@@ -11,7 +11,7 @@
     <groupId>com.qusu</groupId>
     <artifactId>my-biomni</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>e2b-my</name>
+    <name>my-biomni</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>

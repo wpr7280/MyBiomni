@@ -22,7 +22,7 @@ public class RedisConfig {
     @Value("${spring.cache.redis.time-to-live:3600000}")
     private long timeToLive;
 
-    @Value("${spring.cache.redis.key-prefix:e2b:billing:}")
+    @Value("${spring.cache.redis.key-prefix:biomni:}")
     private String keyPrefix;
 
     @Bean
