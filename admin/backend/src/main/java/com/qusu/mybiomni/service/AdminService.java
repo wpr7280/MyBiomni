@@ -73,6 +73,7 @@ public class AdminService {
         adminVO.setId(admin.getId());
         adminVO.setEmail(admin.getEmail());
         adminVO.setUsername(admin.getUsername());
+        adminVO.setRole(admin.getRole() != null ? admin.getRole() : "user");
         adminVO.setStatus(AdminStatus.isActive(admin.getStatus()) ? "ACTIVE" : "INACTIVE");
         adminVO.setCreateTime(admin.getCreatedAt());
         adminVO.setRealName(admin.getRealName());

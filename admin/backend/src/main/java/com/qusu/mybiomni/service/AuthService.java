@@ -46,6 +46,7 @@ public class AuthService {
         response.setUserId(String.valueOf(admin.getId()));
         response.setEmail(admin.getEmail());
         response.setUsername(admin.getUsername());
+        response.setRole(admin.getRole() != null ? admin.getRole() : "user");
         response.setForcePasswordChange(ForcePasswordChange.needChange(admin.getForcePasswordChange()));
 
         // 更新最后登录时间

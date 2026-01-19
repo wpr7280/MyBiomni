@@ -15,6 +15,7 @@ public class AdminVO implements UserDetails {
     private String username;
     private String realName;
     private String avatar;
+    private String role;
     private String status;
     private Date createTime;
     private String token;
@@ -28,5 +29,19 @@ public class AdminVO implements UserDetails {
     @Override
     public String getPassword() {
         return "";
+    }
+    
+    /**
+     * 判断是否为管理员
+     */
+    public boolean isAdmin() {
+        return "admin".equals(this.role);
+    }
+    
+    /**
+     * 判断是否可以访问管理功能
+     */
+    public boolean canAccessAdmin() {
+        return "admin".equals(this.role);
     }
 }

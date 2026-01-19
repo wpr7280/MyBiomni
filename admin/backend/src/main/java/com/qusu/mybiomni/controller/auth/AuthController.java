@@ -34,6 +34,7 @@ public class AuthController {
             response.setUserId(String.valueOf(admin.getId()));
             response.setEmail(admin.getEmail());
             response.setUsername(admin.getUsername());
+            response.setRole(admin.getRole());
             response.setForcePasswordChange(admin.getForcePasswordChange());
             return BaseResult.success(response);
         } catch (Exception e) {

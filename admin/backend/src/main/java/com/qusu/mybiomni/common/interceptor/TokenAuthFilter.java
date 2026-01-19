@@ -81,10 +81,15 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         // 设置Spring Security认证信息
         AdminVO admin = adminService.getAdminInfo(adminId);
         admin.setToken(token);
+        
+        // 根据角色设置权限
+        String role = admin.getRole() != null ? admin.getRole() : "user";
+        String springRole = "ROLE_" + role.toUpperCase();  // ROLE_ADMIN 或 ROLE_USER
+        
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             admin, 
             token, 
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))
+            Collections.singletonList(new SimpleGrantedAuthority(springRole))
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 设置租户上下文（多租户支持）

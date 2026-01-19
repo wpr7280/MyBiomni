@@ -20,6 +20,24 @@ export default {
   // profile
   updateUserInfo: (data = {}) => request.post('/auth/updateUserInfo', data),
   updatePassword: (data = {}) => request.post('/auth/updatePassword', data),
+  
+  // ========== 对话管理 ==========
+  getConversations: (params = {}) => request.get('/conversations', { params }),
+  createConversation: (data = {}) => request.post('/conversations', data),
+  getConversationDetail: (id) => request.get(`/conversations/${id}`),
+  deleteConversation: (id) => request.delete(`/conversations/${id}`),
+  
+  // ========== 知识库 ==========
+  getKnowHowList: (params = {}) => request.get('/knowhow', { params }),
+  getKnowHowDetail: (id) => request.get(`/knowhow/${id}`),
+  
+  // ========== 管理员 - 用户管理 ==========
+  getUserList: (params = {}) => request.get('/admin/users', { params }),
+  createUser: (data = {}) => request.post('/admin/users', data),
+  updateUser: (id, data = {}) => request.put(`/admin/users/${id}`, data),
+  deleteUser: (id) => request.delete(`/admin/users/${id}`),
+  resetUserPassword: (id, data = {}) => request.post(`/admin/users/${id}/reset-password`, data),
+  
   // users
   getUserList: (params = {}) => request.get('/user/list', { params }),
   getUserById: (params = {}) => request.get('/user/get', { params }),
