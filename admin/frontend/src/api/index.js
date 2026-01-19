@@ -32,41 +32,25 @@ export default {
   getKnowHowDetail: (id) => request.get(`/knowhow/${id}`),
   
   // ========== 管理员 - 用户管理 ==========
-  getUserList: (params = {}) => request.get('/admin/users', { params }),
-  createUser: (data = {}) => request.post('/admin/users', data),
-  updateUser: (id, data = {}) => request.put(`/admin/users/${id}`, data),
-  deleteUser: (id) => request.delete(`/admin/users/${id}`),
-  resetUserPassword: (id, data = {}) => request.post(`/admin/users/${id}/reset-password`, data),
+  getUserList: (params = {}) => request.post('/users/list', params),
+  createUser: (data = {}) => request.post('/users/create', data),
+  updateUser: (data = {}) => request.post('/users/update', data),
+  deleteUser: (data = {}) => request.post('/users/delete', data),
+  resetUserPassword: (data = {}) => request.post('/users/reset-password', data),
   
-  // users
-  getUserList: (params = {}) => request.get('/user/list', { params }),
-  getUserById: (params = {}) => request.get('/user/get', { params }),
-  createUser: (data = {}) => request.post('/user/create', data),
-  updateUser: (data = {}) => request.post('/user/update', data),
-  deleteUser: (params = {}) => request.delete(`/user/delete`, { params }),
+  // // users
+  // getUserList: (params = {}) => request.get('/user/list', { params }),
+  // getUserById: (params = {}) => request.get('/user/get', { params }),
+  // createUser: (data = {}) => request.post('/user/create', data),
+  // updateUser: (data = {}) => request.post('/user/update', data),
+  // deleteUser: (params = {}) => request.delete(`/user/delete`, { params }),
   // role
-  getRoleList: (params = {}) => request.get('/role/list', { params }),
-  createRole: (data = {}) => request.post('/role/create', data),
-  updateRole: (data = {}) => request.post('/role/update', data),
-  deleteRole: (params = {}) => request.delete('/role/delete', { params }),
-  updateRoleAuthorized: (data = {}) => request.post('/role/authorized', data),
-  getRoleAuthorized: (params = {}) => request.get('/role/authorized', { params }),
+
   // menus
   getMenus: (params = {}) => request.get('/menu/list', { params }),
   createMenu: (data = {}) => request.post('/menu/create', data),
   updateMenu: (data = {}) => request.post('/menu/update', data),
   deleteMenu: (params = {}) => request.delete('/menu/delete', { params }),
-  // apis
-  getApis: (params = {}) => request.get('/api/list', { params }),
-  createApi: (data = {}) => request.post('/api/create', data),
-  updateApi: (data = {}) => request.post('/api/update', data),
-  deleteApi: (params = {}) => request.delete('/api/delete', { params }),
-  refreshApi: (data = {}) => request.post('/api/refresh', data),
-  // depts
-  getDepts: (params = {}) => request.get('/dept/list', { params }),
-  createDept: (data = {}) => request.post('/dept/create', data),
-  updateDept: (data = {}) => request.post('/dept/update', data),
-  deleteDept: (params = {}) => request.delete('/dept/delete', { params }),
   // auditlog
   getAuditLogList: (params = {}) => request.get('/auditlog/list', { params }),
 

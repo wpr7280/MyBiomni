@@ -121,13 +121,13 @@ async function loadUsers() {
   loading.value = true
   try {
     const res = await api.getUserList({
-      page: pagination.value.page,
+      currentPage: pagination.value.page,
       pageSize: pagination.value.pageSize,
       keyword: searchKeyword.value
     })
     if (res.code === 200) {
-      users.value = res.data.items || []
-      pagination.value.itemCount = res.data.total || 0
+      users.value = res.data || []
+      pagination.value.itemCount = res.totalCount || 0
     }
   } catch (error) {
     message.error('加载失败')
@@ -171,7 +171,10 @@ async function saveUser() {
     
     try {
       if (userForm.value.id) {
-        await api.updateUser(userForm.value.id, userForm.value)
+        await api.updateUser({
+          userId: userForm.value.id,
+          ...userForm.value
+        })
       } else {
         await api.createUser(userForm.value)
       }
@@ -187,7 +190,7 @@ async function saveUser() {
 // 删除用户
 async function deleteUser(id) {
   try {
-    await api.deleteUser(id)
+    await api.deleteUser({ userId: id })
     message.success('删除成功')
     loadUsers()
   } catch (error) {
