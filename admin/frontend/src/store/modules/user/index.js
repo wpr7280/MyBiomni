@@ -26,12 +26,9 @@ export const useUserStore = defineStore('user', {
     role() {
       return this.userInfo?.roles || []
     },
-    // isSuperUser() {
-    //   return this.userInfo?.is_superuser
-    // },
-    // isActive() {
-    //   return this.userInfo?.is_active
-    // },
+    forcePasswordChange() {
+      return this.userInfo?.forcePasswordChange || false
+    },
   },
   actions: {
     async getUserInfo() {
@@ -41,8 +38,8 @@ export const useUserStore = defineStore('user', {
           this.logout()
           return
         }
-        const { id, username, email, avatar } = res.data
-        this.userInfo = { id, username, email, avatar }
+        const { id, username, email, avatar, forcePasswordChange } = res.data
+        this.userInfo = { id, username, email, avatar, forcePasswordChange }
         return res.data
       } catch (error) {
         return error
@@ -62,6 +59,9 @@ export const useUserStore = defineStore('user', {
     },
     setUserInfo(userInfo = {}) {
       this.userInfo = { ...this.userInfo, ...userInfo }
+    },
+    setForcePasswordChange(value) {
+      this.userInfo.forcePasswordChange = value
     },
   },
 })

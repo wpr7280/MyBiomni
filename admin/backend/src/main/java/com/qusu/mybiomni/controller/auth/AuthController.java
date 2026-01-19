@@ -34,6 +34,7 @@ public class AuthController {
             response.setUserId(String.valueOf(admin.getId()));
             response.setEmail(admin.getEmail());
             response.setUsername(admin.getUsername());
+            response.setForcePasswordChange(admin.getForcePasswordChange());
             return BaseResult.success(response);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());
@@ -56,6 +57,16 @@ public class AuthController {
         try {
             boolean result = authService.updatePassword(admin.getId(), request.getOldPassword(), request.getNewPassword());
             return BaseResult.success(result);
+        } catch (Exception e) {
+            return BaseResult.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/updateUserInfo")
+    public BaseResult<Void> updateUserInfo(@RequestBody UpdateUserInfoRequest request, @AuthenticationPrincipal AdminVO admin) {
+        try {
+            authService.updateUserInfo(admin.getId(), request.getUsername(), request.getEmail());
+            return BaseResult.success(null);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());
         }

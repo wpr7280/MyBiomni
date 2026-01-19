@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, h } from 'vue'
-import { NButton, NCard, NForm, NFormItem, NInput, NDataTable, NPopconfirm, NIcon, NSpace, NTag, NModal, NText, NAlert } from 'naive-ui'
+import { ref } from 'vue'
+import { NButton, NCard, NForm, NFormItem, NInput, NIcon, NAlert } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import CommonPage from '@/components/page/CommonPage.vue'
 import { useUserStore } from '@/store'
@@ -18,6 +18,7 @@ const infoForm = ref({
   username: userStore.name,
   email: userStore.email,
 })
+
 async function updateProfile() {
   isLoading.value = true
   infoFormRef.value?.validate(async (err) => {
@@ -26,7 +27,10 @@ async function updateProfile() {
       return
     }
     await api
-      .updateUserInfo({ username: infoForm.value.username })
+      .updateUserInfo({ 
+        username: infoForm.value.username,
+        email: infoForm.value.email 
+      })
       .then(() => {
         userStore.setUserInfo(infoForm.value)
         isLoading.value = false
@@ -37,12 +41,30 @@ async function updateProfile() {
       })
   })
 }
+
+// 修改邮箱（使用同一个接口）
+async function updateEmail() {
+  await updateProfile()
+}
+
 const infoFormRules = {
   username: [
     {
       required: true,
       message: t('views.profile.message_username_required'),
       trigger: ['input', 'blur', 'change'],
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: t('views.profile.message_email_required'),
+      trigger: ['input', 'blur', 'change'],
+    },
+    {
+      type: 'email',
+      message: t('views.profile.message_email_invalid'),
+      trigger: ['input', 'blur'],
     },
   ],
 }
@@ -66,11 +88,14 @@ async function updatePassword() {
       await api
         .updatePassword(data)
         .then((res) => {
-          message.success(res.msg)
+          message.success(res.msg || t('views.profile.message_password_update_success'))
           passwordForm.value = {
             old_password: '',
             new_password: '',
             confirm_password: '',
+          }
+          if (userStore.forcePasswordChange) {
+            userStore.setForcePasswordChange(false)
           }
           isLoading.value = false
         })
@@ -82,6 +107,7 @@ async function updatePassword() {
     }
   })
 }
+
 const passwordFormRules = {
   old_password: [
     {
@@ -95,6 +121,11 @@ const passwordFormRules = {
       required: true,
       message: t('views.profile.message_new_password_required'),
       trigger: ['input', 'blur', 'change'],
+    },
+    {
+      min: 8,
+      message: t('views.profile.message_password_min_length'),
+      trigger: ['input', 'blur'],
     },
   ],
   confirm_password: [
@@ -115,6 +146,7 @@ const passwordFormRules = {
     },
   ],
 }
+
 function validatePasswordStartWith(rule, value) {
   return (
     !!passwordForm.value.new_password &&
@@ -122,137 +154,32 @@ function validatePasswordStartWith(rule, value) {
     passwordForm.value.new_password.length >= value.length
   )
 }
+
 function validatePasswordSame(rule, value) {
   return value === passwordForm.value.new_password
 }
-
-// Access Token 管理
-const accessTokens = ref([])
-const tokenLoading = ref(false)
-const generateTokenLoading = ref(false)
-const showTokenModal = ref(false)
-const newGeneratedToken = ref('')
-
-// 加载Access Token列表
-async function loadAccessTokens() {
-  tokenLoading.value = true
-  try {
-    const res = await api.listAccessToken()
-    if (res.code === 200) {
-      accessTokens.value = res.data || []
-    }
-  } catch (error) {
-    message.error(t('views.profile.message_get_tokens_failed'))
-  } finally {
-    tokenLoading.value = false
-  }
-}
-
-// 生成新的Access Token
-async function generateAccessToken() {
-  generateTokenLoading.value = true
-  try {
-    const res = await api.createAccessToken()
-    if (res.code === 200) {
-      // 保存新生成的token（未mask的完整token）
-      newGeneratedToken.value = res.data.accessTokenWithMask
-      // 显示模态框让用户复制
-      showTokenModal.value = true
-      // 重新加载token列表
-      await loadAccessTokens()
-    } else {
-      message.error(res.msg || t('views.profile.message_generate_token_failed'))
-    }
-  } catch (error) {
-    message.error(t('views.profile.message_generate_token_failed'))
-  } finally {
-    generateTokenLoading.value = false
-  }
-}
-
-// 删除Access Token
-async function deleteAccessToken(tokenData) {
-  try {
-    // 从masked token中提取后10位
-    const maskedToken = tokenData.accessTokenWithMask
-    const last10Chars = maskedToken.slice(-10)
-    
-    const deleteRequest = {
-      accessToken: last10Chars,
-      createdAt: tokenData.createdAt
-    }
-    
-    const res = await api.deleteAccessToken(deleteRequest)
-    if (res.code === 200) {
-      message.success(t('views.profile.message_delete_token_success'))
-      await loadAccessTokens()
-    } else {
-      message.error(res.msg || t('views.profile.message_delete_token_failed'))
-    }
-  } catch (error) {
-    message.error(t('views.profile.message_delete_token_failed'))
-  }
-}
-
-// 复制token
-async function copyToken() {
-  try {
-    await navigator.clipboard.writeText(newGeneratedToken.value)
-    message.success(t('views.profile.message_token_copied'))
-  } catch (error) {
-    message.error(t('views.profile.message_token_copy_failed'))
-  }
-}
-
-// 关闭token模态框
-function closeTokenModal() {
-  showTokenModal.value = false
-  newGeneratedToken.value = ''
-}
-
-// 表格列定义
-const columns = [
-  {
-    title: () => t('views.profile.label_access_token'),
-    key: 'accessTokenWithMask',
-    render: (row) => row.accessTokenWithMask || '-'
-  },
-  {
-    title: () => t('views.profile.label_created_at'),
-    key: 'createdAt',
-    render: (row) => row.createdAt ? new Date(row.createdAt).toLocaleString() : '-'
-  },
-  {
-    title: () => t('views.profile.label_actions'),
-    key: 'actions',
-    render: (row) => {
-      return h(NPopconfirm, {
-        onPositiveClick: () => deleteAccessToken(row)
-      }, {
-        default: () => t('views.profile.message_delete_token_confirm'),
-        trigger: () => h(NButton, {
-          size: 'small',
-          type: 'error',
-          ghost: true
-        }, {
-          default: () => t('views.profile.button_delete')
-        })
-      })
-    }
-  }
-]
-
-onMounted(() => {
-  loadAccessTokens()
-})
 </script>
 
 <template>
   <CommonPage :show-header="false">
-        <div class="profile-container">
-      <!-- 基本信息和修改密码在一行 -->
+    <div class="profile-container">
+      <n-alert 
+        v-if="userStore.forcePasswordChange" 
+        type="error" 
+        :title="$t('views.profile.alert_must_change_password_title')"
+        style="margin-bottom: 20px;"
+      >
+        <template #icon>
+          <n-icon size="20">
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-2 6v2h2v-2"/>
+            </svg>
+          </n-icon>
+        </template>
+        {{ $t('views.profile.alert_must_change_password_message') }}
+      </n-alert>
+
       <div class="info-password-row">
-        <!-- 修改信息卡片 -->
         <NCard class="profile-card info-card" :title="$t('views.profile.title_basic_info')">
           <template #header-extra>
             <NIcon size="20" color="#18a058">
@@ -291,17 +218,26 @@ onMounted(() => {
               </div>
             </NFormItem>
             <NFormItem :label="$t('views.profile.label_email')" path="email">
-              <NInput
-                v-model:value="infoForm.email"
-                type="text"
-                :placeholder="$t('views.profile.placeholder_email')"
-                disabled
-              />
+              <div class="username-input-group">
+                <NInput
+                  v-model:value="infoForm.email"
+                  type="text"
+                  :placeholder="$t('views.profile.placeholder_email')"
+                  class="username-input"
+                />
+                <NButton 
+                  type="primary" 
+                  :loading="isLoading" 
+                  @click="updateEmail"
+                  class="inline-update-btn"
+                >
+                  {{ $t('common.buttons.update') }}
+                </NButton>
+              </div>
             </NFormItem>
           </NForm>
         </NCard>
 
-        <!-- 修改密码卡片 -->
         <NCard class="profile-card password-card" :title="$t('views.profile.title_change_password')">
           <template #header-extra>
             <NIcon size="20" color="#f0a020">
@@ -353,100 +289,7 @@ onMounted(() => {
           </NForm>
         </NCard>
       </div>
-
-      <!-- Access Token管理卡片 -->
-      <NCard class="profile-card" :title="$t('views.profile.title_access_token')">
-        <template #header-extra>
-          <NIcon size="20" color="#2080f0">
-            <svg viewBox="0 0 24 24">
-              <path fill="currentColor" d="M7 14c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3zM20.99 4c0-1.1-.89-2-2-2H5c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2l-.01-6zM9 10.5c0 .83-.67 1.5-1.5 1.5S6 11.33 6 10.5S6.67 9 7.5 9S9 9.67 9 10.5zM15.5 9c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5S14 11.33 14 10.5S14.67 9 15.5 9z"/>
-            </svg>
-          </NIcon>
-        </template>
-        <div class="token-section">
-          <div class="token-header">
-            <p class="token-description">
-              {{ $t('views.profile.text_manage_access_token') }}
-            </p>
-            <NButton 
-              type="primary" 
-              :loading="generateTokenLoading" 
-              @click="generateAccessToken"
-              class="generate-btn"
-            >
-              <template #icon>
-                <NIcon>
-                  <svg viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                  </svg>
-                </NIcon>
-              </template>
-              {{ $t('views.profile.button_generate_token') }}
-            </NButton>
-          </div>
-          
-          <div class="token-table">
-            <NDataTable
-              :columns="columns"
-              :data="accessTokens"
-              :loading="tokenLoading"
-              :bordered="false"
-              :single-line="false"
-              flex-height
-              style="min-height: 200px"
-            />
-          </div>
-        </div>
-      </NCard>
     </div>
-
-    <!-- 新生成Token模态框 -->
-    <NModal 
-      v-model:show="showTokenModal" 
-      preset="card" 
-      :title="$t('views.profile.modal_title_new_token')"
-      style="max-width: 600px"
-      :mask-closable="false"
-      :close-on-esc="false"
-    >
-      <div class="token-modal-content">
-        <NAlert 
-          type="warning" 
-          :title="$t('views.profile.text_token_important_notice')"
-          style="margin-bottom: 16px"
-        >
-          {{ $t('views.profile.text_copy_token_notice') }}
-        </NAlert>
-        
-        <div class="token-display">
-          <NText code style="word-break: break-all; font-size: 14px; line-height: 1.6;">
-            {{ newGeneratedToken }}
-          </NText>
-        </div>
-        
-        <div class="token-notice">
-          <NText depth="3" style="font-size: 13px;">
-            {{ $t('views.profile.text_token_security_notice') }}
-          </NText>
-        </div>
-        
-        <div class="token-modal-actions">
-          <NButton type="primary" @click="copyToken" style="margin-right: 12px;">
-            <template #icon>
-              <NIcon>
-                <svg viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/>
-                </svg>
-              </NIcon>
-            </template>
-            {{ $t('views.profile.button_copy_token') }}
-          </NButton>
-          <NButton @click="closeTokenModal">
-            {{ $t('views.profile.button_i_have_copied') }}
-          </NButton>
-        </div>
-      </div>
-    </NModal>
   </CommonPage>
 </template>
 
@@ -488,10 +331,6 @@ onMounted(() => {
   width: 100%;
 }
 
-.profile-card:not(.info-card):not(.password-card) {
-  max-width: 1100px;
-}
-
 .profile-card::before {
   content: '';
   position: absolute;
@@ -523,14 +362,6 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 700;
   color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.profile-card :deep(.n-card-header__extra) {
-  display: flex;
-  align-items: center;
 }
 
 .profile-card :deep(.n-card__content) {
@@ -540,11 +371,6 @@ onMounted(() => {
 .info-form,
 .password-form {
   max-width: 600px;
-}
-
-.info-form :deep(.n-form-item),
-.password-form :deep(.n-form-item) {
-  margin-bottom: 16px;
 }
 
 .info-password-row {
@@ -577,51 +403,6 @@ onMounted(() => {
   font-weight: 500;
   font-size: 14px;
   flex-shrink: 0;
-  margin-left: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.inline-update-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.info-form :deep(.n-form-item-label),
-.password-form :deep(.n-form-item-label) {
-  font-weight: 500;
-  color: #333;
-  font-size: 13px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.4;
-}
-
-.info-form :deep(.n-input),
-.password-form :deep(.n-input) {
-  height: 36px;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.info-form :deep(.n-input:hover),
-.password-form :deep(.n-input:hover) {
-  border-color: #18a058;
-}
-
-.info-form :deep(.n-input.n-input--focus),
-.password-form :deep(.n-input.n-input--focus) {
-  border-color: #18a058;
-  box-shadow: 0 0 0 2px rgba(24, 160, 88, 0.1);
-}
-
-.info-form :deep(.n-input.n-input--disabled),
-.password-form :deep(.n-input.n-input--disabled) {
-  background: #f5f5f5;
-  border-color: #e0e0e0;
-  color: #999;
 }
 
 .password-form-actions {
@@ -632,337 +413,20 @@ onMounted(() => {
   border-top: 1px solid #f0f0f0;
 }
 
-.password-form-actions :deep(.n-button) {
-  padding: 0 24px;
-  height: 36px;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.password-form-actions :deep(.n-button:hover) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.token-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.token-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 8px;
-  border: 1px solid #f0f0f0;
-}
-
-.token-description {
-  color: #666;
-  line-height: 1.5;
-  margin: 0;
-  flex: 1;
-  min-width: 200px;
-  font-size: 14px;
-}
-
-.generate-btn {
-  flex-shrink: 0;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.generate-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.token-table {
-  min-height: 150px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #e0e0e6;
-}
-
-.token-table :deep(.n-data-table) {
-  border: none;
-}
-
-.token-table :deep(.n-data-table-wrapper) {
-  border: none;
-}
-
-.token-table :deep(.n-data-table-base-table) {
-  border: none;
-}
-
-.token-table :deep(.n-data-table-thead) {
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-}
-
-.token-table :deep(.n-data-table-th) {
-  background: transparent;
-  font-weight: 600;
-  color: #333;
-  padding: 12px 16px;
-  font-size: 14px;
-  border-bottom: 1px solid #e0e0e6;
-  border-right: none;
-}
-
-.token-table :deep(.n-data-table-th:not(:last-child)) {
-  border-right: 1px solid #f0f0f0;
-}
-
-.token-table :deep(.n-data-table-td) {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  border-right: none;
-  font-size: 14px;
-}
-
-.token-table :deep(.n-data-table-td:not(:last-child)) {
-  border-right: 1px solid #f5f5f5;
-}
-
-.token-table :deep(.n-data-table-tr:hover .n-data-table-td) {
-  background: #f8f9fa;
-}
-
-.token-table :deep(.n-data-table-tr:last-child .n-data-table-td) {
-  border-bottom: none;
-}
-
-.token-table :deep(.n-data-table-empty) {
-  padding: 24px;
-  color: #999;
-  text-align: center;
-}
-
-.token-table :deep(.n-button) {
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.token-table :deep(.n-button:hover) {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* 响应式设计 */
 @media (max-width: 1024px) {
   .info-password-row {
     flex-direction: column;
-    gap: 16px;
-  }
-  
-  .info-card,
-  .password-card {
-    max-width: none;
-    min-width: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .profile-container {
-    padding: 12px 16px;
-    gap: 16px;
-  }
-  
-  .profile-card :deep(.n-card-header) {
-    padding: 12px 16px;
-  }
-  
-  .profile-card :deep(.n-card__content) {
-    padding: 16px;
-  }
-  
-  .token-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px;
-    gap: 12px;
-  }
-  
-  .generate-btn {
-    align-self: stretch;
-  }
-  
-  .info-form,
-  .password-form {
-    max-width: 100%;
-  }
-  
-  .info-form :deep(.n-form-item) {
-    margin-bottom: 12px;
-  }
-  
-  .password-form :deep(.n-form-item) {
-    margin-bottom: 12px;
-  }
-  
-  .info-form :deep(.n-form-item-label),
-  .password-form :deep(.n-form-item-label) {
-    font-size: 12px;
-    width: 85px !important;
-  }
-  
   .username-input-group {
     flex-direction: column;
-    gap: 8px;
     align-items: stretch;
   }
   
   .inline-update-btn {
-    align-self: stretch;
     margin-left: 0;
-  }
-  
-  .password-form-actions {
-    margin-top: 12px;
-    padding-top: 12px;
-  }
-  
-  .info-form :deep(.n-form-item-label),
-  .password-form :deep(.n-form-item-label) {
-    font-size: 11px;
-    width: 65px !important;
-  }
-  
-  .info-form :deep(.n-form-item) {
-    margin-bottom: 10px;
-  }
-  
-  .password-form :deep(.n-form-item) {
-    margin-bottom: 10px;
-  }
-  
-  .token-section {
-    gap: 12px;
-  }
-  
-  .token-table :deep(.n-data-table-th),
-  .token-table :deep(.n-data-table-td) {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 480px) {
-  .profile-container {
-    padding: 8px 12px;
-    gap: 12px;
-  }
-  
-  .info-password-row {
-    gap: 12px;
-  }
-  
-  .profile-card :deep(.n-card-header) {
-    padding: 10px 12px;
-  }
-  
-  .profile-card :deep(.n-card__content) {
-    padding: 12px;
-  }
-  
-  .token-header {
-    padding: 10px;
-    gap: 8px;
-  }
-  
-  .username-input-group {
-    gap: 6px;
-  }
-  
-  .inline-update-btn,
-  .generate-btn {
-    height: 32px;
-    font-size: 13px;
-  }
-  
-  .inline-update-btn {
-    margin-left: 0;
-  }
-  
-  .token-table :deep(.n-data-table-th),
-  .token-table :deep(.n-data-table-td) {
-    padding: 6px 8px;
-    font-size: 12px;
-  }
-}
-
-/* Token模态框样式 */
-.token-modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.token-display {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
-  position: relative;
-}
-
-.token-notice {
-  padding: 12px;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 6px;
-  color: #856404;
-}
-
-.token-modal-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.token-modal-actions .n-button {
-  min-width: 120px;
-}
-
-/* 模态框响应式 */
-@media (max-width: 768px) {
-  .token-modal-content {
-    gap: 12px;
-  }
-  
-  .token-display {
-    padding: 12px;
-    margin: 12px 0;
-  }
-  
-  .token-modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .token-modal-actions .n-button {
-    width: 100%;
-    min-width: auto;
   }
 }
 </style>

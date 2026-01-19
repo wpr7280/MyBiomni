@@ -116,4 +116,9 @@ public class AdminService {
         adminDAO.updateByPrimaryKeySelective(admin);
         evictAdminCache(String.valueOf(adminId));
     }
+
+    public void updateAdminInfo(AdminDO admin) {
+        adminDAO.updateByPrimaryKeySelective(admin);
+        evictAdminCache(String.valueOf(admin.getId()));
+    }
 }

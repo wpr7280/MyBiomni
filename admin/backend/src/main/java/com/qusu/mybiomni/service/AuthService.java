@@ -78,4 +78,43 @@ public class AuthService {
         
         return true;
     }
+
+    /**
+     * 更新用户信息（用户名和邮箱）
+     * @param adminId 管理员ID
+     * @param username 用户名（可选）
+     * @param email 邮箱（可选）
+     */
+    public void updateUserInfo(Integer adminId, String username, String email) {
+        AdminDO admin = adminService.getAdminById(adminId);
+        if (admin == null) {
+            throw new RuntimeException("管理员不存在");
+        }
+
+        boolean needUpdate = false;
+        AdminDO updateAdmin = new AdminDO();
+        updateAdmin.setId(adminId);
+
+        // 更新用户名
+        if (username != null && !username.trim().isEmpty() && !username.equals(admin.getUsername())) {
+            updateAdmin.setUsername(username.trim());
+            needUpdate = true;
+        }
+
+        // 更新邮箱
+        if (email != null && !email.trim().isEmpty() && !email.equals(admin.getEmail())) {
+            // 检查邮箱是否已被其他管理员使用
+            AdminDO existingAdmin = adminService.getAdminByEmail(email);
+            if (existingAdmin != null && !existingAdmin.getId().equals(adminId)) {
+                throw new RuntimeException("邮箱已被使用");
+            }
+            updateAdmin.setEmail(email.trim());
+            needUpdate = true;
+        }
+
+        if (needUpdate) {
+            updateAdmin.setUpdatedAt(new java.util.Date());
+            adminService.updateAdminInfo(updateAdmin);
+        }
+    }
 }
