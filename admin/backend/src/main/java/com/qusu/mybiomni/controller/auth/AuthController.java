@@ -2,7 +2,6 @@ package com.qusu.mybiomni.controller.auth;
 
 import com.qusu.mybiomni.service.AuthService;
 import com.qusu.mybiomni.common.response.BaseResult;
-import com.qusu.mybiomni.common.response.auth.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,45 +26,14 @@ public class AuthController {
         }
     }
 
-    /**
-     * 重置密码
-     */
-    @PostMapping("/resetPassword")
-    public BaseResult<Boolean> resetPassword(@RequestBody ResetPasswordRequest request) {
-        try {
-            // 验证邮箱验证码
-            String cachedCode = emailCache.get(request.getEmail(), "forgetPwd");
-            if (cachedCode == null) {
-                return BaseResult.error("验证码已过期或不存在");
-            }
-            
-            if (!cachedCode.equals(request.getVerifyCode())) {
-                return BaseResult.error("验证码错误");
-            }
-            
-            // 重置密码
-            boolean result = authService.resetPassword(request.getEmail(), request.getNewPassword());
-            
-            if (result) {
-                // 重置成功后删除验证码，防止重复使用
-                emailCache.remove(request.getEmail(), "forgetPwd");
-                return BaseResult.success(true);
-            } else {
-                return BaseResult.error("密码重置失败");
-            }
-        } catch (Exception e) {
-            return BaseResult.error(e.getMessage());
-        }
-    }
-
     @GetMapping("/me")
-    public BaseResult<LoginResponse> getCurrentUser(@AuthenticationPrincipal UserVO user) {
+    public BaseResult<LoginResponse> getCurrentUser(@AuthenticationPrincipal AdminVO admin) {
         try {
             LoginResponse response = new LoginResponse();
-            response.setToken(user.getToken());
-            response.setUserId(user.getId());
-            response.setEmail(user.getEmail());
-            response.setUsername(user.getUsername());
+            response.setToken(admin.getToken());
+            response.setUserId(String.valueOf(admin.getId()));
+            response.setEmail(admin.getEmail());
+            response.setUsername(admin.getUsername());
             return BaseResult.success(response);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());
@@ -73,9 +41,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public BaseResult<Void> logout(@AuthenticationPrincipal UserVO user) {
+    public BaseResult<Void> logout(@AuthenticationPrincipal AdminVO admin) {
         try {
-            authService.logout(user.getId());
+            authService.logout(admin.getId());
             return BaseResult.success(null);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());
@@ -84,9 +52,9 @@ public class AuthController {
 
 
     @PostMapping("/updatePassword")
-    public BaseResult<Boolean> updatePassword(@RequestBody UpdatePasswordRequest request, @AuthenticationPrincipal UserVO user) {
+    public BaseResult<Boolean> updatePassword(@RequestBody UpdatePasswordRequest request, @AuthenticationPrincipal AdminVO admin) {
         try {
-            boolean result = authService.updatePassword(user.getId(), request.getOldPassword(), request.getNewPassword());
+            boolean result = authService.updatePassword(admin.getId(), request.getOldPassword(), request.getNewPassword());
             return BaseResult.success(result);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());

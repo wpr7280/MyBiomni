@@ -7,4 +7,5 @@ public class LoginResponse {
     private String userId;
     private String email;
     private String username;
+    private Boolean forcePasswordChange;
 }

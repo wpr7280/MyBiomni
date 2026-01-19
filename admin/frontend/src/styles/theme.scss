@@ -1,0 +1,409 @@
+// 基于 #1C9CEB 的舒适配色方案
+// 主色调系统
+$primary-color: #1C9CEB;
+$primary-color-hover: #4DB5FF;
+$primary-color-pressed: #0F7BC7;
+$primary-color-suppl: #E6F4FF;
+
+// 辅助色系统
+$success-color: #52C41A;
+$success-color-hover: #73D13D;
+$success-color-pressed: #389E0D;
+$success-color-suppl: #F6FFED;
+
+$warning-color: #FAAD14;
+$warning-color-hover: #FFC53D;
+$warning-color-pressed: #D48806;
+$warning-color-suppl: #FFFBE6;
+
+$error-color: #FF4D4F;
+$error-color-hover: #FF7875;
+$error-color-pressed: #D9363E;
+$error-color-suppl: #FFF2F0;
+
+$info-color: #1890FF;
+$info-color-hover: #40A9FF;
+$info-color-pressed: #096DD9;
+$info-color-suppl: #E6F7FF;
+
+// 中性色系统
+$text-color-primary: #262626;
+$text-color-secondary: #595959;
+$text-color-tertiary: #8C8C8C;
+$border-color: #F0F0F0;
+$background-color: #FAFAFA;
+
+// 深色模式中性色
+$dark-text-color-primary: #FFFFFF;
+$dark-text-color-secondary: #D9D9D9;
+$dark-text-color-tertiary: #8C8C8C;
+$dark-border-color: #303030;
+$dark-background-color: #141414;
+
+// 阴影系统
+$shadow-1: 0 1px 2px 0 rgba(28, 156, 235, 0.05);
+$shadow-2: 0 2px 4px 0 rgba(28, 156, 235, 0.1);
+$shadow-3: 0 4px 8px 0 rgba(28, 156, 235, 0.15);
+$shadow-4: 0 8px 16px 0 rgba(28, 156, 235, 0.2);
+
+// CSS变量定义
+:root {
+  // 主色调系统
+  --primary-color: #{$primary-color};
+  --primary-color-hover: #{$primary-color-hover};
+  --primary-color-pressed: #{$primary-color-pressed};
+  --primary-color-suppl: #{$primary-color-suppl};
+  
+  // 辅助色系统
+  --success-color: #{$success-color};
+  --success-color-hover: #{$success-color-hover};
+  --success-color-pressed: #{$success-color-pressed};
+  --success-color-suppl: #{$success-color-suppl};
+  
+  --warning-color: #{$warning-color};
+  --warning-color-hover: #{$warning-color-hover};
+  --warning-color-pressed: #{$warning-color-pressed};
+  --warning-color-suppl: #{$warning-color-suppl};
+  
+  --error-color: #{$error-color};
+  --error-color-hover: #{$error-color-hover};
+  --error-color-pressed: #{$error-color-pressed};
+  --error-color-suppl: #{$error-color-suppl};
+  
+  --info-color: #{$info-color};
+  --info-color-hover: #{$info-color-hover};
+  --info-color-pressed: #{$info-color-pressed};
+  --info-color-suppl: #{$info-color-suppl};
+  
+  // 中性色系统
+  --text-color-primary: #{$text-color-primary};
+  --text-color-secondary: #{$text-color-secondary};
+  --text-color-tertiary: #{$text-color-tertiary};
+  --border-color: #{$border-color};
+  --background-color: #{$background-color};
+  
+  // 阴影系统
+  --shadow-1: #{$shadow-1};
+  --shadow-2: #{$shadow-2};
+  --shadow-3: #{$shadow-3};
+  --shadow-4: #{$shadow-4};
+}
+
+// 深色模式配色
+[data-theme='dark'] {
+  --primary-color: #{$primary-color-hover};
+  --primary-color-hover: #{$primary-color};
+  --primary-color-pressed: #{$primary-color-pressed};
+  --primary-color-suppl: #{$dark-background-color};
+  
+  --text-color-primary: #{$dark-text-color-primary};
+  --text-color-secondary: #{$dark-text-color-secondary};
+  --text-color-tertiary: #{$dark-text-color-tertiary};
+  --border-color: #{$dark-border-color};
+  --background-color: #{$dark-background-color};
+}
+
+// 全局样式优化
+body {
+  color: var(--text-color-primary);
+  background-color: var(--background-color);
+  transition: all 0.3s ease;
+}
+
+// 按钮样式优化
+.n-button--primary-type {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  
+  &:hover {
+    background-color: var(--primary-color-hover) !important;
+    border-color: var(--primary-color-hover) !important;
+  }
+  
+  &:active {
+    background-color: var(--primary-color-pressed) !important;
+    border-color: var(--primary-color-pressed) !important;
+  }
+}
+
+// Ghost按钮样式优化
+.n-button--ghost {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  background-color: transparent !important;
+  
+  &:hover {
+    color: var(--primary-color-hover) !important;
+    border-color: var(--primary-color-hover) !important;
+    background-color: var(--primary-color-suppl) !important;
+  }
+  
+  &:active {
+    color: var(--primary-color-pressed) !important;
+    border-color: var(--primary-color-pressed) !important;
+  }
+}
+
+// 深色模式下的Ghost按钮
+[data-theme='dark'] .n-button--ghost {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  background-color: transparent !important;
+  
+  &:hover {
+    color: var(--primary-color-hover) !important;
+    border-color: var(--primary-color-hover) !important;
+    background-color: rgba(28, 156, 235, 0.1) !important;
+  }
+}
+
+// Text按钮样式优化
+.n-button--text-type {
+  color: var(--primary-color) !important;
+  background-color: transparent !important;
+  border: none !important;
+  
+  &:hover {
+    color: var(--primary-color-hover) !important;
+    background-color: var(--primary-color-suppl) !important;
+  }
+  
+  &:active {
+    color: var(--primary-color-pressed) !important;
+  }
+}
+
+// 深色模式下的Text按钮
+[data-theme='dark'] .n-button--text-type {
+  color: var(--primary-color) !important;
+  background-color: transparent !important;
+  
+  &:hover {
+    color: var(--primary-color-hover) !important;
+    background-color: rgba(28, 156, 235, 0.1) !important;
+  }
+}
+
+// Tertiary按钮样式优化
+.n-button--tertiary-type {
+  color: var(--text-color-secondary) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  
+  &:hover {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: var(--primary-color-suppl) !important;
+  }
+  
+  &:active {
+    color: var(--primary-color-pressed) !important;
+    border-color: var(--primary-color-pressed) !important;
+  }
+}
+
+// 深色模式下的Tertiary按钮
+[data-theme='dark'] .n-button--tertiary-type {
+  color: var(--text-color-secondary) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  
+  &:hover {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: rgba(28, 156, 235, 0.1) !important;
+  }
+}
+
+// 链接样式优化
+a {
+  color: var(--primary-color);
+  
+  &:hover {
+    color: var(--primary-color-hover);
+  }
+}
+
+// 卡片样式优化
+.n-card {
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-1);
+  
+  &:hover {
+    box-shadow: var(--shadow-2);
+  }
+}
+
+// 输入框样式优化
+.n-input {
+  border-color: var(--border-color);
+  
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-color-suppl);
+  }
+}
+
+// 表格样式优化
+.n-data-table {
+  .n-data-table__header {
+    background-color: var(--background-color);
+  }
+  
+  .n-data-table__row {
+    &:hover {
+      background-color: var(--primary-color-suppl);
+    }
+  }
+}
+
+// 菜单样式优化
+.n-menu {
+  .n-menu-item {
+    &:hover {
+      background-color: var(--primary-color-suppl);
+    }
+    
+    &.n-menu-item--selected {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  }
+}
+
+// 标签页样式优化
+.n-tabs {
+  .n-tabs-tab {
+    &:hover {
+      color: var(--primary-color);
+    }
+    
+    &.n-tabs-tab--active {
+      color: var(--primary-color);
+    }
+  }
+  
+  .n-tabs-bar {
+    background-color: var(--primary-color);
+  }
+}
+
+// 进度条样式优化
+.n-progress {
+  .n-progress-graph {
+    .n-progress-graph-fill {
+      background-color: var(--primary-color);
+    }
+  }
+}
+
+// 加载动画样式优化
+.n-spin {
+  .n-spin-dot {
+    .n-spin-dot-item {
+      background-color: var(--primary-color);
+    }
+  }
+}
+
+// 分页样式优化
+.n-pagination {
+  .n-pagination-item {
+    &:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    &.n-pagination-item--active {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+  }
+}
+
+// 选择器样式优化
+.n-select {
+  .n-select-menu {
+    .n-select-option {
+      &:hover {
+        background-color: var(--primary-color-suppl);
+      }
+      
+      &.n-select-option--selected {
+        background-color: var(--primary-color);
+        color: white;
+      }
+    }
+  }
+}
+
+// 日期选择器样式优化
+.n-date-picker {
+  .n-date-picker-panel {
+    .n-date-picker-cell {
+      &:hover {
+        background-color: var(--primary-color-suppl);
+      }
+      
+      &.n-date-picker-cell--selected {
+        background-color: var(--primary-color);
+        color: white;
+      }
+    }
+  }
+}
+
+// 工具提示样式优化
+.n-tooltip {
+  .n-tooltip-content {
+    background-color: var(--text-color-primary);
+    color: white;
+  }
+}
+
+// 通知样式优化
+.n-notification {
+  &.n-notification--success {
+    border-left-color: var(--success-color);
+  }
+  
+  &.n-notification--warning {
+    border-left-color: var(--warning-color);
+  }
+  
+  &.n-notification--error {
+    border-left-color: var(--error-color);
+  }
+  
+  &.n-notification--info {
+    border-left-color: var(--info-color);
+  }
+}
+
+// 消息样式优化
+.n-message {
+  &.n-message--success {
+    background-color: var(--success-color-suppl);
+    border-color: var(--success-color);
+    color: var(--success-color);
+  }
+  
+  &.n-message--warning {
+    background-color: var(--warning-color-suppl);
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+  }
+  
+  &.n-message--error {
+    background-color: var(--error-color-suppl);
+    border-color: var(--error-color);
+    color: var(--error-color);
+  }
+  
+  &.n-message--info {
+    background-color: var(--info-color-suppl);
+    border-color: var(--info-color);
+    color: var(--info-color);
+  }
+} 

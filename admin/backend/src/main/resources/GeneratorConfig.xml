@@ -73,5 +73,12 @@
                selectByExampleQueryId="true" mapperName="UserDAO">
             <property name="useActualColumnNames" value="false"/>
         </table>
+
+        <table tableName="admin" domainObjectName="AdminDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="AdminDAO">
+            <property name="useActualColumnNames" value="false"/>
+        </table>
     </context>
 </generatorConfiguration>

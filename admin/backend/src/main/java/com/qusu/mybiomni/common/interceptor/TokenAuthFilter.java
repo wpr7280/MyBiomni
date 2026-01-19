@@ -2,8 +2,8 @@ package com.qusu.mybiomni.common.interceptor;
 
 import com.qusu.mybiomni.common.constant.Constants;
 import com.qusu.mybiomni.common.util.TenantContextUtil;
-import com.qusu.mybiomni.controller.auth.UserVO;
-import com.qusu.mybiomni.service.UserService;
+import com.qusu.mybiomni.controller.auth.AdminVO;
+import com.qusu.mybiomni.service.AdminService;
 import com.qusu.mybiomni.common.util.JWTUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +25,7 @@ import java.util.Collections;
 @Slf4j
 public class TokenAuthFilter extends OncePerRequestFilter {
     @Autowired
-    UserService userService;
+    AdminService adminService;
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -37,12 +37,12 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             if (token != null) {
                 // 2. 验证Token有效性
                 if (JWTUtils.validateToken(token)) {
-                    // 3. 提取用户信息
-                    String userId = JWTUtils.getUserIdFromToken(token);
+                    // 3. 提取管理员信息
+                    String adminId = JWTUtils.getUserIdFromToken(token);
                     String email = JWTUtils.getEmailFromToken(token);
-                    // 4. 设置用户上下文
-                    setUserContext(userId, email, token);
-                    log.info("Token验证成功，用户ID: {}, 邮箱: {}", userId, email);
+                    // 4. 设置管理员上下文
+                    setAdminContext(adminId, email, token);
+                    log.info("Token验证成功，管理员ID: {}, 邮箱: {}", adminId, email);
                 } else {
                     log.warn("Token验证失败: {}", token);
                     clearSecurityContext();
@@ -75,16 +75,20 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 设置用户认证上下文
+     * 设置管理员认证上下文
      */
-    private void setUserContext(String userId, String email, String token) {
+    private void setAdminContext(String adminId, String email, String token) {
         // 设置Spring Security认证信息
-        UserVO user = userService.getUserInfo(userId);
-        user.setToken(token);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, token, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        AdminVO admin = adminService.getAdminInfo(adminId);
+        admin.setToken(token);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            admin, 
+            token, 
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))
+        );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 设置租户上下文（多租户支持）
-        TenantContextUtil.setCurrentUserId(userId);
+        TenantContextUtil.setCurrentUserId(adminId);
     }
 
     /**
