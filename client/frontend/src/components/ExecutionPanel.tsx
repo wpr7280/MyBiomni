@@ -270,11 +270,11 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                   }}
                 >
                   <Text type="secondary" style={{ fontSize: 11 }}>
-                    {new Date(step.startedAt).toLocaleTimeString('zh-CN', {
+                    {step.startedAt ? new Date(step.startedAt).toLocaleTimeString('zh-CN', {
                       hour: '2-digit',
                       minute: '2-digit',
                       second: '2-digit',
-                    })}
+                    }) : '--:--:--'}
                   </Text>
                   {step.durationMs > 0 && (
                     <Badge

@@ -15,7 +15,7 @@ export function useWebSocket(conversationId: number | null) {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      antdMessage.error('请先登录');
+      console.log('未登录，跳过 WebSocket 连接');
       return;
     }
 
@@ -72,7 +72,7 @@ export function useWebSocket(conversationId: number | null) {
 
     ws.addEventListener('error', (error: any) => {
       console.error('WebSocket 错误:', error);
-      antdMessage.error('连接失败');
+      // 不显示错误提示，避免首次进入页面就提示
     });
 
     ws.addEventListener('close', () => {
@@ -118,6 +118,7 @@ export function useWebSocket(conversationId: number | null) {
     messages,
     setMessages,
     executionSteps,
+    setExecutionSteps,
     isExecuting,
     sendMessage,
   };

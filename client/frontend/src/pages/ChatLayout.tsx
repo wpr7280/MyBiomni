@@ -43,10 +43,18 @@ export default function ChatLayout() {
   async function handleCreateConversation() {
     try {
       const newConversation = await conversationApi.createConversation();
-      setConversations((prev) => [newConversation, ...prev]);
-      setActiveConversationId(newConversation.id);
-      message.success('创建成功');
+      console.log('创建的对话:', newConversation);
+      
+      if (newConversation && newConversation.id) {
+        setConversations((prev) => [newConversation, ...prev]);
+        setActiveConversationId(newConversation.id);
+        message.success('创建成功');
+      } else {
+        console.error('对话数据无效:', newConversation);
+        message.error('创建失败：数据无效');
+      }
     } catch (error: any) {
+      console.error('创建对话失败:', error);
       message.error(error.message || '创建失败');
     }
   }
@@ -102,11 +110,13 @@ export default function ChatLayout() {
   }
 
   // 转换为 Ant Design X Conversations 组件需要的格式
-  const conversationItems = conversations.map((conv) => ({
-    key: conv.id.toString(),
-    label: conv.title,
-    timestamp: new Date(conv.updatedAt).getTime(),
-  }));
+  const conversationItems = conversations
+    .filter((conv) => conv && conv.id)  // 过滤掉无效数据
+    .map((conv) => ({
+      key: conv.id.toString(),
+      label: conv.title || '新对话',
+      timestamp: conv.updatedAt ? new Date(conv.updatedAt).getTime() : Date.now(),
+    }));
 
   return (
     <Layout style={{ height: '100vh' }}>

@@ -95,6 +95,7 @@
                enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true" mapperName="ConversationDAO">
             <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 
         <table tableName="execution_steps" domainObjectName="ExecutionStepDO"

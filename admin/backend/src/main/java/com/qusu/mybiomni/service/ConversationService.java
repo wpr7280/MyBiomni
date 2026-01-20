@@ -60,7 +60,15 @@ public class ConversationService {
     public ConversationVO createConversation(Integer userId, String title) {
         ConversationDO conversation = new ConversationDO();
         conversation.setUserId(userId);
-        conversation.setTitle(title != null && !title.trim().isEmpty() ? title : "新对话");
+        
+        // 如果没有提供标题，使用"新对话 + 时间"
+        if (title == null || title.trim().isEmpty()) {
+            LocalDateTime now = LocalDateTime.now();
+            String timeStr = now.format(java.time.format.DateTimeFormatter.ofPattern("MM-dd HH:mm"));
+            title = "新对话 " + timeStr;
+        }
+        
+        conversation.setTitle(title);
         conversation.setStatus("active");
         conversation.setMessageCount(0);
         conversation.setTotalTokens(0);
@@ -69,7 +77,6 @@ public class ConversationService {
         conversation.setUpdatedAt(new Date());
 
         conversationDAO.insert(conversation);
-
         return convertToVO(conversation);
     }
 

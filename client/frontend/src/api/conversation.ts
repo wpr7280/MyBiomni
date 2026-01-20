@@ -30,7 +30,7 @@ export const conversationApi = {
 
     const response = await apiClient.post<ApiResponse<Conversation>>(
       '/api/conversations/create',
-      { title: title || '新对话' }
+      title ? { title } : {}  // 如果没有 title，发送空对象
     );
     return response.data.data;
   },
@@ -93,6 +93,22 @@ export const conversationApi = {
     const response = await apiClient.get<ApiResponse<Message[]>>(
       '/api/messages/list',
       { params: { conversationId, currentPage: page, pageSize: size } }
+    );
+    return response.data.data;
+  },
+
+  /**
+   * 获取消息的执行步骤
+   */
+  async getExecutionSteps(messageId: number): Promise<ExecutionStep[]> {
+    // 如果启用 Mock，使用 Mock 数据
+    if (USE_MOCK) {
+      return mockApi.getExecutionSteps(messageId);
+    }
+
+    const response = await apiClient.get<ApiResponse<ExecutionStep[]>>(
+      '/api/execution-steps/list',
+      { params: { messageId } }
     );
     return response.data.data;
   },

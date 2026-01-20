@@ -20,7 +20,7 @@ const exampleQuestions = [
 ];
 
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
-  const { messages, setMessages, executionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
+  const { messages, setMessages, executionSteps, setExecutionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
   const [rightPanelWidth, setRightPanelWidth] = useState(420);
   const [isDragging, setIsDragging] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
@@ -28,6 +28,8 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 切换对话时清空执行步骤
+    setExecutionSteps([]);
     loadMessages();
   }, [conversationId]);
 
@@ -35,6 +37,23 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     try {
       const data = await conversationApi.getMessages(conversationId);
       setMessages(data);
+      
+      // 如果有消息，加载最后一对消息（user + assistant）的执行步骤
+      // 执行步骤关联到用户消息
+      const messages = data;
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].role === 'assistant' && i > 0 && messages[i - 1].role === 'user') {
+          // 找到最后一对消息，使用用户消息的 ID
+          const userMessageId = messages[i - 1].id;
+          try {
+            const steps = await conversationApi.getExecutionSteps(userMessageId);
+            setExecutionSteps(steps);
+          } catch (error) {
+            console.error('加载执行步骤失败:', error);
+          }
+          break;
+        }
+      }
     } catch (error) {
       console.error('加载消息失败:', error);
     }
@@ -55,8 +74,11 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, userMessage]);
-      await conversationApi.sendMessage(conversationId, content);
+      
+      // 直接通过 WebSocket 发送给 Python Agent
+      // Python 会负责：保存用户消息、执行 Agent、保存 AI 消息
       sendMessage(content);
+      
       setFileList([]);
       setShowUpload(false);
     } catch (error: any) {
@@ -104,13 +126,13 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
                 <div style={{ fontSize: 14, color: '#8c8c8c' }}>输入您的问题或选择示例问题</div>
               </div>
             ) : (
-              messages.map((msg) => (
+              messages.map((msg, index) => (
                 <Bubble
                   key={msg.id}
                   placement={msg.role === 'user' ? 'end' : 'start'}
                   content={msg.role === 'assistant' ? <MarkdownContent content={msg.content} /> : msg.content}
                   avatar={msg.role === 'assistant' ? { icon: '🤖', style: { background: '#1890ff' } } : { icon: '👤', style: { background: '#52c41a' } }}
-                  loading={msg.role === 'assistant' && isExecuting}
+                  loading={msg.role === 'assistant' && isExecuting && index === messages.length - 1}
                   style={{ marginBottom: 20 }}
                 />
               ))
