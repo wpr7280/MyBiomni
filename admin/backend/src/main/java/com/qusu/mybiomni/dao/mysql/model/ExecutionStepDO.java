@@ -11,7 +11,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    private Long id;
+    private Integer id;
 
     /**
      *
@@ -20,7 +20,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    private Long conversationId;
+    private Integer conversationId;
 
     /**
      *
@@ -29,7 +29,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    private Long messageId;
+    private Integer messageId;
 
     /**
      *
@@ -155,7 +155,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -167,7 +167,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -179,7 +179,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getConversationId() {
+    public Integer getConversationId() {
         return conversationId;
     }
 
@@ -191,7 +191,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public void setConversationId(Long conversationId) {
+    public void setConversationId(Integer conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -203,7 +203,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getMessageId() {
+    public Integer getMessageId() {
         return messageId;
     }
 
@@ -215,7 +215,7 @@ public class ExecutionStepDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public void setMessageId(Long messageId) {
+    public void setMessageId(Integer messageId) {
         this.messageId = messageId;
     }
 

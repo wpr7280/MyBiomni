@@ -31,8 +31,7 @@ public class MessageController {
     @RequestMapping("/list")
     public PageResult<List<MessageVO>> getMessages(
             GetMessagesRequest request,
-            @AuthenticationPrincipal AdminVO currentUser
-    ) {
+            @AuthenticationPrincipal AdminVO currentUser) {
         try {
             List<MessageVO> messages = messageService.getMessageList(
                     request.getConversationId(), 
@@ -55,23 +54,22 @@ public class MessageController {
         }
     }
 
-    /**
-     * 发送消息
-     */
-    @PostMapping("/send")
-    public BaseResult<MessageVO> sendMessage(
-            @Valid @RequestBody SendMessageRequest request,
-            @AuthenticationPrincipal AdminVO currentUser
-    ) {
-        try {
-            MessageVO message = messageService.sendMessage(
-                    request.getConversationId(),
-                    currentUser.getId(),
-                    request.getContent()
-            );
-            return BaseResult.success(message);
-        } catch (Exception e) {
-            return BaseResult.error(e.getMessage());
-        }
-    }
+//    /**
+//     * 发送消息
+//     */
+//    @PostMapping("/send")
+//    public BaseResult<MessageVO> sendMessage(
+//            @Valid @RequestBody SendMessageRequest request,
+//            @AuthenticationPrincipal AdminVO currentUser) {
+//        try {
+//            MessageVO message = messageService.sendMessage(
+//                    request.getConversationId(),
+//                    currentUser.getId(),
+//                    request.getContent()
+//            );
+//            return BaseResult.success(message);
+//        } catch (Exception e) {
+//            return BaseResult.error(e.getMessage());
+//        }
+//    }
 }

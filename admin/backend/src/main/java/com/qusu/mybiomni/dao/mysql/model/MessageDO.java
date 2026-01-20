@@ -11,7 +11,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    private Long id;
+    private Integer id;
 
     /**
      *
@@ -20,7 +20,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    private Long conversationId;
+    private Integer conversationId;
 
     /**
      *
@@ -101,7 +101,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -113,7 +113,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -125,7 +125,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getConversationId() {
+    public Integer getConversationId() {
         return conversationId;
     }
 
@@ -137,7 +137,7 @@ public class MessageDO extends BaseDO implements Serializable {
      *
      * @mbg.generated
      */
-    public void setConversationId(Long conversationId) {
+    public void setConversationId(Integer conversationId) {
         this.conversationId = conversationId;
     }
 

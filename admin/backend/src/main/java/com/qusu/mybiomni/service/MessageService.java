@@ -2,17 +2,19 @@ package com.qusu.mybiomni.service;
 
 import com.qusu.mybiomni.common.request.PageRequest;
 import com.qusu.mybiomni.controller.message.response.MessageVO;
-import com.qusu.mybiomni.dao.ConversationDAO;
-import com.qusu.mybiomni.dao.MessageDAO;
-import com.qusu.mybiomni.dataobject.ConversationDO;
-import com.qusu.mybiomni.dataobject.MessageDO;
-import com.qusu.mybiomni.dataobject.MessageDOExample;
+import com.qusu.mybiomni.dao.mysql.dao.ConversationDAO;
+import com.qusu.mybiomni.dao.mysql.dao.MessageDAO;
+import com.qusu.mybiomni.dao.mysql.model.ConversationDO;
+import com.qusu.mybiomni.dao.mysql.model.MessageDO;
+import com.qusu.mybiomni.dao.mysql.model.MessageDOExample;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +40,9 @@ public class MessageService {
         example.setOrderByClause("created_at ASC");
         
         // 分页
-        int offset = (pageRequest.getCurrentPage() - 1) * pageRequest.getPageSize();
-        example.setOffset(offset);
-        example.setLimit(pageRequest.getPageSize());
+        RowBounds rowBounds = new RowBounds(pageRequest.getStart(), pageRequest.getPageSize());
         
-        List<MessageDO> messages = messageDAO.selectByExample(example);
+        List<MessageDO> messages = messageDAO.selectByExampleWithRowbounds(example,rowBounds);
         
         return messages.stream()
                 .map(this::convertToVO)
@@ -79,14 +79,14 @@ public class MessageService {
         message.setTokens(estimateTokens(content));
         message.setInputTokens(estimateTokens(content));
         message.setOutputTokens(0);
-        message.setCreatedAt(LocalDateTime.now());
+        message.setCreatedAt(new Date());
         
         messageDAO.insert(message);
         
         // 更新对话统计
         conversation.setMessageCount(conversation.getMessageCount() + 1);
-        conversation.setLastMessageAt(LocalDateTime.now());
-        conversation.setUpdatedAt(LocalDateTime.now());
+        conversation.setLastMessageAt(new Date());
+        conversation.setUpdatedAt(new Date());
         conversationDAO.updateByPrimaryKey(conversation);
         
         return convertToVO(message);
