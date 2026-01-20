@@ -63,6 +63,7 @@ export const authApi = {
       username: data.username,
       email: data.email,
       role: data.role,
+      forcePasswordChange: data.forcePasswordChange,
     };
   },
 
@@ -76,5 +77,35 @@ export const authApi = {
     }
 
     await apiClient.post('/api/auth/logout');
+  },
+
+  /**
+   * 修改密码
+   */
+  async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
+    // 如果启用 Mock，使用 Mock 数据
+    if (USE_MOCK) {
+      return mockApi.updatePassword(oldPassword, newPassword);
+    }
+
+    await apiClient.post('/api/auth/updatePassword', {
+      oldPassword,
+      newPassword,
+    });
+  },
+
+  /**
+   * 更新用户信息
+   */
+  async updateUserInfo(username: string, email: string): Promise<void> {
+    // 如果启用 Mock，使用 Mock 数据
+    if (USE_MOCK) {
+      return mockApi.updateUserInfo(username, email);
+    }
+
+    await apiClient.post('/api/auth/updateUserInfo', {
+      username,
+      email,
+    });
   },
 };

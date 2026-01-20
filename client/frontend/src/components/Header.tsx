@@ -2,7 +2,6 @@ import { Layout, Button, Dropdown, Avatar, Space } from 'antd';
 import {
   UserOutlined,
   LogoutOutlined,
-  SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
@@ -37,11 +36,7 @@ export default function Header({ collapsed, onToggle }: HeaderProps) {
       key: 'profile',
       icon: <UserOutlined />,
       label: '个人中心',
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '设置',
+      onClick: () => navigate('/profile'),
     },
     {
       type: 'divider',

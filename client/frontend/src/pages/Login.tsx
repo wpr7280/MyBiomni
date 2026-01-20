@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
+
+const { Title, Text } = Typography;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,8 +17,16 @@ export default function Login() {
     try {
       const { token, user } = await authApi.login(values);
       setAuth(token, user);
-      message.success(`欢迎，${user.username}！`);
-      navigate('/');
+      
+      // 检查是否需要强制修改密码
+      const response = await authApi.getCurrentUser();
+      if ((response as any).forcePasswordChange) {
+        message.warning('首次登录需要修改密码');
+        navigate('/change-password');
+      } else {
+        message.success(`欢迎，${user.username}！`);
+        navigate('/');
+      }
     } catch (error: any) {
       message.error(error.message || '登录失败');
     } finally {
@@ -25,58 +35,136 @@ export default function Login() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    }}>
-      <Card
-        title="Biomni AI 对话助手"
-        style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      }}
+    >
+      {/* 左侧：介绍区域 */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 60,
+          color: '#fff',
+        }}
       >
-        <Form
-          name="login"
-          onFinish={onFinish}
-          autoComplete="off"
-          size="large"
+        <div
+          style={{
+            width: 120,
+            height: 120,
+            borderRadius: 24,
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 64,
+            marginBottom: 32,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
         >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: '请输入邮箱' },
-              { type: 'email', message: '请输入有效的邮箱地址' }
-            ]}
-          >
-            <Input
-              prefix={<MailOutlined />}
-              placeholder="邮箱"
-            />
-          </Form.Item>
+          🧬
+        </div>
+        <Title level={1} style={{ color: '#fff', marginBottom: 16, fontSize: 48 }}>
+          Biomni
+        </Title>
+        <Title level={3} style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 400, marginBottom: 32 }}>
+          AI-Powered Biomedical Assistant
+        </Title>
+        <div style={{ maxWidth: 500, textAlign: 'center', lineHeight: 1.8 }}>
+          <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 16 }}>
+            通用的生物医学 AI Agent，为科研工作者提供智能化的数据分析、
+            文献检索和实验设计支持。
+          </Text>
+        </div>
+        <div
+          style={{
+            marginTop: 48,
+            display: 'flex',
+            gap: 40,
+            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: 14,
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🔬</div>
+            <div>智能分析</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
+            <div>数据可视化</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📚</div>
+            <div>知识库</div>
+          </div>
+        </div>
+      </div>
 
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: '请输入密码' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="密码"
-            />
-          </Form.Item>
+      {/* 右侧：登录表单 */}
+      <div
+        style={{
+          width: 500,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: '#fff',
+          padding: 60,
+        }}
+      >
+        <div style={{ width: '100%', maxWidth: 400 }}>
+          <div style={{ marginBottom: 40, textAlign: 'center' }}>
+            <Title level={2} style={{ marginBottom: 8 }}>
+              欢迎回来
+            </Title>
+            <Text type="secondary">登录您的 Biomni 账户</Text>
+          </div>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
+          <Form name="login" onFinish={onFinish} autoComplete="off" size="large">
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: '请输入邮箱' },
+                { type: 'email', message: '请输入有效的邮箱地址' },
+              ]}
             >
-              登录
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+              <Input prefix={<MailOutlined />} placeholder="邮箱地址" />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: '请输入密码' }]}
+            >
+              <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading} block size="large">
+                登录
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <div style={{ textAlign: 'center', marginTop: 24 }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              登录即表示您同意我们的{' '}
+              <a href="#" style={{ color: '#1890ff' }}>
+                服务条款
+              </a>{' '}
+              和{' '}
+              <a href="#" style={{ color: '#1890ff' }}>
+                隐私政策
+              </a>
+            </Text>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

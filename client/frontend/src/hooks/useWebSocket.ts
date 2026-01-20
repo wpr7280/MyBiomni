@@ -104,22 +104,11 @@ export function useWebSocket(conversationId: number | null) {
 
   const sendMessage = useCallback((content: string) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
+      // 只发送消息，不添加到界面（等待 WebSocket 返回）
       wsRef.current.send(JSON.stringify({
         type: 'send_message',
         content,
       }));
-
-      // 立即添加用户消息到界面
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          conversationId: conversationId!,
-          role: 'user',
-          content,
-          createdAt: new Date().toISOString(),
-        },
-      ]);
     } else {
       antdMessage.error('连接未建立，请稍后重试');
     }

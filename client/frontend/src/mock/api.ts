@@ -65,6 +65,27 @@ export const mockApi = {
   },
 
   /**
+   * 修改密码
+   */
+  async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
+    await delay(500);
+    // Mock 修改密码
+    console.log('Mock: 密码已修改');
+  },
+
+  /**
+   * 更新用户信息
+   */
+  async updateUserInfo(username: string, email: string): Promise<void> {
+    await delay(500);
+    // Mock 更新用户信息
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    user.username = username;
+    user.email = email;
+    localStorage.setItem('user', JSON.stringify(user));
+  },
+
+  /**
    * 获取对话列表
    */
   async getConversations(): Promise<Conversation[]> {

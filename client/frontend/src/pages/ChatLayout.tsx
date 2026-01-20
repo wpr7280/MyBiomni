@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Layout, message } from 'antd';
 import { Conversations } from '@ant-design/x';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ChatWindow from '@/components/ChatWindow';
 import { conversationApi } from '@/api/conversation';
 import type { Conversation } from '@/types';
@@ -141,9 +140,6 @@ export default function ChatLayout() {
           )}
         </Content>
       </Layout>
-
-      {/* 底部信息 */}
-      <Footer />
     </Layout>
   );
 }

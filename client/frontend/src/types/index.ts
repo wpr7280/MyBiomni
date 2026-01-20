@@ -6,6 +6,7 @@ export interface User {
   role: string;
   realName?: string;
   avatar?: string;
+  forcePasswordChange?: boolean;
 }
 
 // 对话类型
