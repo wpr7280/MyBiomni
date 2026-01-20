@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Button, Dropdown, Tag, Upload, message as antdMessage } from 'antd';
+import { Button, Dropdown, Tag, Upload, message as antdMessage, Collapse } from 'antd';
 import { DownloadOutlined, ExportOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Bubble, Sender, Prompts, Attachments } from '@ant-design/x';
 import ExecutionPanel from './ExecutionPanel';
@@ -151,17 +151,21 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
       </div>
 
       <div style={{ borderTop: '1px solid #f0f0f0', background: '#fff' }}>
-        {/* 示例问题行 - 始终显示 */}
-        <div style={{ padding: '16px 32px', borderBottom: '1px solid #f0f0f0' }}>
-          <div style={{ marginBottom: 12, fontSize: 13, color: '#8c8c8c', fontWeight: 500 }}>📝 Example Research Questions</div>
-          <Prompts 
-            items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} 
-            onItemClick={(info) => {
-              console.log('点击了示例问题:', info);
-              handleSendMessage(info.data.label);
-            }} 
-          />
-        </div>
+        {/* 示例问题 - 可折叠，默认折叠 */}
+        <Collapse
+          ghost
+          items={[{
+            key: 'examples',
+            label: <div style={{ fontSize: 13, color: '#595959', fontWeight: 500 }}>📝 Example Research Questions</div>,
+            children: (
+              <Prompts 
+                items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} 
+                onItemClick={(info) => handleSendMessage(info.data.label)} 
+              />
+            ),
+          }]}
+          style={{ padding: '8px 32px 0' }}
+        />
 
         {/* 输入框 */}
         <div style={{ padding: '16px 32px' }}>
