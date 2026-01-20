@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout, message } from 'antd';
+import { Layout, message, Button, Modal, Input } from 'antd';
 import { Conversations } from '@ant-design/x';
 import Header from '@/components/Header';
 import ChatWindow from '@/components/ChatWindow';
@@ -13,6 +13,9 @@ export default function ChatLayout() {
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [renamingId, setRenamingId] = useState<number | null>(null);
+  const [newTitle, setNewTitle] = useState('');
 
   // 加载对话列表
   useEffect(() => {
@@ -66,6 +69,38 @@ export default function ChatLayout() {
     }
   }
 
+  // 重命名对话
+  function showRenameModal(id: number) {
+    const conversation = conversations.find((c) => c.id === id);
+    if (conversation) {
+      setRenamingId(id);
+      setNewTitle(conversation.title);
+      setRenameModalOpen(true);
+    }
+  }
+
+  async function handleRename() {
+    if (!renamingId || !newTitle.trim()) {
+      message.error('请输入对话标题');
+      return;
+    }
+
+    try {
+      // TODO: 调用后端 API 更新标题
+      // await conversationApi.updateConversation(renamingId, { title: newTitle });
+      
+      // 更新本地状态
+      setConversations((prev) =>
+        prev.map((c) => (c.id === renamingId ? { ...c, title: newTitle } : c))
+      );
+      
+      setRenameModalOpen(false);
+      message.success('重命名成功');
+    } catch (error: any) {
+      message.error(error.message || '重命名失败');
+    }
+  }
+
   // 转换为 Ant Design X Conversations 组件需要的格式
   const conversationItems = conversations.map((conv) => ({
     key: conv.id.toString(),
@@ -90,15 +125,29 @@ export default function ChatLayout() {
             transition: 'all 0.2s',
           }}
         >
+          {/* 新建对话按钮 */}
+          <div style={{ padding: 16, borderBottom: '1px solid #f0f0f0' }}>
+            <Button
+              type="primary"
+              block
+              icon={<span style={{ fontSize: 16 }}>➕</span>}
+              onClick={handleCreateConversation}
+              size="large"
+            >
+              新建对话
+            </Button>
+          </div>
+          
           <Conversations
             items={conversationItems}
             activeKey={activeConversationId?.toString()}
             onActiveChange={(key) => setActiveConversationId(Number(key))}
-            creation={{
-              onSubmit: handleCreateConversation,
-            }}
             menu={{
               items: [
+                {
+                  label: '重命名',
+                  key: 'rename',
+                },
                 {
                   label: '删除',
                   key: 'delete',
@@ -106,8 +155,19 @@ export default function ChatLayout() {
                 },
               ],
               onClick: (menuInfo, itemInfo) => {
-                if (menuInfo.key === 'delete') {
-                  handleDeleteConversation(Number(itemInfo.key));
+                console.log('菜单点击:', menuInfo, itemInfo);
+                if (!menuInfo || !menuInfo.key) return;
+                
+                // 从 itemInfo 或 menuInfo 中获取对话 ID
+                const conversationKey = itemInfo?.key || activeConversationId?.toString();
+                if (!conversationKey) return;
+                
+                const id = Number(conversationKey);
+                
+                if (menuInfo.key === 'rename') {
+                  showRenameModal(id);
+                } else if (menuInfo.key === 'delete') {
+                  handleDeleteConversation(id);
                 }
               },
             }}
@@ -140,6 +200,24 @@ export default function ChatLayout() {
           )}
         </Content>
       </Layout>
+
+      {/* 重命名对话弹窗 */}
+      <Modal
+        title="重命名对话"
+        open={renameModalOpen}
+        onOk={handleRename}
+        onCancel={() => setRenameModalOpen(false)}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Input
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          placeholder="请输入对话标题"
+          onPressEnter={handleRename}
+          autoFocus
+        />
+      </Modal>
     </Layout>
   );
 }

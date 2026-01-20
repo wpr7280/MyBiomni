@@ -14,15 +14,13 @@ interface ChatWindowProps {
 
 const exampleQuestions = [
   'How do different perturbations affect protein expression?',
-  'I have a plasmid sequence. Help me clone a CRISPR sgRNA.',
-  'Identify potential genetic causes for intellectual disability.',
-  'Plan a CRISPR screen of 100 genes for T cell activation.',
-  'Research the genetic mechanism of rs6690215',
+  'Help me clone a CRISPR sgRNA into a plasmid.',
+  'Identify genetic causes for intellectual disability.',
+  'Plan a CRISPR screen for T cell activation.',
 ];
 
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const { messages, setMessages, executionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
-  const [showExamples, setShowExamples] = useState(false);
   const [rightPanelWidth, setRightPanelWidth] = useState(420);
   const [isDragging, setIsDragging] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
@@ -37,23 +35,18 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     try {
       const data = await conversationApi.getMessages(conversationId);
       setMessages(data);
-      setShowExamples(data.length === 0);
     } catch (error) {
       console.error('加载消息失败:', error);
     }
   }
 
   async function handleSendMessage(content: string) {
-    // 如果正在执行，不允许提交
     if (isExecuting) {
       antdMessage.warning('请等待当前问题执行完成');
       return;
     }
     
     try {
-      setShowExamples(false);
-      
-      // 1. 立即添加用户消息到界面
       const userMessage = {
         id: Date.now(),
         conversationId,
@@ -62,14 +55,8 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, userMessage]);
-      
-      // 2. 调用 API 保存消息
       await conversationApi.sendMessage(conversationId, content);
-      
-      // 3. 通过 WebSocket 发送给 Agent 执行
       sendMessage(content);
-      
-      // 4. 清空文件列表和关闭上传区域
       setFileList([]);
       setShowUpload(false);
     } catch (error: any) {
@@ -87,18 +74,13 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
       if (!isDragging || !containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
       const newWidth = containerRect.right - e.clientX;
-      if (newWidth >= 300 && newWidth <= 600) {
-        setRightPanelWidth(newWidth);
-      }
+      if (newWidth >= 300 && newWidth <= 600) setRightPanelWidth(newWidth);
     };
-
     const handleMouseUp = () => setIsDragging(false);
-
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
@@ -111,15 +93,15 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   ];
 
   return (
-    <div ref={containerRef} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#fff' }}>
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div style={{ flex: 1, overflow: 'auto', padding: '24px 32px', background: '#fafafa' }}>
+    <div ref={containerRef} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#f8f9fa' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', gap: 1 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
+          <div style={{ flex: 1, overflow: 'auto', padding: '24px 32px' }}>
             {messages.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '100px 20px', color: '#bfbfbf' }}>
+              <div style={{ textAlign: 'center', padding: '100px 20px' }}>
                 <div style={{ fontSize: 64, marginBottom: 16 }}>💬</div>
-                <div style={{ fontSize: 18, color: '#8c8c8c', marginBottom: 8 }}>开始新的对话</div>
-                <div style={{ fontSize: 14, color: '#bfbfbf' }}>输入您的问题或选择下方的示例问题</div>
+                <div style={{ fontSize: 18, color: '#595959', marginBottom: 8, fontWeight: 500 }}>开始新的对话</div>
+                <div style={{ fontSize: 14, color: '#8c8c8c' }}>输入您的问题或选择示例问题</div>
               </div>
             ) : (
               messages.map((msg) => (
@@ -138,111 +120,70 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
 
         <div
           onMouseDown={handleMouseDown}
-          style={{ width: 4, cursor: 'col-resize', background: isDragging ? '#1890ff' : 'transparent', transition: 'background 0.2s', position: 'relative' }}
-          onMouseEnter={(e) => !isDragging && (e.currentTarget.style.background = '#f0f0f0')}
-          onMouseLeave={(e) => !isDragging && (e.currentTarget.style.background = 'transparent')}
-        >
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 20, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.3 }}>⋮</div>
-        </div>
+          style={{ width: 5, cursor: 'col-resize', background: isDragging ? '#1890ff' : '#e0e0e0', transition: 'all 0.2s' }}
+          onMouseEnter={(e) => !isDragging && (e.currentTarget.style.background = '#bfbfbf')}
+          onMouseLeave={(e) => !isDragging && (e.currentTarget.style.background = '#e0e0e0')}
+        />
 
-        <div style={{ width: rightPanelWidth, borderLeft: '1px solid #f0f0f0', overflow: 'hidden' }}>
+        <div style={{ width: rightPanelWidth, background: '#fff', overflow: 'hidden' }}>
           <ExecutionPanel steps={executionSteps} />
         </div>
       </div>
 
-      <div style={{ borderTop: '1px solid #f0f0f0', background: '#fff' }}>
-        {/* 示例问题 - 可折叠，默认折叠 */}
+      <div style={{ background: '#fff', boxShadow: '0 -4px 12px rgba(0,0,0,0.08)' }}>
         <Collapse
           ghost
           items={[{
             key: 'examples',
             label: <div style={{ fontSize: 13, color: '#595959', fontWeight: 500 }}>📝 Example Research Questions</div>,
-            children: (
-              <Prompts 
-                items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} 
-                onItemClick={(info) => handleSendMessage(info.data.label)} 
-              />
-            ),
+            children: <Prompts items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} onItemClick={(info) => handleSendMessage(info.data.label)} />,
           }]}
-          style={{ padding: '8px 32px 0' }}
+          style={{ padding: '8px 32px 0', borderBottom: '1px solid #f0f0f0' }}
         />
 
-        {/* 输入框 */}
         <div style={{ padding: '16px 32px' }}>
-          {/* 附件列表（有文件时显示） */}
           {fileList.length > 0 && (
-            <div style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 12, padding: 12, background: '#f5f7fa', borderRadius: 8, border: '1px solid #e8e8e8' }}>
               <Attachments items={fileList} onChange={setFileList} />
             </div>
           )}
           
-          {/* 上传区域（点击附件按钮后显示） */}
           {showUpload && (
             <div style={{ marginBottom: 12 }}>
-              <Upload.Dragger
-                beforeUpload={(file) => {
-                  setFileList([...fileList, {
-                    uid: file.uid,
-                    name: file.name,
-                    status: 'done',
-                  }]);
-                  setShowUpload(false);
-                  return false;
-                }}
-                fileList={[]}
-                showUploadList={false}
-              >
+              <Upload.Dragger beforeUpload={(file) => { setFileList([...fileList, { uid: file.uid, name: file.name, status: 'done' }]); setShowUpload(false); return false; }} fileList={[]} showUploadList={false} style={{ background: '#fafafa', borderColor: '#d9d9d9' }}>
                 <div style={{ padding: '20px 0' }}>
                   <PaperClipOutlined style={{ fontSize: 24, color: '#1890ff' }} />
-                  <div style={{ marginTop: 8, fontSize: 14, color: '#8c8c8c' }}>
-                    Click or drag files to upload
-                  </div>
+                  <div style={{ marginTop: 8, fontSize: 14, color: '#8c8c8c' }}>Click or drag files to upload</div>
                 </div>
               </Upload.Dragger>
             </div>
           )}
           
-          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <div style={{ flex: 1 }}>
-              <Sender 
-                onSubmit={handleSendMessage} 
-                placeholder={isExecuting ? "Agent is working..." : "Ask something or upload a file..."} 
-                loading={isExecuting}
-                disabled={isExecuting}
-              />
+              <Sender onSubmit={handleSendMessage} placeholder={isExecuting ? "Agent is working..." : "Ask something or upload a file..."} loading={isExecuting} disabled={isExecuting} />
             </div>
-            <Button 
-              icon={<PaperClipOutlined />} 
-              size="large"
-              style={{ height: 40 }}
-              onClick={() => setShowUpload(!showUpload)}
-              disabled={isExecuting}
-            >
-              附件
-            </Button>
+            <Button icon={<PaperClipOutlined />} size="large" style={{ height: 40 }} onClick={() => setShowUpload(!showUpload)} disabled={isExecuting}>附件</Button>
           </div>
         </div>
 
-        {/* 底部操作栏 - 两行布局 */}
-        <div style={{ borderTop: '1px solid #f0f0f0', background: '#fafafa' }}>
-          {/* 第一行：Export + 配额 */}
-          <div style={{ padding: '12px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ borderTop: '2px solid #f0f0f0', background: 'linear-gradient(to bottom, #fafafa, #f5f5f5)' }}>
+          <div style={{ padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Dropdown menu={{ items: exportMenuItems }}>
-              <Button type="text" size="small" icon={<DownloadOutlined />}>Export & Download</Button>
+              <Button type="text" size="small" icon={<DownloadOutlined />} style={{ fontWeight: 500 }}>Export & Download</Button>
             </Dropdown>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Tag color="default" style={{ margin: 0 }}>Weekly: 45/50</Tag>
-              <Tag color="default" style={{ margin: 0 }}>Tokens: 2025-06-02</Tag>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Tag color="processing" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>📊 Weekly: 45/50</Tag>
+              <Tag color="success" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>📅 Tokens: 2025-06-02</Tag>
             </div>
           </div>
 
-          {/* 第二行：链接 */}
-          <div style={{ padding: '8px 32px 12px', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'center', gap: 12, fontSize: 12 }}>
-            <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c' }}>GitHub</a>
-            <span style={{ color: '#d9d9d9' }}>|</span>
-            <a href="mailto:contact@biomni.com" style={{ color: '#8c8c8c' }}>Contact</a>
-            <span style={{ color: '#d9d9d9' }}>|</span>
-            <a href="https://biomni.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c' }}>Website</a>
+          <div style={{ padding: '10px 32px 14px', borderTop: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center', gap: 16, fontSize: 12 }}>
+            <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>GitHub</a>
+            <span style={{ color: '#d9d9d9' }}>•</span>
+            <a href="mailto:contact@biomni.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>Contact</a>
+            <span style={{ color: '#d9d9d9' }}>•</span>
+            <a href="https://biomni.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>Website</a>
           </div>
         </div>
       </div>
