@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, h } from 'vue'
-import { NButton, NCard, NInput, NDataTable, NPopconfirm, NTag, NIcon, NEmpty, NSpace, NModal, NForm, NFormItem, NSelect } from 'naive-ui'
+import { NButton, NCard, NInput, NDataTable, NPopconfirm, NTag, NIcon, NEmpty, NSpace, NModal, NForm, NFormItem, NSelect, NAlert } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import CommonPage from '@/components/page/CommonPage.vue'
 import { useMessage } from 'naive-ui'
@@ -142,7 +142,7 @@ function createUser() {
     id: null,
     username: '',
     email: '',
-    password: '',
+    password: '',  // 留空，让用户看到提示
     realName: '',
     role: 'user',
     status: 1
@@ -273,6 +273,18 @@ onMounted(() => {
         :title="userForm.id ? '编辑用户' : '创建用户'"
         style="max-width: 600px;"
       >
+        <!-- 默认密码提示 -->
+        <n-alert 
+          v-if="!userForm.id" 
+          type="info" 
+          title="默认密码"
+          style="margin-bottom: 16px;"
+        >
+          新用户的默认密码为：<strong>Password&123</strong>
+          <br/>
+          用户首次登录时需要修改密码。
+        </n-alert>
+
         <NForm
           ref="userFormRef"
           :model="userForm"
@@ -285,8 +297,13 @@ onMounted(() => {
           <NFormItem label="邮箱" path="email" :rule="{ required: true, type: 'email', message: '请输入有效的邮箱' }">
             <NInput v-model:value="userForm.email" placeholder="请输入邮箱" />
           </NFormItem>
-          <NFormItem v-if="!userForm.id" label="密码" path="password" :rule="{ required: true, message: '请输入密码' }">
-            <NInput v-model:value="userForm.password" type="password" placeholder="请输入密码" />
+          <NFormItem v-if="!userForm.id" label="密码" path="password">
+            <NInput 
+              v-model:value="userForm.password" 
+              type="password" 
+              placeholder="留空使用默认密码 Password&123"
+              clearable
+            />
           </NFormItem>
           <NFormItem label="真实姓名" path="realName">
             <NInput v-model:value="userForm.realName" placeholder="请输入真实姓名" />

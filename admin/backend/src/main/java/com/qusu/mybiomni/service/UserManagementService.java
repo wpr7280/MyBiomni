@@ -122,10 +122,10 @@ public class UserManagementService {
         admin.setUsername(request.getUsername());
         admin.setEmail(request.getEmail());
 
-        // 密码处理：如果未提供密码，使用邮箱前缀
+        // 密码处理：如果未提供密码，使用默认密码 Password&123
         String password = request.getPassword();
         if (password == null || password.trim().isEmpty()) {
-            password = request.getEmail().split("@")[0];
+            password = "Password&123";
         }
         admin.setPassword(passwordEncoder.encode(password));
 
