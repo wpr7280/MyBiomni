@@ -80,5 +80,32 @@
                selectByExampleQueryId="true" mapperName="AdminDAO">
             <property name="useActualColumnNames" value="false"/>
         </table>
+
+        <table tableName="messages" domainObjectName="MessageDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="MessageDAO">
+            <property name="useActualColumnNames" value="false"/>
+            <!-- TEXT 类型映射为 String -->
+            <columnOverride column="content" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </table>
+
+        <table tableName="conversations" domainObjectName="ConversationDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="ConversationDAO">
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+
+        <table tableName="execution_steps" domainObjectName="ExecutionStepDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="ExecutionStepDAO">
+            <property name="useActualColumnNames" value="false"/>
+            <!-- TEXT 类型映射为 String -->
+            <columnOverride column="tool_input" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <columnOverride column="tool_output" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <columnOverride column="error_message" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </table>
     </context>
 </generatorConfiguration>
