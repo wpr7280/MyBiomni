@@ -91,8 +91,8 @@ export const conversationApi = {
     }
 
     const response = await apiClient.get<ApiResponse<Message[]>>(
-      `/api/conversations/${conversationId}/messages`,
-      { params: { page, size } }
+      '/api/messages/list',
+      { params: { conversationId, currentPage: page, pageSize: size } }
     );
     return response.data.data;
   },
@@ -107,8 +107,8 @@ export const conversationApi = {
     }
 
     const response = await apiClient.post<ApiResponse<Message>>(
-      `/api/conversations/${conversationId}/messages`,
-      { content }
+      '/api/messages/send',
+      { conversationId, content }
     );
     return response.data.data;
   },
