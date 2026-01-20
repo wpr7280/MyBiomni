@@ -39,16 +39,16 @@ public class MenuController {
 //        adminMenuList.add(workbench);
 
         // 2. 对话管理（所有人可见）
-        BaseMenu conversations = menu(2, "对话管理", "/conversations", MenuType.MENU,
-                "material-symbols:chat-outline", 2, 0,
-                "/conversations", false, true, null);
-        adminMenuList.add(conversations);
-
-        // 3. Know-How 文档（所有人可见）
-        BaseMenu knowhow = menu(3, "知识库", "/knowhow", MenuType.MENU,
-                "material-symbols:book-outline", 3, 0,
-                "/knowhow", false, true, null);
-        adminMenuList.add(knowhow);
+//        BaseMenu conversations = menu(2, "对话管理", "/conversations", MenuType.MENU,
+//                "material-symbols:chat-outline", 2, 0,
+//                "/conversations", false, true, null);
+//        adminMenuList.add(conversations);
+//
+//        // 3. Know-How 文档（所有人可见）
+//        BaseMenu knowhow = menu(3, "知识库", "/knowhow", MenuType.MENU,
+//                "material-symbols:book-outline", 3, 0,
+//                "/knowhow", false, true, null);
+//        adminMenuList.add(knowhow);
 
         // 4. 系统管理（仅管理员）
         BaseMenu system = menu(10, "系统管理", "/system", MenuType.CATALOG,
@@ -86,14 +86,14 @@ public class MenuController {
                 "/workbench", false, true, null));
 
         // 2. 我的对话
-        userMenuList.add(menu(2, "我的对话", "/conversations", MenuType.MENU,
-                "material-symbols:chat-outline", 2, 0,
-                "/conversations", false, true, null));
-
-        // 3. 知识库
-        userMenuList.add(menu(3, "知识库", "/knowhow", MenuType.MENU,
-                "material-symbols:book-outline", 3, 0,
-                "/knowhow", false, true, null));
+//        userMenuList.add(menu(2, "我的对话", "/conversations", MenuType.MENU,
+//                "material-symbols:chat-outline", 2, 0,
+//                "/conversations", false, true, null));
+//
+//        // 3. 知识库
+//        userMenuList.add(menu(3, "知识库", "/knowhow", MenuType.MENU,
+//                "material-symbols:book-outline", 3, 0,
+//                "/knowhow", false, true, null));
 
         USER_MENUS = userMenuList;
     }
