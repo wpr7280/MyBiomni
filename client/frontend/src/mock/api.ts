@@ -86,6 +86,14 @@ export const mockApi = {
   },
 
   /**
+   * 更新对话标题（重命名）
+   */
+  async updateConversation(id: number, title: string): Promise<void> {
+    await delay(500);
+    console.log('Mock: 对话已重命名', id, title);
+  },
+
+  /**
    * 获取对话列表
    */
   async getConversations(): Promise<Conversation[]> {

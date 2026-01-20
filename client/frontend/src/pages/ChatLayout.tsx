@@ -86,8 +86,8 @@ export default function ChatLayout() {
     }
 
     try {
-      // TODO: 调用后端 API 更新标题
-      // await conversationApi.updateConversation(renamingId, { title: newTitle });
+      // 调用后端 API 更新标题
+      await conversationApi.updateConversation(renamingId, newTitle);
       
       // 更新本地状态
       setConversations((prev) =>

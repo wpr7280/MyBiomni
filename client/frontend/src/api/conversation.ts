@@ -13,7 +13,7 @@ export const conversationApi = {
     }
 
     const response = await apiClient.get<ApiResponse<Conversation[]>>(
-      '/api/conversations',
+      '/api/conversations/list',
       { params: { page, size } }
     );
     return response.data.data;
@@ -29,7 +29,7 @@ export const conversationApi = {
     }
 
     const response = await apiClient.post<ApiResponse<Conversation>>(
-      '/api/conversations',
+      '/api/conversations/create',
       { title: title || '新对话' }
     );
     return response.data.data;
@@ -44,10 +44,26 @@ export const conversationApi = {
       return mockApi.getConversation(id);
     }
 
-    const response = await apiClient.get<ApiResponse<Conversation>>(
-      `/api/conversations/${id}`
+    const response = await apiClient.post<ApiResponse<Conversation>>(
+      '/api/conversations/get',
+      { conversationId: id }
     );
     return response.data.data;
+  },
+
+  /**
+   * 更新对话标题（重命名）
+   */
+  async updateConversation(id: number, title: string): Promise<void> {
+    // 如果启用 Mock，使用 Mock 数据
+    if (USE_MOCK) {
+      return mockApi.updateConversation(id, title);
+    }
+
+    await apiClient.post(
+      '/api/conversations/update',
+      { conversationId: id, title }
+    );
   },
 
   /**
@@ -59,7 +75,10 @@ export const conversationApi = {
       return mockApi.deleteConversation(id);
     }
 
-    await apiClient.delete(`/api/conversations/${id}`);
+    await apiClient.post(
+      '/api/conversations/delete',
+      { conversationId: id }
+    );
   },
 
   /**
