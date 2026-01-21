@@ -27,20 +27,20 @@ const detailLoading = ref(false)
 const conversationDetail = ref(null)
 
 const statusOptions = [
-  { label: '全部', value: null },
-  { label: '活跃', value: 'active' },
-  { label: '已归档', value: 'archived' }
+  { label: t('views.system.conversations.status_all'), value: null },
+  { label: t('views.system.conversations.status_active'), value: 'active' },
+  { label: t('views.system.conversations.status_archived'), value: 'archived' }
 ]
 
 // 表格列定义
 const columns = [
   {
-    title: '对话ID',
+    title: () => t('views.system.conversations.label_conversation_id'),
     key: 'id',
     width: 80,
   },
   {
-    title: '用户',
+    title: () => t('views.system.conversations.label_user'),
     key: 'user',
     width: 200,
     render: (row) => {
@@ -51,14 +51,14 @@ const columns = [
     }
   },
   {
-    title: '对话标题',
+    title: () => t('views.system.conversations.label_title'),
     key: 'title',
     ellipsis: {
       tooltip: true
     }
   },
   {
-    title: '状态',
+    title: () => t('views.system.conversations.label_status'),
     key: 'status',
     width: 100,
     render: (row) => {
@@ -66,18 +66,18 @@ const columns = [
         type: row.status === 'active' ? 'success' : 'default',
         size: 'small'
       }, {
-        default: () => row.status === 'active' ? '活跃' : '已归档'
+        default: () => row.status === 'active' ? t('views.system.conversations.status_active') : t('views.system.conversations.status_archived')
       })
     }
   },
   {
-    title: '消息数',
+    title: () => t('views.system.conversations.label_message_count'),
     key: 'messageCount',
     width: 100,
     render: (row) => row.messageCount || 0
   },
   {
-    title: 'Tokens',
+    title: () => t('views.system.conversations.label_tokens'),
     key: 'totalTokens',
     width: 100,
     render: (row) => {
@@ -86,19 +86,19 @@ const columns = [
     }
   },
   {
-    title: '最后消息',
+    title: () => t('views.system.conversations.label_last_message'),
     key: 'lastMessageAt',
     width: 180,
     render: (row) => row.lastMessageAt ? new Date(row.lastMessageAt).toLocaleString() : '-'
   },
   {
-    title: '创建时间',
+    title: () => t('views.system.conversations.label_created_at'),
     key: 'createdAt',
     width: 180,
     render: (row) => row.createdAt ? new Date(row.createdAt).toLocaleString() : '-'
   },
   {
-    title: '操作',
+    title: () => t('views.system.conversations.label_actions'),
     key: 'actions',
     width: 180,
     fixed: 'right',
@@ -110,16 +110,16 @@ const columns = [
             type: 'primary',
             ghost: true,
             onClick: () => viewDetail(row.id)
-          }, { default: () => '详情' }),
+          }, { default: () => t('views.system.conversations.button_detail') }),
           h(NPopconfirm, {
             onPositiveClick: () => deleteConversation(row.id)
           }, {
-            default: () => '确定要删除这个对话吗？',
+            default: () => t('views.system.conversations.message_delete_confirm'),
             trigger: () => h(NButton, {
               size: 'small',
               type: 'error',
               ghost: true
-            }, { default: () => '删除' })
+            }, { default: () => t('views.system.conversations.button_delete') })
           })
         ]
       })
@@ -151,7 +151,7 @@ async function loadConversations() {
       pagination.value.itemCount = res.totalCount || 0
     }
   } catch (error) {
-    message.error('加载失败')
+    message.error(t('views.system.conversations.message_load_failed'))
   } finally {
     loading.value = false
   }
@@ -161,10 +161,10 @@ async function loadConversations() {
 async function deleteConversation(id) {
   try {
     await api.deleteAdminConversation({ conversationId: id })
-    message.success('删除成功')
+    message.success(t('views.system.conversations.message_delete_success'))
     loadConversations()
   } catch (error) {
-    message.error('删除失败')
+    message.error(t('views.system.conversations.message_delete_failed'))
   }
 }
 
@@ -180,7 +180,7 @@ async function viewDetail(id) {
       conversationDetail.value = res.data
     }
   } catch (error) {
-    message.error('加载详情失败')
+    message.error(t('views.system.conversations.message_detail_load_failed'))
   } finally {
     detailLoading.value = false
   }
@@ -213,7 +213,7 @@ onMounted(() => {
 <template>
   <CommonPage :show-header="false">
     <div class="conversations-container">
-      <NCard class="conversations-card" title="对话记录管理">
+      <NCard class="conversations-card" :title="t('views.system.conversations.label_conversation_management')">
         <template #header-extra>
           <div style="display: flex; align-items: center; gap: 8px;">
             <NIcon size="20" color="#18a058">
@@ -222,7 +222,7 @@ onMounted(() => {
               </svg>
             </NIcon>
             <span style="font-size: 14px; color: #666;">
-              共 {{ pagination.itemCount }} 条对话记录
+              {{ t('views.system.conversations.text_total_records', { count: pagination.itemCount }) }}
             </span>
           </div>
         </template>
@@ -231,7 +231,7 @@ onMounted(() => {
         <div class="search-bar">
           <NInput
             v-model:value="searchKeyword"
-            placeholder="搜索对话标题..."
+            :placeholder="t('views.system.conversations.placeholder_search')"
             clearable
             @keyup.enter="handleSearch"
             style="max-width: 300px;"
@@ -248,7 +248,7 @@ onMounted(() => {
           <NSelect
             v-model:value="searchStatus"
             :options="statusOptions"
-            placeholder="状态"
+            :placeholder="t('views.system.conversations.placeholder_status')"
             clearable
             style="width: 150px;"
           />
@@ -257,16 +257,16 @@ onMounted(() => {
             v-model:value="dateRange"
             type="daterange"
             clearable
-            placeholder="选择日期范围"
+            :placeholder="t('views.system.conversations.placeholder_date_range')"
             style="width: 280px;"
           />
           
           <NButton type="primary" @click="handleSearch">
-            搜索
+            {{ t('views.system.conversations.button_search') }}
           </NButton>
           
           <NButton @click="handleReset">
-            重置
+            {{ t('views.system.conversations.button_reset') }}
           </NButton>
         </div>
 
@@ -282,7 +282,7 @@ onMounted(() => {
           style="margin-top: 16px;"
         >
           <template #empty>
-            <NEmpty description="暂无对话记录" />
+            <NEmpty :description="t('views.system.conversations.text_no_records')" />
           </template>
         </NDataTable>
       </NCard>
@@ -291,7 +291,7 @@ onMounted(() => {
       <NModal
         v-model:show="showDetailModal"
         preset="card"
-        title="对话详情"
+        :title="t('views.system.conversations.modal_title_detail')"
         style="width: 90%; max-width: 1200px;"
         :segmented="{ content: true }"
       >
@@ -301,23 +301,23 @@ onMounted(() => {
             <div style="padding: 16px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                 <div>
-                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">对话标题</div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">{{ t('views.system.conversations.detail_label_title') }}</div>
                   <div style="font-weight: 600;">{{ conversationDetail.title }}</div>
                 </div>
                 <div>
-                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">用户</div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">{{ t('views.system.conversations.detail_label_user') }}</div>
                   <div>{{ conversationDetail.username }} ({{ conversationDetail.userEmail }})</div>
                 </div>
                 <div>
-                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">消息数</div>
-                  <div>{{ conversationDetail.messageCount }} 条</div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">{{ t('views.system.conversations.detail_label_message_count') }}</div>
+                  <div>{{ conversationDetail.messageCount }} {{ t('views.system.conversations.detail_text_messages') }}</div>
                 </div>
                 <div>
-                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Token 使用</div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">{{ t('views.system.conversations.detail_label_token_usage') }}</div>
                   <div>{{ ((conversationDetail.totalTokens || 0) / 1000).toFixed(1) }}K</div>
                 </div>
                 <div>
-                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">创建时间</div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">{{ t('views.system.conversations.detail_label_created_at') }}</div>
                   <div>{{ new Date(conversationDetail.createdAt).toLocaleString() }}</div>
                 </div>
               </div>
@@ -353,7 +353,7 @@ onMounted(() => {
                     <div style="flex: 1; min-width: 0;">
                       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                         <span style="font-weight: 600; font-size: 14px;">
-                          {{ msg.role === 'user' ? '用户' : 'AI 助手' }}
+                          {{ msg.role === 'user' ? t('views.system.conversations.text_user_message') : t('views.system.conversations.text_ai_message') }}
                         </span>
                         <span style="font-size: 12px; color: #999;">
                           {{ new Date(msg.createdAt).toLocaleString() }}
@@ -378,7 +378,7 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-              <NEmpty v-else description="暂无消息" />
+              <NEmpty v-else :description="t('views.system.conversations.text_no_messages')" />
             </div>
           </div>
         </NSpin>

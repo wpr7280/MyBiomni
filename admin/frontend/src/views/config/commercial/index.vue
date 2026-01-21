@@ -3,8 +3,10 @@ import { ref, onMounted, h } from 'vue'
 import { NCard, NIcon, NSwitch, NButton, NAlert, NTable, NTag, NSpace, NSpin } from 'naive-ui'
 import CommonPage from '@/components/page/CommonPage.vue'
 import { useMessage } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
 import api from '@/api'
 
+const { t } = useI18n()
 const message = useMessage()
 const loading = ref(false)
 const saving = ref(false)
@@ -34,10 +36,10 @@ const datasetLicenses = [
 ]
 
 const columns = [
-  { title: '数据集', key: 'name', width: 200 },
-  { title: '许可证', key: 'license', width: 200 },
+  { title: () => t('views.config.commercial.table_column_dataset'), key: 'name', width: 200 },
+  { title: () => t('views.config.commercial.table_column_license'), key: 'license', width: 200 },
   { 
-    title: '商业使用', 
+    title: () => t('views.config.commercial.table_column_commercial'), 
     key: 'commercial',
     width: 150,
     render: (row) => {
@@ -46,12 +48,17 @@ const columns = [
     }
   },
   { 
-    title: '风险等级', 
+    title: () => t('views.config.commercial.table_column_risk'), 
     key: 'risk',
     width: 100,
     render: (row) => {
       const typeMap = { '低': 'success', '中': 'warning', '高': 'error' }
-      return h(NTag, { type: typeMap[row.risk], size: 'small' }, { default: () => row.risk })
+      const textMap = { 
+        '低': t('views.config.commercial.text_risk_low'), 
+        '中': t('views.config.commercial.text_risk_medium'), 
+        '高': t('views.config.commercial.text_risk_high') 
+      }
+      return h(NTag, { type: typeMap[row.risk], size: 'small' }, { default: () => textMap[row.risk] })
     }
   }
 ]
@@ -68,7 +75,7 @@ async function loadConfig() {
       }
     }
   } catch (error) {
-    message.error('加载配置失败')
+    message.error(t('views.config.commercial.message_load_failed'))
   } finally {
     loading.value = false
   }
@@ -82,9 +89,9 @@ async function saveConfig() {
       configKey: 'agent.commercial_mode',
       configValue: commercialMode.value ? 'true' : 'false'
     })
-    message.success('配置保存成功')
+    message.success(t('views.config.commercial.message_save_success'))
   } catch (error) {
-    message.error('保存失败')
+    message.error(t('views.config.commercial.message_save_failed'))
   } finally {
     saving.value = false
   }
@@ -100,7 +107,7 @@ onMounted(() => {
   <CommonPage :show-header="false">
     <div class="commercial-container">
       <NSpin :show="loading">
-        <NCard class="commercial-card" title="商业模式配置">
+        <NCard class="commercial-card" :title="t('views.config.commercial.label_commercial_mode')">
           <template #header-extra>
             <NButton type="primary" :loading="saving" @click="saveConfig">
               <template #icon>
@@ -110,24 +117,24 @@ onMounted(() => {
                   </svg>
                 </NIcon>
               </template>
-              保存配置
+              {{ t('views.config.commercial.button_save') }}
             </NButton>
           </template>
 
           <!-- 风险警告 -->
-          <NAlert type="error" title="⚠️ 重要法律声明" style="margin-bottom: 24px;">
+          <NAlert type="error" :title="t('views.config.commercial.alert_legal_title')" style="margin-bottom: 24px;">
             <div style="line-height: 1.8;">
               <p style="margin-bottom: 12px; font-weight: 600;">
-                在启用或禁用商业模式前，请仔细阅读以下内容：
+                {{ t('views.config.commercial.alert_legal_intro') }}
               </p>
               <ul style="margin: 0 0 12px 20px;">
-                <li>部分数据集仅授权用于<strong>非商业用途</strong>（学术研究、教育等）</li>
-                <li>在商业环境中使用这些数据集可能<strong>违反许可协议</strong></li>
-                <li>违反许可协议可能导致<strong>法律责任和经济损失</strong></li>
-                <li>启用商业模式后，系统将<strong>自动排除</strong>非商业授权的数据集</li>
+                <li v-html="t('views.config.commercial.alert_legal_item_1')"></li>
+                <li v-html="t('views.config.commercial.alert_legal_item_2')"></li>
+                <li v-html="t('views.config.commercial.alert_legal_item_3')"></li>
+                <li v-html="t('views.config.commercial.alert_legal_item_4')"></li>
               </ul>
               <p style="margin-top: 12px; padding: 12px; background: #fff1f0; border-left: 3px solid #ff4d4f; font-weight: 600;">
-                ⚠️ 使用风险由您自行承担。建议在使用前咨询法律顾问，确保符合所有适用的许可协议。
+                {{ t('views.config.commercial.alert_legal_risk') }}
               </p>
             </div>
           </NAlert>
@@ -142,18 +149,18 @@ onMounted(() => {
                       <path fill="currentColor" d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67l-.5-.68C10.96 2.54 10.05 2 9 2C7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83L8.62 12L12 7.4l3.38 4.6L17 10.83L14.92 8H20v6z"/>
                     </svg>
                   </NIcon>
-                  商业模式
+                  {{ t('views.config.commercial.label_switch') }}
                 </div>
                 <div style="font-size: 13px; color: #666;">
-                  启用后仅使用商业授权的数据集，自动排除非商业数据集
+                  {{ t('views.config.commercial.text_switch_desc') }}
                 </div>
               </div>
               <NSwitch 
                 v-model:value="commercialMode"
                 size="large"
               >
-                <template #checked>已启用</template>
-                <template #unchecked>已禁用</template>
+                <template #checked>{{ t('views.config.commercial.text_switch_enabled') }}</template>
+                <template #unchecked>{{ t('views.config.commercial.text_switch_disabled') }}</template>
               </NSwitch>
             </div>
           </div>
@@ -171,12 +178,12 @@ onMounted(() => {
               </NIcon>
             </template>
             <div v-if="commercialMode">
-              <strong>商业模式已启用</strong><br/>
-              系统将仅使用具有商业授权的数据集（{{ datasetLicenses.filter(d => d.commercial.includes('✅')).length }} 个可用）
+              <strong>{{ t('views.config.commercial.text_mode_enabled_title') }}</strong><br/>
+              {{ t('views.config.commercial.text_mode_enabled_desc', { count: datasetLicenses.filter(d => d.commercial.includes('✅')).length }) }}
             </div>
             <div v-else>
-              <strong>学术模式（默认）</strong><br/>
-              系统将使用所有数据集（{{ datasetLicenses.length }} 个），包括仅限非商业使用的数据集
+              <strong>{{ t('views.config.commercial.text_mode_disabled_title') }}</strong><br/>
+              {{ t('views.config.commercial.text_mode_disabled_desc', { count: datasetLicenses.length }) }}
             </div>
           </NAlert>
 
@@ -188,7 +195,7 @@ onMounted(() => {
                   <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                 </svg>
               </NIcon>
-              数据集许可证信息
+              {{ t('views.config.commercial.section_dataset_title') }}
             </div>
             
             <NTable 
@@ -204,32 +211,32 @@ onMounted(() => {
           <!-- 说明文档 -->
           <div style="margin-top: 32px; padding: 20px; background: #f5f7fa; border-radius: 8px; border-left: 4px solid #1890ff;">
             <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #262626;">
-              📚 商业模式说明
+              {{ t('views.config.commercial.section_explanation_title') }}
             </div>
             <div style="font-size: 13px; line-height: 1.8; color: #595959;">
               <p style="margin-bottom: 8px;">
-                <strong>商业模式启用时：</strong>
+                <strong>{{ t('views.config.commercial.text_when_enabled_title') }}</strong>
               </p>
               <ul style="margin: 0 0 12px 20px;">
-                <li>系统自动排除标记为"仅非商业"的数据集</li>
-                <li>仅使用明确允许商业使用的数据集</li>
-                <li>降低许可证合规风险</li>
-                <li>可能影响某些功能的可用性</li>
+                <li>{{ t('views.config.commercial.text_when_enabled_1') }}</li>
+                <li>{{ t('views.config.commercial.text_when_enabled_2') }}</li>
+                <li>{{ t('views.config.commercial.text_when_enabled_3') }}</li>
+                <li>{{ t('views.config.commercial.text_when_enabled_4') }}</li>
               </ul>
               
               <p style="margin-bottom: 8px;">
-                <strong>商业模式禁用时（学术模式）：</strong>
+                <strong>{{ t('views.config.commercial.text_when_disabled_title') }}</strong>
               </p>
               <ul style="margin: 0 0 12px 20px;">
-                <li>可以使用所有数据集</li>
-                <li>适用于学术研究、教育等非商业场景</li>
-                <li>功能完整，数据集最全</li>
-                <li>不适用于商业产品或服务</li>
+                <li>{{ t('views.config.commercial.text_when_disabled_1') }}</li>
+                <li>{{ t('views.config.commercial.text_when_disabled_2') }}</li>
+                <li>{{ t('views.config.commercial.text_when_disabled_3') }}</li>
+                <li>{{ t('views.config.commercial.text_when_disabled_4') }}</li>
               </ul>
 
               <p style="margin-top: 16px; padding: 12px; background: #fff; border-radius: 4px; border: 1px solid #d9d9d9;">
-                <strong>⚖️ 法律建议：</strong>
-                在商业环境中使用 Biomni 前，请咨询法律顾问，审查所有相关数据集的许可协议，确保合规使用。
+                <strong>{{ t('views.config.commercial.text_legal_advice_title') }}</strong>
+                {{ t('views.config.commercial.text_legal_advice_content') }}
               </p>
             </div>
           </div>

@@ -77,7 +77,7 @@ const columns = [
     }
   },
   {
-    title: 'Token配额',
+    title: () => t('views.system.users.label_token_quota'),
     key: 'quota',
     width: 140,
     render: (row) => {
@@ -131,7 +131,7 @@ const columns = [
             type: 'info',
             ghost: true,
             onClick: () => manageQuota(row)
-          }, { default: () => '配额' }),
+          }, { default: () => t('views.system.users.button_quota') }),
           h(NPopconfirm, {
             onPositiveClick: () => deleteUser(row.id)
           }, {
@@ -162,7 +162,7 @@ async function loadUsers() {
       pagination.value.itemCount = res.totalCount || 0
     }
   } catch (error) {
-    message.error('加载失败')
+    message.error(t('views.system.users.message_load_failed'))
   } finally {
     loading.value = false
   }
@@ -214,7 +214,7 @@ async function saveUser() {
       showUserModal.value = false
       loadUsers()
     } catch (error) {
-      message.error('操作失败')
+      message.error(t('views.system.users.message_operation_failed'))
     }
   })
 }
@@ -223,10 +223,10 @@ async function saveUser() {
 async function deleteUser(id) {
   try {
     await api.deleteUser({ userId: id })
-    message.success('删除成功')
+    message.success(t('views.system.users.message_delete_success'))
     loadUsers()
   } catch (error) {
-    message.error('删除失败')
+    message.error(t('views.system.users.message_operation_failed'))
   }
 }
 
@@ -248,11 +248,11 @@ async function saveQuota() {
       userId: quotaForm.value.userId,
       totalTokenLimit: quotaForm.value.totalTokenLimit
     })
-    message.success('配额更新成功')
+    message.success(t('views.system.users.message_quota_update_success'))
     showQuotaModal.value = false
     loadUsers()
   } catch (error) {
-    message.error('配额更新失败')
+    message.error(t('views.system.users.message_quota_update_failed'))
   }
 }
 
@@ -262,11 +262,11 @@ async function resetQuota() {
     await api.resetQuota({
       userId: quotaForm.value.userId
     })
-    message.success('配额已重置')
+    message.success(t('views.system.users.message_quota_reset_success'))
     quotaForm.value.totalTokenUsed = 0
     loadUsers()
   } catch (error) {
-    message.error('重置失败')
+    message.error(t('views.system.users.message_quota_reset_failed'))
   }
 }
 
@@ -305,7 +305,7 @@ onMounted(() => {
         <div class="search-bar">
           <NInput
             v-model:value="searchKeyword"
-            placeholder="搜索用户..."
+            :placeholder="t('views.system.users.placeholder_search')"
             clearable
             @keyup.enter="handleSearch"
             style="max-width: 400px;"
@@ -319,7 +319,7 @@ onMounted(() => {
             </template>
           </NInput>
           <NButton type="primary" @click="handleSearch" style="margin-left: 12px;">
-            搜索
+            {{ t('views.system.users.button_search') }}
           </NButton>
         </div>
 
@@ -333,7 +333,7 @@ onMounted(() => {
           style="margin-top: 16px;"
         >
           <template #empty>
-            <NEmpty description="暂无用户" />
+            <NEmpty :description="t('views.system.users.text_no_users')" />
           </template>
         </NDataTable>
       </NCard>
@@ -342,19 +342,17 @@ onMounted(() => {
       <NModal
         v-model:show="showUserModal"
         preset="card"
-        :title="userForm.id ? '编辑用户' : '创建用户'"
+        :title="userForm.id ? t('views.system.users.modal_title_edit') : t('views.system.users.modal_title_create')"
         style="max-width: 600px;"
       >
         <!-- 默认密码提示 -->
         <n-alert 
           v-if="!userForm.id" 
           type="info" 
-          title="默认密码"
+          :title="t('views.system.users.alert_default_password_title')"
           style="margin-bottom: 16px;"
         >
-          新用户的默认密码为：<strong>Password&123</strong>
-          <br/>
-          用户首次登录时需要修改密码。
+          <div v-html="t('views.system.users.alert_default_password_content')"></div>
         </n-alert>
 
         <NForm
@@ -363,34 +361,34 @@ onMounted(() => {
           label-placement="left"
           label-width="100"
         >
-          <NFormItem label="用户名" path="username" :rule="{ required: true, message: '请输入用户名' }">
-            <NInput v-model:value="userForm.username" placeholder="请输入用户名" />
+          <NFormItem :label="t('views.system.users.label_username')" path="username" :rule="{ required: true, message: t('views.system.users.message_username_required') }">
+            <NInput v-model:value="userForm.username" :placeholder="t('views.system.users.placeholder_username')" />
           </NFormItem>
-          <NFormItem label="邮箱" path="email" :rule="{ required: true, type: 'email', message: '请输入有效的邮箱' }">
-            <NInput v-model:value="userForm.email" placeholder="请输入邮箱" />
+          <NFormItem :label="t('views.system.users.label_email')" path="email" :rule="{ required: true, type: 'email', message: t('views.system.users.message_email_required') }">
+            <NInput v-model:value="userForm.email" :placeholder="t('views.system.users.placeholder_email')" />
           </NFormItem>
-          <NFormItem v-if="!userForm.id" label="密码" path="password">
+          <NFormItem v-if="!userForm.id" :label="t('views.system.users.label_password')" path="password">
             <NInput 
               v-model:value="userForm.password" 
               type="password" 
-              placeholder="留空使用默认密码 Password&123"
+              :placeholder="t('views.system.users.placeholder_password')"
               clearable
             />
           </NFormItem>
-          <NFormItem label="真实姓名" path="realName">
-            <NInput v-model:value="userForm.realName" placeholder="请输入真实姓名" />
+          <NFormItem :label="t('views.system.users.label_real_name')" path="realName">
+            <NInput v-model:value="userForm.realName" :placeholder="t('views.system.users.placeholder_real_name')" />
           </NFormItem>
-          <NFormItem label="角色" path="role">
+          <NFormItem :label="t('views.system.users.label_role')" path="role">
             <NSelect v-model:value="userForm.role" :options="roleOptions" />
           </NFormItem>
-          <NFormItem label="状态" path="status">
+          <NFormItem :label="t('views.system.users.label_status')" path="status">
             <NSelect v-model:value="userForm.status" :options="statusOptions" />
           </NFormItem>
         </NForm>
         <template #footer>
           <div style="display: flex; justify-content: flex-end; gap: 12px;">
-            <NButton @click="showUserModal = false">取消</NButton>
-            <NButton type="primary" @click="saveUser">保存</NButton>
+            <NButton @click="showUserModal = false">{{ t('views.system.users.button_cancel') }}</NButton>
+            <NButton type="primary" @click="saveUser">{{ t('views.system.users.button_save') }}</NButton>
           </div>
         </template>
       </NModal>
@@ -399,11 +397,11 @@ onMounted(() => {
       <NModal
         v-model:show="showQuotaModal"
         preset="card"
-        title="配额管理"
+        :title="t('views.system.users.modal_title_quota')"
         style="max-width: 600px;"
       >
         <NAlert type="info" style="margin-bottom: 16px;">
-          管理用户 <strong>{{ quotaForm.username }}</strong> 的 Token 配额
+          <div v-html="t('views.system.users.alert_quota_user', { username: quotaForm.username })"></div>
         </NAlert>
 
         <NForm
@@ -412,16 +410,16 @@ onMounted(() => {
           label-placement="left"
           label-width="120"
         >
-          <NFormItem label="总配额 (Tokens)">
+          <NFormItem :label="t('views.system.users.label_total_quota')">
             <NInput 
               v-model:value="quotaForm.totalTokenLimit" 
               type="number"
               :min="0"
               :step="100000"
-              placeholder="请输入总配额"
+              :placeholder="t('views.system.users.placeholder_total_quota')"
             />
           </NFormItem>
-          <NFormItem label="已使用 (Tokens)">
+          <NFormItem :label="t('views.system.users.label_used_quota')">
             <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
               <NInput 
                 :value="quotaForm.totalTokenUsed.toLocaleString()" 
@@ -432,19 +430,19 @@ onMounted(() => {
                 @positive-click="resetQuota"
               >
                 <template #trigger>
-                  <NButton type="warning" ghost>重置</NButton>
+                  <NButton type="warning" ghost>{{ t('views.system.users.button_reset') }}</NButton>
                 </template>
-                确定要重置已使用量为 0 吗？
+                {{ t('views.system.users.message_reset_confirm') }}
               </NPopconfirm>
             </div>
           </NFormItem>
-          <NFormItem label="剩余 (Tokens)">
+          <NFormItem :label="t('views.system.users.label_remaining_quota')">
             <NInput 
               :value="(quotaForm.totalTokenLimit - quotaForm.totalTokenUsed).toLocaleString()" 
               disabled
             />
           </NFormItem>
-          <NFormItem label="使用率">
+          <NFormItem :label="t('views.system.users.label_usage_rate')">
             <div style="display: flex; align-items: center; gap: 12px;">
               <div style="flex: 1; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
                 <div 
@@ -469,8 +467,8 @@ onMounted(() => {
 
         <template #footer>
           <div style="display: flex; justify-content: flex-end; gap: 12px;">
-            <NButton @click="showQuotaModal = false">取消</NButton>
-            <NButton type="primary" @click="saveQuota">保存</NButton>
+            <NButton @click="showQuotaModal = false">{{ t('views.system.users.button_cancel') }}</NButton>
+            <NButton type="primary" @click="saveQuota">{{ t('views.system.users.button_save') }}</NButton>
           </div>
         </template>
       </NModal>
