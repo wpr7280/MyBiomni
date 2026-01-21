@@ -57,9 +57,9 @@ public class MenuController {
 
         system.setChildren(List.of(
                 child(11, "用户管理", "users", 1, system, "material-symbols:person-outline", "/system/users"),
-                child(12, "配额管理", "quota", 2, system, "material-symbols:data-usage-outline", "/system/quota"),
-                child(13, "对话记录", "conversations-admin", 3, system, "material-symbols:history", "/system/conversations"),
-                child(14, "文档管理", "knowhow-admin", 4, system, "material-symbols:library-books-outline", "/system/knowhow")
+//                child(12, "配额管理", "quota", 2, system, "material-symbols:data-usage-outline", "/system/quota"),
+                child(13, "对话记录", "conversations-admin", 3, system, "material-symbols:history", "/system/conversations")
+//                child(14, "文档管理", "knowhow-admin", 4, system, "material-symbols:library-books-outline", "/system/knowhow")
         ));
         adminMenuList.add(system);
 

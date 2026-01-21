@@ -43,6 +43,10 @@ export default {
   updateQuota: (data = {}) => request.post('/quota/update', data),
   resetQuota: (data = {}) => request.post('/quota/reset', data),
   
+  // ========== 管理员 - 对话管理 ==========
+  getAdminConversationList: (data = {}) => request.post('/admin/conversations/list', data),
+  deleteAdminConversation: (data = {}) => request.post('/admin/conversations/delete', data),
+  
   // // users
   // getUserList: (params = {}) => request.get('/user/list', { params }),
   // getUserById: (params = {}) => request.get('/user/get', { params }),
