@@ -108,5 +108,13 @@
             <columnOverride column="tool_output" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <columnOverride column="error_message" jdbcType="VARCHAR" javaType="java.lang.String"/>
         </table>
+
+        <table tableName="user_quotas" domainObjectName="UserQuotaDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="UserQuotaDAO">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

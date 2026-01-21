@@ -114,7 +114,8 @@ class MockAgentAsync:
         # 步骤 1: 思考（延迟 500ms）
         await asyncio.sleep(0.5)
         yield {
-            'output': f"Let me analyze your question: {query}\n\nI'll break this down into steps..."
+            'output': f"Let me analyze your question: {query}\n\nI'll break this down into steps...",
+            'usage': {'input_tokens': 50, 'output_tokens': 30}
         }
         
         # 步骤 2: 执行代码（延迟 1s）
@@ -133,7 +134,8 @@ data = pd.DataFrame({
 })
 print(data)
 </execute>
-"""
+""",
+            'usage': {'input_tokens': 80, 'output_tokens': 60}
         }
         
         # 步骤 3: 观察结果（延迟 800ms）
@@ -147,7 +149,8 @@ print(data)
 1  GENE2         2.3
 2  GENE3         0.8
 </observation>
-"""
+""",
+            'usage': {'input_tokens': 100, 'output_tokens': 40}
         }
         
         # 步骤 4: 再次执行（延迟 1.2s）
@@ -160,7 +163,8 @@ result = data[data['expression'] > 1.0]
 print(f"找到 {len(result)} 个高表达基因")
 print(result)
 </execute>
-"""
+""",
+            'usage': {'input_tokens': 120, 'output_tokens': 50}
         }
         
         # 步骤 5: 观察结果（延迟 600ms）
@@ -173,7 +177,8 @@ print(result)
 0  GENE1         1.5
 1  GENE2         2.3
 </observation>
-"""
+""",
+            'usage': {'input_tokens': 140, 'output_tokens': 35}
         }
         
         # 步骤 6: 最终答案（延迟 1.5s）
@@ -202,5 +207,6 @@ Based on the analysis, here are the findings:
 
 如果您需要更详细的分析，请告诉我！
 </solution>
-"""
+""",
+            'usage': {'input_tokens': 200, 'output_tokens': 150}
         }

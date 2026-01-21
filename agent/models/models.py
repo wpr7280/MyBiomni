@@ -48,3 +48,14 @@ class Conversation(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
     deleted_at = Column(DateTime)
+
+class UserQuota(Base):
+    __tablename__ = 'user_quotas'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False, unique=True)
+    total_token_limit = Column(Integer, nullable=False, default=1000000)
+    total_token_used = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+

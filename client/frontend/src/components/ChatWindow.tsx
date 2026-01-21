@@ -158,7 +158,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           items={[{
             key: 'examples',
             label: <div style={{ fontSize: 13, color: '#595959', fontWeight: 500 }}>📝 Example Research Questions</div>,
-            children: <Prompts items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} onItemClick={(info) => handleSendMessage(info.data.label)} />,
+            children: <Prompts items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} onItemClick={(info) => handleSendMessage(info.data.label as string)} />,
           }]}
           style={{ padding: '8px 32px 0', borderBottom: '1px solid #f0f0f0' }}
         />
@@ -166,7 +166,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         <div style={{ padding: '16px 32px' }}>
           {fileList.length > 0 && (
             <div style={{ marginBottom: 12, padding: 12, background: '#f5f7fa', borderRadius: 8, border: '1px solid #e8e8e8' }}>
-              <Attachments items={fileList} onChange={setFileList} />
+              <Attachments items={fileList} onChange={(info) => setFileList(info.fileList)} />
             </div>
           )}
           

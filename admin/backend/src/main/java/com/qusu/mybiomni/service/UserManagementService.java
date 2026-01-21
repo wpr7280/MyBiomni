@@ -7,6 +7,7 @@ import com.qusu.mybiomni.controller.admin.request.CreateUserRequest;
 import com.qusu.mybiomni.controller.admin.request.UpdateUserRequest;
 import com.qusu.mybiomni.controller.admin.request.UserListRequest;
 import com.qusu.mybiomni.controller.admin.response.UserVO;
+import com.qusu.mybiomni.controller.admin.response.QuotaVO;
 import com.qusu.mybiomni.dao.mysql.dao.AdminDAO;
 import com.qusu.mybiomni.dao.mysql.model.AdminDO;
 import com.qusu.mybiomni.dao.mysql.model.AdminDOExample;
@@ -31,6 +32,9 @@ public class UserManagementService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private QuotaService quotaService;
 
     /**
      * 获取用户列表（分页）
@@ -271,6 +275,22 @@ public class UserManagementService {
     private UserVO convertToResponse(AdminDO admin) {
         UserVO response = new UserVO();
         BeanUtils.copyProperties(admin, response);
+        
+        // 添加配额信息
+        try {
+            QuotaVO quota = quotaService.getUserQuota(admin.getId());
+            response.setTotalTokenLimit(quota.getTotalTokenLimit());
+            response.setTotalTokenUsed(quota.getTotalTokenUsed());
+            response.setRemaining(quota.getRemaining());
+            response.setUsagePercent(quota.getUsagePercent());
+        } catch (Exception e) {
+            // 如果获取配额失败，设置默认值
+            response.setTotalTokenLimit(1000000);
+            response.setTotalTokenUsed(0);
+            response.setRemaining(1000000);
+            response.setUsagePercent(0.0);
+        }
+        
         return response;
     }
 }

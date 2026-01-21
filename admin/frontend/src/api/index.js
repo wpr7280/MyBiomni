@@ -38,6 +38,11 @@ export default {
   deleteUser: (data = {}) => request.post('/users/delete', data),
   resetUserPassword: (data = {}) => request.post('/users/reset-password', data),
   
+  // ========== 管理员 - 配额管理 ==========
+  getQuota: (data = {}) => request.post('/quota/get', data),
+  updateQuota: (data = {}) => request.post('/quota/update', data),
+  resetQuota: (data = {}) => request.post('/quota/reset', data),
+  
   // // users
   // getUserList: (params = {}) => request.get('/user/list', { params }),
   // getUserById: (params = {}) => request.get('/user/get', { params }),

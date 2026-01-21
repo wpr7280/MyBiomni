@@ -53,7 +53,8 @@ class AgentService:
             # Mock Agent 是异步的
             async for step in agent.go_stream_async(query):
                 output = step.get('output', '')
-                await callback.process_step(output)
+                usage = step.get('usage', None)
+                await callback.process_step(output, usage)
         else:
             # 真实 A1 Agent 是同步的，需要在线程池中执行
             loop = asyncio.get_event_loop()
@@ -69,6 +70,7 @@ class AgentService:
             # 处理每个步骤
             for step in steps:
                 output = step.get('output', '')
-                await callback.process_step(output)
+                usage = step.get('usage', None)
+                await callback.process_step(output, usage)
         
         return callback.get_result()

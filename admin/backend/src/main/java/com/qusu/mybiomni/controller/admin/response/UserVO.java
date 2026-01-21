@@ -16,4 +16,10 @@ public class UserVO {
     private Integer status;
     private Date lastLoginAt;
     private Date createdAt;
+    
+    // 配额信息
+    private Integer totalTokenLimit;
+    private Integer totalTokenUsed;
+    private Integer remaining;
+    private Double usagePercent;
 }

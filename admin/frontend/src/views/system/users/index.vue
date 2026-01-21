@@ -31,6 +31,16 @@ const userForm = ref({
   status: 1
 })
 
+// 配额弹窗
+const showQuotaModal = ref(false)
+const quotaFormRef = ref(null)
+const quotaForm = ref({
+  userId: null,
+  username: '',
+  totalTokenLimit: 1000000,
+  totalTokenUsed: 0
+})
+
 const roleOptions = [
   { label: t('views.system.users.role_admin'), value: 'admin' },
   { label: t('views.system.users.role_user'), value: 'user' }
@@ -67,6 +77,22 @@ const columns = [
     }
   },
   {
+    title: 'Token配额',
+    key: 'quota',
+    width: 140,
+    render: (row) => {
+      const limit = row.totalTokenLimit || 1000000
+      const used = row.totalTokenUsed || 0
+      const percent = (used / limit * 100).toFixed(1)
+      return h('div', { style: 'font-size: 12px;' }, [
+        h('div', { style: 'margin-bottom: 2px;' }, `${(used / 1000).toFixed(0)}K / ${(limit / 1000).toFixed(0)}K`),
+        h('div', { 
+          style: `color: ${percent > 80 ? '#d03050' : percent > 50 ? '#f0a020' : '#18a058'};` 
+        }, `${percent}%`)
+      ])
+    }
+  },
+  {
     title: () => t('views.system.users.label_status'),
     key: 'status',
     width: 100,
@@ -90,7 +116,7 @@ const columns = [
   {
     title: () => t('views.conversations.label_actions'),
     key: 'actions',
-    width: 200,
+    width: 260,
     render: (row) => {
       return h(NSpace, { size: 4 }, {
         default: () => [
@@ -100,6 +126,12 @@ const columns = [
             ghost: true,
             onClick: () => editUser(row)
           }, { default: () => t('views.system.users.button_edit') }),
+          h(NButton, {
+            size: 'small',
+            type: 'info',
+            ghost: true,
+            onClick: () => manageQuota(row)
+          }, { default: () => '配额' }),
           h(NPopconfirm, {
             onPositiveClick: () => deleteUser(row.id)
           }, {
@@ -195,6 +227,46 @@ async function deleteUser(id) {
     loadUsers()
   } catch (error) {
     message.error('删除失败')
+  }
+}
+
+// 管理配额
+function manageQuota(user) {
+  quotaForm.value = {
+    userId: user.id,
+    username: user.username,
+    totalTokenLimit: user.totalTokenLimit || 1000000,
+    totalTokenUsed: user.totalTokenUsed || 0
+  }
+  showQuotaModal.value = true
+}
+
+// 保存配额
+async function saveQuota() {
+  try {
+    await api.updateQuota({
+      userId: quotaForm.value.userId,
+      totalTokenLimit: quotaForm.value.totalTokenLimit
+    })
+    message.success('配额更新成功')
+    showQuotaModal.value = false
+    loadUsers()
+  } catch (error) {
+    message.error('配额更新失败')
+  }
+}
+
+// 重置配额
+async function resetQuota() {
+  try {
+    await api.resetQuota({
+      userId: quotaForm.value.userId
+    })
+    message.success('配额已重置')
+    quotaForm.value.totalTokenUsed = 0
+    loadUsers()
+  } catch (error) {
+    message.error('重置失败')
   }
 }
 
@@ -319,6 +391,86 @@ onMounted(() => {
           <div style="display: flex; justify-content: flex-end; gap: 12px;">
             <NButton @click="showUserModal = false">取消</NButton>
             <NButton type="primary" @click="saveUser">保存</NButton>
+          </div>
+        </template>
+      </NModal>
+
+      <!-- 配额管理弹窗 -->
+      <NModal
+        v-model:show="showQuotaModal"
+        preset="card"
+        title="配额管理"
+        style="max-width: 600px;"
+      >
+        <NAlert type="info" style="margin-bottom: 16px;">
+          管理用户 <strong>{{ quotaForm.username }}</strong> 的 Token 配额
+        </NAlert>
+
+        <NForm
+          ref="quotaFormRef"
+          :model="quotaForm"
+          label-placement="left"
+          label-width="120"
+        >
+          <NFormItem label="总配额 (Tokens)">
+            <NInput 
+              v-model:value="quotaForm.totalTokenLimit" 
+              type="number"
+              :min="0"
+              :step="100000"
+              placeholder="请输入总配额"
+            />
+          </NFormItem>
+          <NFormItem label="已使用 (Tokens)">
+            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+              <NInput 
+                :value="quotaForm.totalTokenUsed.toLocaleString()" 
+                disabled
+                style="flex: 1;"
+              />
+              <NPopconfirm
+                @positive-click="resetQuota"
+              >
+                <template #trigger>
+                  <NButton type="warning" ghost>重置</NButton>
+                </template>
+                确定要重置已使用量为 0 吗？
+              </NPopconfirm>
+            </div>
+          </NFormItem>
+          <NFormItem label="剩余 (Tokens)">
+            <NInput 
+              :value="(quotaForm.totalTokenLimit - quotaForm.totalTokenUsed).toLocaleString()" 
+              disabled
+            />
+          </NFormItem>
+          <NFormItem label="使用率">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="flex: 1; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
+                <div 
+                  :style="{
+                    width: `${Math.min(100, (quotaForm.totalTokenUsed / quotaForm.totalTokenLimit * 100))}%`,
+                    height: '100%',
+                    background: (quotaForm.totalTokenUsed / quotaForm.totalTokenLimit * 100) > 80 
+                      ? 'linear-gradient(90deg, #d03050, #ff6b6b)' 
+                      : (quotaForm.totalTokenUsed / quotaForm.totalTokenLimit * 100) > 50
+                        ? 'linear-gradient(90deg, #f0a020, #ffc107)'
+                        : 'linear-gradient(90deg, #18a058, #36ad6a)',
+                    transition: 'width 0.3s ease'
+                  }"
+                />
+              </div>
+              <span style="min-width: 60px; text-align: right; font-weight: 600;">
+                {{ ((quotaForm.totalTokenUsed / quotaForm.totalTokenLimit * 100) || 0).toFixed(1) }}%
+              </span>
+            </div>
+          </NFormItem>
+        </NForm>
+
+        <template #footer>
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <NButton @click="showQuotaModal = false">取消</NButton>
+            <NButton type="primary" @click="saveQuota">保存</NButton>
           </div>
         </template>
       </NModal>

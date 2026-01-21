@@ -90,7 +90,31 @@ async def handle_agent_execution(
     """执行 Agent 并推送结果"""
     
     try:
-        # 1. 保存用户消息到数据库
+        # 1. 检查配额
+        from models.models import UserQuota
+        
+        quota = db.query(UserQuota).filter(UserQuota.user_id == user_id).first()
+        
+        if not quota:
+            # 如果没有配额记录，创建默认配额
+            quota = UserQuota(user_id=user_id, total_token_limit=1000000, total_token_used=0)
+            db.add(quota)
+            db.commit()
+            db.refresh(quota)
+        
+        if quota.total_token_used >= quota.total_token_limit:
+            await manager.send_message(str(conversation_id), {
+                'type': 'quota_exceeded',
+                'error': f'Token 配额已用完（{quota.total_token_used:,}/{quota.total_token_limit:,}）',
+                'quota': {
+                    'totalTokenLimit': quota.total_token_limit,
+                    'totalTokenUsed': quota.total_token_used,
+                    'remaining': 0
+                }
+            })
+            return
+        
+        # 2. 保存用户消息到数据库
         from models.models import Message, Conversation
         
         user_message = Message(
@@ -98,7 +122,7 @@ async def handle_agent_execution(
             role='user',
             content=content,
             content_type='text',
-            tokens=max(1, len(content) // 4),  # 简单估算
+            tokens=max(1, len(content) // 4),
             input_tokens=max(1, len(content) // 4),
             output_tokens=0,
             created_at=datetime.now()
@@ -115,20 +139,21 @@ async def handle_agent_execution(
             conversation.updated_at = datetime.now()
             db.commit()
         
-        # 2. 通知开始执行
+        # 3. 通知开始执行
         await manager.send_message(str(conversation_id), {
             'type': 'execution_start'
         })
         
-        # 3. 创建回调处理器
+        # 4. 创建回调处理器
         callback = WebSocketCallback(
             conversation_id=conversation_id,
             manager=manager,
-            db=db
+            db=db,
+            user_id=user_id
         )
         callback.current_message_id = user_message.id
         
-        # 4. 执行 Agent（流式）
+        # 5. 执行 Agent（流式）
         result = await AgentService.execute_agent_stream(
             conversation_id=conversation_id,
             user_id=user_id,
@@ -136,7 +161,7 @@ async def handle_agent_execution(
             callback=callback
         )
         
-        # 5. 通知完成
+        # 6. 通知完成
         await manager.send_message(str(conversation_id), {
             'type': 'execution_complete',
             'message': result

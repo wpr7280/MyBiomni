@@ -6,10 +6,11 @@ import re
 class WebSocketCallback:
     """WebSocket 回调处理器"""
     
-    def __init__(self, conversation_id: int, manager, db):
+    def __init__(self, conversation_id: int, manager, db, user_id: int):
         self.conversation_id = conversation_id
         self.manager = manager
         self.db = db
+        self.user_id = user_id  # 新增：保存 user_id
         self.step_order = 0
         self.current_message_id = None
         self.total_input_tokens = 0
@@ -18,8 +19,13 @@ class WebSocketCallback:
         self.final_content = ""
         self.start_time = datetime.now()
     
-    async def process_step(self, output: str):
+    async def process_step(self, output: str, usage: dict = None):
         """处理每个步骤的输出"""
+        
+        # 累计 Token 使用量
+        if usage:
+            self.total_input_tokens += usage.get('input_tokens', 0)
+            self.total_output_tokens += usage.get('output_tokens', 0)
         
         # 检查是否包含 thinking/reasoning（没有标签的文本）
         if output.strip() and '<execute>' not in output and '<observation>' not in output and '<solution>' not in output:
@@ -168,6 +174,15 @@ class WebSocketCallback:
         self.db.add(assistant_message)
         self.db.commit()
         self.db.refresh(assistant_message)
+        
+        # 更新用户配额
+        from models.models import UserQuota
+        
+        quota = self.db.query(UserQuota).filter(UserQuota.user_id == self.user_id).first()
+        if quota:
+            quota.total_token_used += (self.total_input_tokens + self.total_output_tokens)
+            quota.updated_at = datetime.now()
+            self.db.commit()
         
         # 更新对话统计
         conversation = self.db.query(Conversation).get(self.conversation_id)
