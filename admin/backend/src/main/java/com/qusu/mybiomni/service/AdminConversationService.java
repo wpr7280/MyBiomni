@@ -2,11 +2,15 @@ package com.qusu.mybiomni.service;
 
 import com.qusu.mybiomni.controller.admin.request.AdminConversationListRequest;
 import com.qusu.mybiomni.controller.admin.response.AdminConversationVO;
+import com.qusu.mybiomni.controller.admin.response.ConversationDetailVO;
 import com.qusu.mybiomni.dao.mysql.dao.AdminDAO;
 import com.qusu.mybiomni.dao.mysql.dao.ConversationDAO;
+import com.qusu.mybiomni.dao.mysql.dao.MessageDAO;
 import com.qusu.mybiomni.dao.mysql.model.AdminDO;
 import com.qusu.mybiomni.dao.mysql.model.ConversationDO;
 import com.qusu.mybiomni.dao.mysql.model.ConversationDOExample;
+import com.qusu.mybiomni.dao.mysql.model.MessageDO;
+import com.qusu.mybiomni.dao.mysql.model.MessageDOExample;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,9 @@ public class AdminConversationService {
     
     @Autowired
     private AdminDAO adminDAO;
+    
+    @Autowired
+    private MessageDAO messageDAO;
     
     /**
      * 获取对话列表（管理员视图）
@@ -156,6 +163,45 @@ public class AdminConversationService {
     }
     
     /**
+     * 获取对话详情（包含消息列表）
+     */
+    public ConversationDetailVO getConversationDetail(Integer conversationId) {
+        // 获取对话基本信息
+        ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
+        if (conversation == null || conversation.getDeletedAt() != null) {
+            throw new RuntimeException("对话不存在");
+        }
+        
+        // 转换为详情 VO
+        ConversationDetailVO detail = new ConversationDetailVO();
+        BeanUtils.copyProperties(conversation, detail);
+        
+        // 获取用户信息
+        AdminDO user = adminDAO.selectByPrimaryKey(conversation.getUserId());
+        if (user != null) {
+            detail.setUserEmail(user.getEmail());
+            detail.setUsername(user.getUsername());
+        }
+        
+        // 获取消息列表
+        MessageDOExample messageExample = new MessageDOExample();
+        messageExample.createCriteria()
+                .andConversationIdEqualTo(conversationId);
+        messageExample.setOrderByClause("created_at ASC");
+        
+        List<MessageDO> messages = messageDAO.selectByExample(messageExample);
+        
+        // 转换消息为 VO
+        List<ConversationDetailVO.MessageVO> messageVOs = messages.stream()
+                .map(this::convertToMessageVO)
+                .collect(Collectors.toList());
+        
+        detail.setMessages(messageVOs);
+        
+        return detail;
+    }
+    
+    /**
      * 转换为管理员 VO
      */
     private AdminConversationVO convertToAdminVO(ConversationDO conversation) {
@@ -169,6 +215,15 @@ public class AdminConversationService {
             vo.setUsername(user.getUsername());
         }
         
+        return vo;
+    }
+    
+    /**
+     * 转换消息为 VO
+     */
+    private ConversationDetailVO.MessageVO convertToMessageVO(MessageDO message) {
+        ConversationDetailVO.MessageVO vo = new ConversationDetailVO.MessageVO();
+        BeanUtils.copyProperties(message, vo);
         return vo;
     }
 }

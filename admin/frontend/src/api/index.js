@@ -45,6 +45,7 @@ export default {
   
   // ========== 管理员 - 对话管理 ==========
   getAdminConversationList: (data = {}) => request.post('/admin/conversations/list', data),
+  getAdminConversationDetail: (data = {}) => request.post('/admin/conversations/detail', data),
   deleteAdminConversation: (data = {}) => request.post('/admin/conversations/delete', data),
   
   // // users

@@ -6,7 +6,9 @@ import com.qusu.mybiomni.common.response.BaseResult;
 import com.qusu.mybiomni.common.response.PageResult;
 import com.qusu.mybiomni.controller.admin.request.AdminConversationListRequest;
 import com.qusu.mybiomni.controller.admin.request.DeleteConversationRequest;
+import com.qusu.mybiomni.controller.admin.request.GetConversationDetailRequest;
 import com.qusu.mybiomni.controller.admin.response.AdminConversationVO;
+import com.qusu.mybiomni.controller.admin.response.ConversationDetailVO;
 import com.qusu.mybiomni.controller.auth.AdminVO;
 import com.qusu.mybiomni.service.AdminConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,22 @@ public class AdminConversationController {
         try {
             adminConversationService.deleteConversation(request.getConversationId());
             return BaseResult.success(null);
+        } catch (Exception e) {
+            return BaseResult.error(e.getMessage());
+        }
+    }
+    
+    /**
+     * 获取对话详情（包含消息列表）
+     */
+    @PostMapping("/detail")
+    public BaseResult<ConversationDetailVO> getConversationDetail(
+            @Valid @RequestBody GetConversationDetailRequest request,
+            @AuthenticationPrincipal AdminVO currentUser
+    ) {
+        try {
+            ConversationDetailVO detail = adminConversationService.getConversationDetail(request.getConversationId());
+            return BaseResult.success(detail);
         } catch (Exception e) {
             return BaseResult.error(e.getMessage());
         }

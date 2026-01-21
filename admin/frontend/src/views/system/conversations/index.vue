@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, h } from 'vue'
-import { NButton, NCard, NInput, NDataTable, NPopconfirm, NTag, NIcon, NEmpty, NSpace, NDatePicker, NSelect } from 'naive-ui'
+import { NButton, NCard, NInput, NDataTable, NPopconfirm, NTag, NIcon, NEmpty, NSpace, NDatePicker, NSelect, NModal, NSpin, NScrollbar } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import CommonPage from '@/components/page/CommonPage.vue'
 import { useMessage } from 'naive-ui'
@@ -20,6 +20,11 @@ const pagination = ref({
   pageSize: 20,
   itemCount: 0,
 })
+
+// 详情弹窗
+const showDetailModal = ref(false)
+const detailLoading = ref(false)
+const conversationDetail = ref(null)
 
 const statusOptions = [
   { label: '全部', value: null },
@@ -95,11 +100,17 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
-    width: 120,
+    width: 180,
     fixed: 'right',
     render: (row) => {
       return h(NSpace, { size: 4 }, {
         default: () => [
+          h(NButton, {
+            size: 'small',
+            type: 'primary',
+            ghost: true,
+            onClick: () => viewDetail(row.id)
+          }, { default: () => '详情' }),
           h(NPopconfirm, {
             onPositiveClick: () => deleteConversation(row.id)
           }, {
@@ -154,6 +165,24 @@ async function deleteConversation(id) {
     loadConversations()
   } catch (error) {
     message.error('删除失败')
+  }
+}
+
+// 查看详情
+async function viewDetail(id) {
+  showDetailModal.value = true
+  detailLoading.value = true
+  conversationDetail.value = null
+  
+  try {
+    const res = await api.getAdminConversationDetail({ conversationId: id })
+    if (res.code === 200) {
+      conversationDetail.value = res.data
+    }
+  } catch (error) {
+    message.error('加载详情失败')
+  } finally {
+    detailLoading.value = false
   }
 }
 
@@ -257,6 +286,103 @@ onMounted(() => {
           </template>
         </NDataTable>
       </NCard>
+
+      <!-- 对话详情弹窗 -->
+      <NModal
+        v-model:show="showDetailModal"
+        preset="card"
+        title="对话详情"
+        style="width: 90%; max-width: 1200px;"
+        :segmented="{ content: true }"
+      >
+        <NSpin :show="detailLoading">
+          <div v-if="conversationDetail" style="min-height: 400px;">
+            <!-- 对话基本信息 -->
+            <div style="padding: 16px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">对话标题</div>
+                  <div style="font-weight: 600;">{{ conversationDetail.title }}</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">用户</div>
+                  <div>{{ conversationDetail.username }} ({{ conversationDetail.userEmail }})</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">消息数</div>
+                  <div>{{ conversationDetail.messageCount }} 条</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Token 使用</div>
+                  <div>{{ ((conversationDetail.totalTokens || 0) / 1000).toFixed(1) }}K</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: #999; margin-bottom: 4px;">创建时间</div>
+                  <div>{{ new Date(conversationDetail.createdAt).toLocaleString() }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 消息列表 -->
+            <div style="max-height: 600px; overflow-y: auto;">
+              <div v-if="conversationDetail.messages && conversationDetail.messages.length > 0">
+                <div
+                  v-for="(msg, index) in conversationDetail.messages"
+                  :key="msg.id"
+                  style="margin-bottom: 20px;"
+                >
+                  <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <!-- 头像 -->
+                    <div
+                      :style="{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '18px',
+                        flexShrink: 0,
+                        background: msg.role === 'user' ? '#52c41a' : '#1890ff'
+                      }"
+                    >
+                      {{ msg.role === 'user' ? '👤' : '🤖' }}
+                    </div>
+
+                    <!-- 消息内容 -->
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 14px;">
+                          {{ msg.role === 'user' ? '用户' : 'AI 助手' }}
+                        </span>
+                        <span style="font-size: 12px; color: #999;">
+                          {{ new Date(msg.createdAt).toLocaleString() }}
+                        </span>
+                        <NTag v-if="msg.tokens" size="small" type="info">
+                          {{ msg.tokens }} tokens
+                        </NTag>
+                      </div>
+                      <div
+                        :style="{
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          background: msg.role === 'user' ? '#f0f0f0' : '#e6f7ff',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                          lineHeight: '1.6'
+                        }"
+                      >
+                        {{ msg.content }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <NEmpty v-else description="暂无消息" />
+            </div>
+          </div>
+        </NSpin>
+      </NModal>
     </div>
   </CommonPage>
 </template>
