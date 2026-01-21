@@ -1,6 +1,41 @@
 <template>
   <AppPage :show-footer="false">
     <div flex-1>
+      <!-- 配置未完成提示 -->
+      <n-alert 
+        v-if="!configStatus.isConfigured || !configStatus.hasApiKey" 
+        type="error" 
+        title="系统配置未完成"
+        style="margin-bottom: 16px;"
+      >
+        <template #icon>
+          <n-icon size="20">
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+          </n-icon>
+        </template>
+        <div>
+          <p style="margin-bottom: 8px;">{{ configStatus.message || '系统尚未配置 LLM 模型，无法使用对话功能' }}</p>
+          <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
+            请前往"配置管理 → 模型配置"完成以下设置：
+          </p>
+          <ul style="margin: 0 0 12px 20px; font-size: 13px; color: #666;">
+            <li v-if="!configStatus.isConfigured">初始化系统配置</li>
+            <li v-if="configStatus.isConfigured && !configStatus.hasApiKey">
+              配置 {{ configStatus.currentSource }} 的 API Key
+            </li>
+          </ul>
+          <n-button 
+            type="primary" 
+            size="small" 
+            @click="goToConfig"
+          >
+            前往配置
+          </n-button>
+        </div>
+      </n-alert>
+
       <!-- 强制修改密码提示 -->
       <n-alert 
         v-if="userStore.forcePasswordChange" 
@@ -56,19 +91,47 @@
 import { useUserStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import api from '@/api'
 
 const { t } = useI18n({ useScope: 'global' })
 const userStore = useUserStore()
 const router = useRouter()
+
+// 配置状态
+const configStatus = ref({
+  isConfigured: true,
+  hasApiKey: true,
+  currentSource: 'Anthropic',
+  message: ''
+})
 
 // 跳转到个人中心修改密码
 function goToProfile() {
   router.push('/profile')
 }
 
-// 页面加载时检查是否需要强制修改密码
+// 跳转到配置页面
+function goToConfig() {
+  router.push('/config/model')
+}
+
+// 检查配置状态
+async function checkConfigStatus() {
+  try {
+    const res = await api.getConfigStatus()
+    if (res.code === 200 && res.data) {
+      configStatus.value = res.data
+    }
+  } catch (error) {
+    console.error('检查配置状态失败:', error)
+  }
+}
+
+// 页面加载时检查配置状态
 onMounted(() => {
+  checkConfigStatus()
+  
   if (userStore.forcePasswordChange) {
     // 可以选择直接跳转，或者显示提示
     // router.push('/profile')

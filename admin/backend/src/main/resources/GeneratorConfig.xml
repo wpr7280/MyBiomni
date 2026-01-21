@@ -116,5 +116,13 @@
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
+
+        <table tableName="system_config" domainObjectName="SystemConfigDO"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true" mapperName="SystemConfigDAO">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

@@ -48,6 +48,13 @@ export default {
   getAdminConversationDetail: (data = {}) => request.post('/admin/conversations/detail', data),
   deleteAdminConversation: (data = {}) => request.post('/admin/conversations/delete', data),
   
+  // ========== 系统配置 ==========
+  getConfigList: () => request.post('/config/list', {}),
+  getConfigStatus: () => request.post('/config/status', {}),
+  updateConfig: (data = {}) => request.post('/config/update', data),
+  batchUpdateConfig: (data = {}) => request.post('/config/batch-update', data),
+  resetConfig: () => request.post('/config/reset', {}),
+  
   // // users
   // getUserList: (params = {}) => request.get('/user/list', { params }),
   // getUserById: (params = {}) => request.get('/user/get', { params }),

@@ -90,6 +90,35 @@ async def handle_agent_execution(
     """执行 Agent 并推送结果"""
     
     try:
+        # 0. 检查系统配置是否完成
+        from services.config_service import ConfigService
+        
+        try:
+            config = ConfigService.get_agent_config(db)
+            
+            # 检查必需的配置
+            if not config.get('llm'):
+                await manager.send_message(str(conversation_id), {
+                    'type': 'config_error',
+                    'error': '系统尚未配置 LLM 模型，请联系管理员完成配置'
+                })
+                return
+            
+            source = config.get('source', 'Anthropic')
+            
+            # 检查是否配置了对应的 API Key（Ollama 除外）
+            if source != 'Ollama':
+                # 这里只做基本检查，具体的环境变量设置在 ConfigService 中完成
+                # 如果创建 Agent 失败，会在后面捕获异常
+                pass
+                
+        except Exception as config_error:
+            await manager.send_message(str(conversation_id), {
+                'type': 'config_error',
+                'error': f'配置加载失败：{str(config_error)}。请联系管理员检查系统配置'
+            })
+            return
+        
         # 1. 检查配额
         from models.models import UserQuota
         
@@ -133,7 +162,7 @@ async def handle_agent_execution(
         
         # 更新对话统计
         conversation = db.query(Conversation).get(conversation_id)
-        if conversation:
+        if (conversation):
             conversation.message_count += 1
             conversation.last_message_at = datetime.now()
             conversation.updated_at = datetime.now()
@@ -158,7 +187,8 @@ async def handle_agent_execution(
             conversation_id=conversation_id,
             user_id=user_id,
             query=content,
-            callback=callback
+            callback=callback,
+            db=db
         )
         
         # 6. 通知完成
@@ -168,10 +198,18 @@ async def handle_agent_execution(
         })
         
     except Exception as e:
-        print(f"Agent 执行失败: {e}")
+        error_msg = str(e)
+        print(f"Agent 执行失败: {error_msg}")
         import traceback
         traceback.print_exc()
+        
+        # 检查是否是 API Key 相关错误
+        if 'api' in error_msg.lower() and 'key' in error_msg.lower():
+            error_msg = f'LLM API Key 配置错误：{error_msg}。请联系管理员检查配置'
+        elif 'anthropic' in error_msg.lower() or 'openai' in error_msg.lower():
+            error_msg = f'LLM 服务连接失败：{error_msg}。请联系管理员检查配置'
+        
         await manager.send_message(str(conversation_id), {
             'type': 'execution_error',
-            'error': str(e)
+            'error': error_msg
         })

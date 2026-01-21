@@ -59,3 +59,17 @@ class UserQuota(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
+
+class SystemConfig(Base):
+    __tablename__ = 'system_config'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    config_key = Column(String(100), nullable=False, unique=True)
+    config_value = Column(Text)
+    config_type = Column(String(20), nullable=False, default='string')
+    description = Column(String(500))
+    is_sensitive = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+

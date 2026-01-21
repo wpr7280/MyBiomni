@@ -64,6 +64,22 @@ export function useWebSocket(conversationId: number | null) {
             setIsExecuting(false);
             antdMessage.error(data.error || '执行失败');
             break;
+
+          case 'config_error':
+            setIsExecuting(false);
+            antdMessage.error({
+              content: data.error || '系统配置错误',
+              duration: 8,
+            });
+            break;
+
+          case 'quota_exceeded':
+            setIsExecuting(false);
+            antdMessage.error({
+              content: data.error || 'Token 配额已用完',
+              duration: 5,
+            });
+            break;
         }
       } catch (error) {
         console.error('解析 WebSocket 消息失败:', error);
