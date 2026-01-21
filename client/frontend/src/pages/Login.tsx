@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 
@@ -10,6 +11,7 @@ const { Title, Text } = Typography;
 export default function Login() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: { email: string; password: string }) => {
@@ -21,14 +23,14 @@ export default function Login() {
       // 检查是否需要强制修改密码
       const response = await authApi.getCurrentUser();
       if ((response as any).forcePasswordChange) {
-        message.warning('首次登录需要修改密码');
+        message.warning(t('login.forcePasswordChange'));
         navigate('/change-password');
       } else {
-        message.success(`欢迎，${user.username}！`);
+        message.success(t('login.loginSuccess', { username: user.username }));
         navigate('/');
       }
     } catch (error: any) {
-      message.error(error.message || '登录失败');
+      message.error(error.message || t('login.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -72,15 +74,14 @@ export default function Login() {
           🧬
         </div>
         <Title level={1} style={{ color: '#fff', marginBottom: 16, fontSize: 48 }}>
-          Biomni
+          {t('login.appTitle')}
         </Title>
         <Title level={3} style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 400, marginBottom: 32 }}>
-          AI-Powered Biomedical Assistant
+          {t('login.appSubtitle')}
         </Title>
         <div style={{ maxWidth: 500, textAlign: 'center', lineHeight: 1.8 }}>
           <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 16 }}>
-            通用的生物医学 AI Agent，为科研工作者提供智能化的数据分析、
-            文献检索和实验设计支持。
+            {t('login.appDescription')}
           </Text>
         </div>
         <div
@@ -94,15 +95,15 @@ export default function Login() {
         >
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>🔬</div>
-            <div>智能分析</div>
+            <div>{t('login.feature1')}</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
-            <div>数据可视化</div>
+            <div>{t('login.feature2')}</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>📚</div>
-            <div>知识库</div>
+            <div>{t('login.feature3')}</div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Button, Dropdown, Tag, Upload, message as antdMessage, Collapse } from 'antd';
 import { DownloadOutlined, ExportOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Bubble, Sender, Prompts, Attachments } from '@ant-design/x';
+import { useTranslation } from 'react-i18next';
 import ExecutionPanel from './ExecutionPanel';
 import MarkdownContent from './MarkdownContent';
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -20,6 +21,7 @@ const exampleQuestions = [
 ];
 
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
+  const { t } = useTranslation();
   const { messages, setMessages, executionSteps, setExecutionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
   const [rightPanelWidth, setRightPanelWidth] = useState(420);
   const [isDragging, setIsDragging] = useState(false);
@@ -61,7 +63,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
 
   async function handleSendMessage(content: string) {
     if (isExecuting) {
-      antdMessage.warning('请等待当前问题执行完成');
+      antdMessage.warning(t('chat.waitingExecution'));
       return;
     }
     
@@ -82,7 +84,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
       setFileList([]);
       setShowUpload(false);
     } catch (error: any) {
-      antdMessage.error(error.message || '发送消息失败');
+      antdMessage.error(error.message || t('chat.sendFailed'));
     }
   }
 
@@ -110,8 +112,8 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   }, [isDragging]);
 
   const exportMenuItems: MenuProps['items'] = [
-    { key: 'markdown', label: 'Export as Markdown', icon: <ExportOutlined /> },
-    { key: 'pdf', label: 'Export as PDF', icon: <DownloadOutlined /> },
+    { key: 'markdown', label: t('chat.exportMarkdown'), icon: <ExportOutlined /> },
+    { key: 'pdf', label: t('chat.exportPDF'), icon: <DownloadOutlined /> },
   ];
 
   return (
@@ -122,8 +124,8 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
             {messages.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '100px 20px' }}>
                 <div style={{ fontSize: 64, marginBottom: 16 }}>💬</div>
-                <div style={{ fontSize: 18, color: '#595959', marginBottom: 8, fontWeight: 500 }}>开始新的对话</div>
-                <div style={{ fontSize: 14, color: '#8c8c8c' }}>输入您的问题或选择示例问题</div>
+                <div style={{ fontSize: 18, color: '#595959', marginBottom: 8, fontWeight: 500 }}>{t('chat.emptyTitle')}</div>
+                <div style={{ fontSize: 14, color: '#8c8c8c' }}>{t('chat.emptySubtitle')}</div>
               </div>
             ) : (
               messages.map((msg, index) => (
@@ -157,7 +159,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           ghost
           items={[{
             key: 'examples',
-            label: <div style={{ fontSize: 13, color: '#595959', fontWeight: 500 }}>📝 Example Research Questions</div>,
+            label: <div style={{ fontSize: 13, color: '#595959', fontWeight: 500 }}>{t('chat.exampleQuestionsTitle')}</div>,
             children: <Prompts items={exampleQuestions.map((q, i) => ({ key: i.toString(), label: q }))} onItemClick={(info) => handleSendMessage(info.data.label as string)} />,
           }]}
           style={{ padding: '8px 32px 0', borderBottom: '1px solid #f0f0f0' }}
@@ -175,7 +177,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
               <Upload.Dragger beforeUpload={(file) => { setFileList([...fileList, { uid: file.uid, name: file.name, status: 'done' }]); setShowUpload(false); return false; }} fileList={[]} showUploadList={false} style={{ background: '#fafafa', borderColor: '#d9d9d9' }}>
                 <div style={{ padding: '20px 0' }}>
                   <PaperClipOutlined style={{ fontSize: 24, color: '#1890ff' }} />
-                  <div style={{ marginTop: 8, fontSize: 14, color: '#8c8c8c' }}>Click or drag files to upload</div>
+                  <div style={{ marginTop: 8, fontSize: 14, color: '#8c8c8c' }}>{t('chat.uploadHint')}</div>
                 </div>
               </Upload.Dragger>
             </div>
@@ -183,29 +185,29 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           
           <div style={{ display: 'flex', gap: 8 }}>
             <div style={{ flex: 1 }}>
-              <Sender onSubmit={handleSendMessage} placeholder={isExecuting ? "Agent is working..." : "Ask something or upload a file..."} loading={isExecuting} disabled={isExecuting} />
+              <Sender onSubmit={handleSendMessage} placeholder={isExecuting ? t('chat.inputPlaceholderExecuting') : t('chat.inputPlaceholder')} loading={isExecuting} disabled={isExecuting} />
             </div>
-            <Button icon={<PaperClipOutlined />} size="large" style={{ height: 40 }} onClick={() => setShowUpload(!showUpload)} disabled={isExecuting}>附件</Button>
+            <Button icon={<PaperClipOutlined />} size="large" style={{ height: 40 }} onClick={() => setShowUpload(!showUpload)} disabled={isExecuting}>{t('chat.attachButton')}</Button>
           </div>
         </div>
 
         <div style={{ borderTop: '2px solid #f0f0f0', background: 'linear-gradient(to bottom, #fafafa, #f5f5f5)' }}>
           <div style={{ padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Dropdown menu={{ items: exportMenuItems }}>
-              <Button type="text" size="small" icon={<DownloadOutlined />} style={{ fontWeight: 500 }}>Export & Download</Button>
+              <Button type="text" size="small" icon={<DownloadOutlined />} style={{ fontWeight: 500 }}>{t('chat.exportDownload')}</Button>
             </Dropdown>
             <div style={{ display: 'flex', gap: 10 }}>
-              <Tag color="processing" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>📊 Weekly: 45/50</Tag>
-              <Tag color="success" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>📅 Tokens: 2025-06-02</Tag>
+              <Tag color="processing" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>{t('chat.weeklyQuota', { used: 45, total: 50 })}</Tag>
+              <Tag color="success" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>{t('chat.tokensExpiry', { date: '2025-06-02' })}</Tag>
             </div>
           </div>
 
           <div style={{ padding: '10px 32px 14px', borderTop: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center', gap: 16, fontSize: 12 }}>
-            <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>GitHub</a>
+            <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.github')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="mailto:contact@biomni.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>Contact</a>
+            <a href="mailto:contact@biomni.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="https://biomni.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>Website</a>
+            <a href="https://biomni.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
           </div>
         </div>
       </div>

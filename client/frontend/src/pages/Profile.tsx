@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Form, Input, Button, message, Typography, Divider, Space, Avatar } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 
@@ -8,6 +9,7 @@ const { Title, Text } = Typography;
 
 export default function Profile() {
   const { user, setAuth } = useAuthStore();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [passwordForm] = Form.useForm();
   const [infoForm] = Form.useForm();
@@ -33,9 +35,9 @@ export default function Profile() {
         setAuth(token, { ...user, username: values.username, email: values.email });
       }
       
-      message.success('信息更新成功');
+      message.success(t('profile.infoUpdateSuccess'));
     } catch (error: any) {
-      message.error(error.message || '更新失败');
+      message.error(error.message || t('profile.infoUpdateFailed'));
     } finally {
       setLoading(false);
     }
@@ -46,16 +48,22 @@ export default function Profile() {
     setLoading(true);
     try {
       await authApi.updatePassword(values.oldPassword, values.newPassword);
-      message.success('密码修改成功，请重新登录');
+      message.success(t('profile.passwordUpdateSuccess'));
       
       // 清除登录状态
       localStorage.clear();
       window.location.href = '/login';
     } catch (error: any) {
-      message.error(error.message || '密码修改失败');
+      message.error(error.message || t('profile.passwordUpdateFailed'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const getRoleText = (role: string) => {
+    if (role === 'super_admin') return t('profile.roleSuperAdmin');
+    if (role === 'admin') return t('profile.roleAdmin');
+    return t('profile.roleUser');
   };
 
   return (
@@ -67,7 +75,7 @@ export default function Profile() {
       }}
     >
       <Title level={2} style={{ marginBottom: 24 }}>
-        个人中心
+        {t('profile.title')}
       </Title>
 
       <div style={{ display: 'flex', gap: 24 }}>
@@ -89,17 +97,13 @@ export default function Profile() {
           <Divider />
           <Space direction="vertical" size={8} style={{ width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Text type="secondary">角色</Text>
+              <Text type="secondary">{t('profile.role')}</Text>
               <Text>
-                {user?.role === 'super_admin'
-                  ? '超级管理员'
-                  : user?.role === 'admin'
-                  ? '管理员'
-                  : '用户'}
+                {user?.role && getRoleText(user.role)}
               </Text>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Text type="secondary">用户 ID</Text>
+              <Text type="secondary">{t('profile.userId')}</Text>
               <Text>{user?.id}</Text>
             </div>
           </Space>
@@ -108,7 +112,7 @@ export default function Profile() {
         {/* 右侧：表单区域 */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* 基本信息 */}
-          <Card title="基本信息">
+          <Card title={t('profile.basicInfo')}>
             <Form
               form={infoForm}
               layout="vertical"
@@ -116,34 +120,34 @@ export default function Profile() {
               autoComplete="off"
             >
               <Form.Item
-                label="用户名"
+                label={t('profile.username')}
                 name="username"
-                rules={[{ required: true, message: '请输入用户名' }]}
+                rules={[{ required: true, message: t('profile.usernameRequired') }]}
               >
-                <Input prefix={<UserOutlined />} placeholder="用户名" />
+                <Input prefix={<UserOutlined />} placeholder={t('profile.usernamePlaceholder')} />
               </Form.Item>
 
               <Form.Item
-                label="邮箱"
+                label={t('profile.email')}
                 name="email"
                 rules={[
-                  { required: true, message: '请输入邮箱' },
-                  { type: 'email', message: '请输入有效的邮箱地址' },
+                  { required: true, message: t('profile.emailRequired') },
+                  { type: 'email', message: t('profile.emailInvalid') },
                 ]}
               >
-                <Input prefix={<MailOutlined />} placeholder="邮箱地址" />
+                <Input prefix={<MailOutlined />} placeholder={t('profile.emailPlaceholder')} />
               </Form.Item>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                  保存修改
+                  {t('profile.saveButton')}
                 </Button>
               </Form.Item>
             </Form>
           </Card>
 
           {/* 修改密码 */}
-          <Card title="修改密码">
+          <Card title={t('profile.changePassword')}>
             <Form
               form={passwordForm}
               layout="vertical"
@@ -151,50 +155,50 @@ export default function Profile() {
               autoComplete="off"
             >
               <Form.Item
-                label="当前密码"
+                label={t('profile.currentPassword')}
                 name="oldPassword"
-                rules={[{ required: true, message: '请输入当前密码' }]}
+                rules={[{ required: true, message: t('profile.currentPasswordRequired') }]}
               >
-                <Input.Password prefix={<LockOutlined />} placeholder="当前密码" />
+                <Input.Password prefix={<LockOutlined />} placeholder={t('profile.currentPasswordPlaceholder')} />
               </Form.Item>
 
               <Form.Item
-                label="新密码"
+                label={t('profile.newPassword')}
                 name="newPassword"
                 rules={[
-                  { required: true, message: '请输入新密码' },
-                  { min: 8, message: '密码长度至少 8 位' },
+                  { required: true, message: t('profile.newPasswordRequired') },
+                  { min: 8, message: t('profile.passwordMinLength') },
                   {
                     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-                    message: '密码必须包含大小写字母和数字',
+                    message: t('profile.passwordPattern'),
                   },
                 ]}
               >
-                <Input.Password prefix={<LockOutlined />} placeholder="新密码" />
+                <Input.Password prefix={<LockOutlined />} placeholder={t('profile.newPasswordPlaceholder')} />
               </Form.Item>
 
               <Form.Item
-                label="确认新密码"
+                label={t('profile.confirmPassword')}
                 name="confirmPassword"
                 dependencies={['newPassword']}
                 rules={[
-                  { required: true, message: '请确认新密码' },
+                  { required: true, message: t('profile.confirmPasswordRequired') },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (!value || getFieldValue('newPassword') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('两次输入的密码不一致'));
+                      return Promise.reject(new Error(t('profile.passwordsNotMatch')));
                     },
                   }),
                 ]}
               >
-                <Input.Password prefix={<LockOutlined />} placeholder="确认新密码" />
+                <Input.Password prefix={<LockOutlined />} placeholder={t('profile.confirmPasswordPlaceholder')} />
               </Form.Item>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                  修改密码
+                  {t('profile.changePasswordButton')}
                 </Button>
               </Form.Item>
             </Form>

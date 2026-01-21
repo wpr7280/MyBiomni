@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTranslation } from 'react-i18next';
 import type { ExecutionStep } from '@/types';
 
 const { Text } = Typography;
@@ -18,6 +19,7 @@ interface ExecutionPanelProps {
 }
 
 export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
+  const { t } = useTranslation();
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'running':
@@ -87,11 +89,11 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
             }}
           />
           <Text strong style={{ fontSize: 16 }}>
-            Biomni Executor
+            {t('execution.title')}
           </Text>
         </div>
         <Text type="secondary" style={{ fontSize: 12, marginTop: 4, display: 'block' }}>
-          {steps.length > 0 ? `${successCount}/${steps.length} 步骤完成` : '等待执行...'}
+          {steps.length > 0 ? t('execution.stepsCompleted', { success: successCount, total: steps.length }) : t('execution.waiting')}
         </Text>
       </div>
 
@@ -106,7 +108,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
             }}
           >
             <div style={{ fontSize: 48, marginBottom: 16 }}>🤖</div>
-            <Text type="secondary">Agent 准备就绪</Text>
+            <Text type="secondary">{t('execution.ready')}</Text>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -189,7 +191,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                               key: 'input',
                               label: (
                                 <Text type="secondary" style={{ fontSize: 12 }}>
-                                  输入参数
+                                  {t('execution.input')}
                                 </Text>
                               ),
                               children: (
@@ -214,7 +216,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                               key: 'output',
                               label: (
                                 <Text type="secondary" style={{ fontSize: 12 }}>
-                                  执行结果
+                                  {t('execution.output')}
                                 </Text>
                               ),
                               children: (
@@ -253,7 +255,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                     }}
                   >
                     <Text type="danger" style={{ fontSize: 12 }}>
-                      ⚠️ {step.errorMessage}
+                      {t('execution.error', { message: step.errorMessage })}
                     </Text>
                   </div>
                 )}

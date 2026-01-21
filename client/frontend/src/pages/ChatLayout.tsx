@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout, message, Button, Modal, Input } from 'antd';
 import { Conversations } from '@ant-design/x';
+import { useTranslation } from 'react-i18next';
 import Header from '@/components/Header';
 import ChatWindow from '@/components/ChatWindow';
 import { conversationApi } from '@/api/conversation';
@@ -9,6 +10,7 @@ import type { Conversation } from '@/types';
 const { Sider, Content } = Layout;
 
 export default function ChatLayout() {
+  const { t } = useTranslation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export default function ChatLayout() {
         setActiveConversationId(data[0].id);
       }
     } catch (error: any) {
-      message.error(error.message || '加载对话列表失败');
+      message.error(error.message || t('chat.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -48,14 +50,14 @@ export default function ChatLayout() {
       if (newConversation && newConversation.id) {
         setConversations((prev) => [newConversation, ...prev]);
         setActiveConversationId(newConversation.id);
-        message.success('创建成功');
+        message.success(t('chat.createSuccess'));
       } else {
         console.error('对话数据无效:', newConversation);
-        message.error('创建失败：数据无效');
+        message.error(t('chat.createFailed'));
       }
     } catch (error: any) {
       console.error('创建对话失败:', error);
-      message.error(error.message || '创建失败');
+      message.error(error.message || t('chat.createFailed'));
     }
   }
 
@@ -71,9 +73,9 @@ export default function ChatLayout() {
         setActiveConversationId(remaining.length > 0 ? remaining[0].id : null);
       }
       
-      message.success('删除成功');
+      message.success(t('chat.deleteSuccess'));
     } catch (error: any) {
-      message.error(error.message || '删除失败');
+      message.error(error.message || t('chat.deleteFailed'));
     }
   }
 
@@ -89,7 +91,7 @@ export default function ChatLayout() {
 
   async function handleRename() {
     if (!renamingId || !newTitle.trim()) {
-      message.error('请输入对话标题');
+      message.error(t('chat.renamePlaceholder'));
       return;
     }
 
@@ -103,9 +105,9 @@ export default function ChatLayout() {
       );
       
       setRenameModalOpen(false);
-      message.success('重命名成功');
+      message.success(t('chat.renameSuccess'));
     } catch (error: any) {
-      message.error(error.message || '重命名失败');
+      message.error(error.message || t('chat.renameFailed'));
     }
   }
 
@@ -114,7 +116,7 @@ export default function ChatLayout() {
     .filter((conv) => conv && conv.id)  // 过滤掉无效数据
     .map((conv) => ({
       key: conv.id.toString(),
-      label: conv.title || '新对话',
+      label: conv.title || t('chat.newConversation'),
       timestamp: conv.updatedAt ? new Date(conv.updatedAt).getTime() : Date.now(),
     }));
 
@@ -144,7 +146,7 @@ export default function ChatLayout() {
               onClick={handleCreateConversation}
               size="large"
             >
-              新建对话
+              {t('chat.newConversation')}
             </Button>
           </div>
           
@@ -155,11 +157,11 @@ export default function ChatLayout() {
             menu={{
               items: [
                 {
-                  label: '重命名',
+                  label: t('chat.rename'),
                   key: 'rename',
                 },
                 {
-                  label: '删除',
+                  label: t('chat.delete'),
                   key: 'delete',
                   danger: true,
                 },
@@ -201,10 +203,10 @@ export default function ChatLayout() {
             >
               <div style={{ fontSize: 64, marginBottom: 16 }}>🧬</div>
               <div style={{ fontSize: 18, color: '#8c8c8c', marginBottom: 8 }}>
-                欢迎使用 Biomni AI 助手
+                {t('chat.welcomeTitle')}
               </div>
               <div style={{ fontSize: 14, color: '#bfbfbf' }}>
-                请选择或创建一个对话开始
+                {t('chat.welcomeSubtitle')}
               </div>
             </div>
           )}
@@ -213,17 +215,17 @@ export default function ChatLayout() {
 
       {/* 重命名对话弹窗 */}
       <Modal
-        title="重命名对话"
+        title={t('chat.renameTitle')}
         open={renameModalOpen}
         onOk={handleRename}
         onCancel={() => setRenameModalOpen(false)}
-        okText="确定"
-        cancelText="取消"
+        okText={t('common.confirm')}
+        cancelText={t('common.cancel')}
       >
         <Input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="请输入对话标题"
+          placeholder={t('chat.renamePlaceholder')}
           onPressEnter={handleRename}
           autoFocus
         />

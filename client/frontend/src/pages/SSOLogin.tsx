@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Spin, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 
@@ -8,18 +9,19 @@ export default function SSOLogin() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const token = searchParams.get('token');
 
     if (!token) {
-      message.error('缺少 Token');
+      message.error(t('login.loginFailed'));
       navigate('/login');
       return;
     }
 
     verifyAndSaveToken(token);
-  }, [searchParams, navigate, setAuth]);
+  }, [searchParams, navigate, setAuth, t]);
 
   async function verifyAndSaveToken(token: string) {
     try {
@@ -33,10 +35,10 @@ export default function SSOLogin() {
       window.history.replaceState({}, document.title, '/');
 
       // 跳转到首页
-      message.success(`欢迎，${user.username}！`);
+      message.success(t('login.loginSuccess', { username: user.username }));
       navigate('/');
     } catch (error: any) {
-      message.error('Token 无效或已过期，请重新登录');
+      message.error(t('login.loginFailed'));
       navigate('/login');
     }
   }
@@ -52,7 +54,7 @@ export default function SSOLogin() {
       }}
     >
       <Spin size="large" />
-      <p style={{ marginTop: 20, fontSize: 16 }}>正在登录...</p>
+      <p style={{ marginTop: 20, fontSize: 16 }}>{t('common.loading')}</p>
     </div>
   );
 }

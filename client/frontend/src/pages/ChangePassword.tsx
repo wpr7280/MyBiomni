@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, message, Typography, Alert } from 'antd';
 import { LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { authApi } from '@/api/auth';
 
 const { Title, Text } = Typography;
 
 export default function ChangePassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -15,13 +17,13 @@ export default function ChangePassword() {
     setLoading(true);
     try {
       await authApi.updatePassword(values.oldPassword, values.newPassword);
-      message.success('密码修改成功，请重新登录');
+      message.success(t('changePassword.success'));
       
       // 清除登录状态
       localStorage.clear();
       navigate('/login');
     } catch (error: any) {
-      message.error(error.message || '密码修改失败');
+      message.error(error.message || t('changePassword.failed'));
     } finally {
       setLoading(false);
     }
@@ -60,14 +62,14 @@ export default function ChangePassword() {
             🔐
           </div>
           <Title level={3} style={{ marginBottom: 8 }}>
-            修改密码
+            {t('changePassword.title')}
           </Title>
-          <Text type="secondary">首次登录需要修改密码以确保账户安全</Text>
+          <Text type="secondary">{t('changePassword.subtitle')}</Text>
         </div>
 
         <Alert
-          message="密码要求"
-          description="密码长度至少 8 位，包含大小写字母、数字"
+          message={t('changePassword.requirementsTitle')}
+          description={t('changePassword.requirementsDesc')}
           type="info"
           showIcon
           style={{ marginBottom: 24 }}
@@ -76,46 +78,46 @@ export default function ChangePassword() {
         <Form form={form} name="changePassword" onFinish={onFinish} autoComplete="off" size="large">
           <Form.Item
             name="oldPassword"
-            rules={[{ required: true, message: '请输入当前密码' }]}
+            rules={[{ required: true, message: t('changePassword.oldPasswordRequired') }]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="当前密码" />
+            <Input.Password prefix={<LockOutlined />} placeholder={t('changePassword.oldPasswordPlaceholder')} />
           </Form.Item>
 
           <Form.Item
             name="newPassword"
             rules={[
-              { required: true, message: '请输入新密码' },
-              { min: 8, message: '密码长度至少 8 位' },
+              { required: true, message: t('changePassword.newPasswordRequired') },
+              { min: 8, message: t('changePassword.passwordMinLength') },
               {
                 pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-                message: '密码必须包含大小写字母和数字',
+                message: t('changePassword.passwordPattern'),
               },
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="新密码" />
+            <Input.Password prefix={<LockOutlined />} placeholder={t('changePassword.newPasswordPlaceholder')} />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
             dependencies={['newPassword']}
             rules={[
-              { required: true, message: '请确认新密码' },
+              { required: true, message: t('changePassword.confirmPasswordRequired') },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('两次输入的密码不一致'));
+                  return Promise.reject(new Error(t('changePassword.passwordsNotMatch')));
                 },
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="确认新密码" />
+            <Input.Password prefix={<LockOutlined />} placeholder={t('changePassword.confirmPasswordPlaceholder')} />
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block size="large">
-              确认修改
+              {t('changePassword.submitButton')}
             </Button>
           </Form.Item>
         </Form>

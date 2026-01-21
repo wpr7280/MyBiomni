@@ -1,10 +1,13 @@
 import { Layout, Space, Typography } from 'antd';
 import { GithubOutlined, MailOutlined, GlobalOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Footer: AntFooter } = Layout;
 const { Text, Link } = Typography;
 
 export default function Footer() {
+  const { t } = useTranslation();
+  
   return (
     <AntFooter
       style={{
@@ -18,24 +21,24 @@ export default function Footer() {
         {/* 链接 */}
         <Space size={24}>
           <Link href="https://github.com/biomni" target="_blank">
-            <GithubOutlined style={{ fontSize: 16 }} /> GitHub
+            <GithubOutlined style={{ fontSize: 16 }} /> {t('footer.github')}
           </Link>
           <Link href="mailto:contact@biomni.com">
-            <MailOutlined style={{ fontSize: 16 }} /> Contact
+            <MailOutlined style={{ fontSize: 16 }} /> {t('footer.contact')}
           </Link>
           <Link href="https://biomni.com" target="_blank">
-            <GlobalOutlined style={{ fontSize: 16 }} /> Website
+            <GlobalOutlined style={{ fontSize: 16 }} /> {t('footer.website')}
           </Link>
         </Space>
 
         {/* 版权信息 */}
         <Text type="secondary" style={{ fontSize: 12 }}>
-          © 2025 Biomni. All rights reserved. | Powered by AI
+          {t('footer.copyright')}
         </Text>
 
         {/* 描述 */}
         <Text type="secondary" style={{ fontSize: 12 }}>
-          A universal biomedical AI agent for research and analysis
+          {t('footer.description')}
         </Text>
       </Space>
     </AntFooter>

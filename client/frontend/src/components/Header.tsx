@@ -6,8 +6,10 @@ import {
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth';
+import LanguageSwitcher from './LanguageSwitcher';
 import type { MenuProps } from 'antd';
 
 const { Header: AntHeader } = Layout;
@@ -20,6 +22,7 @@ interface HeaderProps {
 export default function Header({ collapsed, onToggle }: HeaderProps) {
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthStore();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     try {
@@ -31,11 +34,17 @@ export default function Header({ collapsed, onToggle }: HeaderProps) {
     }
   };
 
+  const getRoleText = (role: string) => {
+    if (role === 'super_admin') return t('profile.roleSuperAdmin');
+    if (role === 'admin') return t('profile.roleAdmin');
+    return t('profile.roleUser');
+  };
+
   const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: '个人中心',
+      label: t('header.profile'),
       onClick: () => navigate('/profile'),
     },
     {
@@ -44,7 +53,7 @@ export default function Header({ collapsed, onToggle }: HeaderProps) {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录',
+      label: t('header.logout'),
       danger: true,
       onClick: handleLogout,
     },
@@ -103,7 +112,7 @@ export default function Header({ collapsed, onToggle }: HeaderProps) {
                 letterSpacing: '-0.5px',
               }}
             >
-              Biomni
+              {t('header.appTitle')}
             </div>
             <div
               style={{
@@ -113,47 +122,51 @@ export default function Header({ collapsed, onToggle }: HeaderProps) {
                 fontWeight: 400,
               }}
             >
-              AI-Powered Biomedical Assistant
+              {t('header.appSubtitle')}
             </div>
           </div>
         </div>
       </div>
 
-      {/* 右侧：用户信息 */}
-      <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            cursor: 'pointer',
-            padding: '6px 12px',
-            borderRadius: 8,
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#fafafa';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-          }}
-        >
-          <Avatar
-            size={36}
-            style={{ background: '#1890ff' }}
-            icon={<UserOutlined />}
-            src={user?.avatar}
-          />
-          <div style={{ lineHeight: 1.3 }}>
-            <div style={{ fontSize: 14, fontWeight: 500, color: '#262626' }}>
-              {user?.username}
-            </div>
-            <div style={{ fontSize: 12, color: '#8c8c8c' }}>
-              {user?.role === 'super_admin' ? '超级管理员' : user?.role === 'admin' ? '管理员' : '用户'}
+      {/* 右侧：语言切换 + 用户信息 */}
+      <Space size={16}>
+        <LanguageSwitcher />
+        
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+              padding: '6px 12px',
+              borderRadius: 8,
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#fafafa';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <Avatar
+              size={36}
+              style={{ background: '#1890ff' }}
+              icon={<UserOutlined />}
+              src={user?.avatar}
+            />
+            <div style={{ lineHeight: 1.3 }}>
+              <div style={{ fontSize: 14, fontWeight: 500, color: '#262626' }}>
+                {user?.username}
+              </div>
+              <div style={{ fontSize: 12, color: '#8c8c8c' }}>
+                {user?.role && getRoleText(user.role)}
+              </div>
             </div>
           </div>
-        </div>
-      </Dropdown>
+        </Dropdown>
+      </Space>
     </AntHeader>
   );
 }

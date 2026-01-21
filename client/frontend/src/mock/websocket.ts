@@ -89,54 +89,54 @@ export class MockWebSocket {
     const now = new Date();
     const steps: ExecutionStep[] = [];
 
-    // 步骤 1: 分析问题
+    // Step 1: Analyze question
     steps.push({
       id: Date.now() + 1,
       conversationId: parseInt(this.conversationId),
       messageId: Date.now(),
       stepOrder: 1,
       stepType: 'reasoning',
-      stepName: '分析用户问题',
+      stepName: 'Analyzing user question',
       status: 'success',
       durationMs: 500,
       startedAt: new Date(now.getTime()).toISOString(),
       completedAt: new Date(now.getTime() + 500).toISOString(),
     });
 
-    // 步骤 2: 搜索知识库
+    // Step 2: Search knowledge base
     steps.push({
       id: Date.now() + 2,
       conversationId: parseInt(this.conversationId),
       messageId: Date.now(),
       stepOrder: 2,
       stepType: 'tool_call',
-      stepName: '搜索相关知识',
+      stepName: 'Searching relevant knowledge',
       toolName: 'search_knowledge',
       toolInput: {
         query: query.substring(0, 50),
         limit: 5,
       },
-      toolOutput: '找到 5 篇相关文献和知识条目',
+      toolOutput: 'Found 5 relevant articles and knowledge entries',
       status: 'success',
       durationMs: 1200,
       startedAt: new Date(now.getTime() + 500).toISOString(),
       completedAt: new Date(now.getTime() + 1700).toISOString(),
     });
 
-    // 步骤 3: 生成回答
+    // Step 3: Generate answer
     steps.push({
       id: Date.now() + 3,
       conversationId: parseInt(this.conversationId),
       messageId: Date.now(),
       stepOrder: 3,
       stepType: 'tool_call',
-      stepName: '生成回答',
+      stepName: 'Generating answer',
       toolName: 'generate_answer',
       toolInput: {
-        context: '相关知识内容',
+        context: 'Relevant knowledge content',
         question: query,
       },
-      toolOutput: '回答生成完成',
+      toolOutput: 'Answer generation completed',
       status: 'success',
       durationMs: 2000,
       startedAt: new Date(now.getTime() + 1700).toISOString(),
@@ -151,17 +151,17 @@ export class MockWebSocket {
       id: Date.now(),
       conversationId: parseInt(this.conversationId),
       role: 'assistant',
-      content: `这是对"${query}"的回答。
+      content: `This is the answer to "${query}".
 
-## 回答内容
+## Answer Content
 
-根据您的问题，我为您整理了以下信息：
+Based on your question, I have compiled the following information:
 
-1. **关键概念**：这是一个关于生物医学的问题
-2. **相关知识**：从知识库中检索到相关内容
-3. **建议**：您可以进一步了解相关主题
+1. **Key Concepts**: This is a biomedical question
+2. **Relevant Knowledge**: Retrieved relevant content from the knowledge base
+3. **Recommendations**: You can learn more about related topics
 
-如果您需要更详细的信息，请告诉我！`,
+If you need more detailed information, please let me know!`,
       contentType: 'markdown',
       tokens: 150,
       inputTokens: Math.ceil(query.length / 4),

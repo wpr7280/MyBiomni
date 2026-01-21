@@ -3,8 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
 import App from './App';
 import './index.css';
+import './i18n';
+
+// 获取当前语言设置
+const currentLanguage = localStorage.getItem('language') || 'en-US';
+const antdLocale = currentLanguage === 'en-US' ? enUS : zhCN;
 
 // Mock 模式提示
 if (import.meta.env.VITE_USE_MOCK === 'true') {
@@ -18,7 +24,7 @@ if (import.meta.env.VITE_USE_MOCK === 'true') {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider locale={antdLocale}>
         <App />
       </ConfigProvider>
     </BrowserRouter>
