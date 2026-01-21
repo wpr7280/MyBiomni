@@ -47,6 +47,8 @@ function handleSelect(key) {
       title: t('header.label_logout_dialog_title'),
       type: 'warning',
       content: t('header.text_logout_confirm'),
+      positiveText: t('common.confirm'),
+      negativeText: t('common.cancel'),
       confirm() {
         userStore.logout()
         $message.success(t('header.text_logout_success'))

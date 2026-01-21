@@ -1,8 +1,8 @@
 <template>
   <n-config-provider
     wh-full
-    :locale="zhCN"
-    :date-locale="dateZhCN"
+    :locale="naiveLocale"
+    :date-locale="naiveDateLocale"
     :theme="appStore.isDark ? darkTheme : undefined"
     :theme-overrides="naiveThemeOverrides"
   >
@@ -20,10 +20,12 @@
 </template>
 
 <script setup>
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, computed } from 'vue'
 import {
   zhCN,
   dateZhCN,
+  enUS,
+  dateEnUS,
   darkTheme,
   useLoadingBar,
   useDialog,
@@ -35,8 +37,19 @@ import { kebabCase } from 'lodash-es'
 import { setupMessage, setupDialog } from '@/utils'
 import { naiveThemeOverrides } from '~/settings'
 import { useAppStore } from '@/store'
+import { useI18n } from 'vue-i18n'
 
 const appStore = useAppStore()
+const { locale } = useI18n()
+
+// 根据当前语言动态切换 Naive UI 的语言包
+const naiveLocale = computed(() => {
+  return locale.value === 'en' ? enUS : zhCN
+})
+
+const naiveDateLocale = computed(() => {
+  return locale.value === 'en' ? dateEnUS : dateZhCN
+})
 
 function setupCssVar() {
   const common = naiveThemeOverrides.common

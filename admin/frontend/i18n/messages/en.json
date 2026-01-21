@@ -657,7 +657,17 @@
       "update_success": "Update success"
     },
     "buttons": {
-      "update": "Update"
+      "update": "Update",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "ok": "OK",
+      "close": "Close",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "search": "Search",
+      "reset": "Reset",
+      "submit": "Submit"
     },
     "back": "Back",
     "cancel": "Cancel",

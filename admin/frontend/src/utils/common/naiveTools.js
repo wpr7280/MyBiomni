@@ -64,10 +64,16 @@ export function setupMessage(NMessage) {
 export function setupDialog(NDialog) {
   NDialog.confirm = function (option = {}) {
     const showIcon = !isNullOrUndef(option.title)
+    
+    // 从 localStorage 获取当前语言，或者使用默认值
+    const currentLang = localStorage.getItem('locale') || 'cn'
+    const positiveText = currentLang === 'en' ? 'Confirm' : '确定'
+    const negativeText = currentLang === 'en' ? 'Cancel' : '取消'
+    
     return NDialog[option.type || 'warning']({
       showIcon,
-      positiveText: '确定',
-      negativeText: '取消',
+      positiveText: option.positiveText || positiveText,
+      negativeText: option.negativeText || negativeText,
       onPositiveClick: option.confirm,
       onNegativeClick: option.cancel,
       onMaskClick: option.cancel,
