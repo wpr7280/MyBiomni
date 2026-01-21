@@ -15,11 +15,13 @@
 <script setup>
 import { usePermissionStore, useAppStore } from '@/store'
 import { renderCustomIcon, renderIcon, isExternal } from '@/utils'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const curRoute = useRoute()
 const permissionStore = usePermissionStore()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 const activeKey = computed(() => curRoute.meta?.activeMenu || curRoute.name)
 
@@ -45,8 +47,9 @@ function resolvePath(basePath, path) {
 }
 
 function getMenuItem(route, basePath = '') {
+  const title = (route.meta && route.meta.title) || route.name
   let menuItem = {
-    label: (route.meta && route.meta.title) || route.name,
+    label: title.startsWith('menu.') ? t(title) : title,
     key: route.name,
     path: resolvePath(basePath, route.path),
     icon: getIcon(route.meta),
@@ -62,9 +65,10 @@ function getMenuItem(route, basePath = '') {
   if (visibleChildren.length === 1) {
     // 单个子路由处理
     const singleRoute = visibleChildren[0]
+    const singleTitle = singleRoute.meta?.title || singleRoute.name
     menuItem = {
       ...menuItem,
-      label: singleRoute.meta?.title || singleRoute.name,
+      label: singleTitle.startsWith('menu.') ? t(singleTitle) : singleTitle,
       key: singleRoute.name,
       path: resolvePath(menuItem.path, singleRoute.path),
       icon: getIcon(singleRoute.meta),

@@ -332,6 +332,18 @@
       }
     }
   },
+  "menu": {
+    "workbench": "Workbench",
+    "system_management": "System Management",
+    "user_management": "User Management",
+    "conversation_records": "Conversation Records",
+    "system_config": "System Configuration",
+    "model_config": "Model Configuration",
+    "commercial_mode": "Commercial Mode",
+    "system_settings": "System Settings",
+    "my_conversations": "My Conversations",
+    "knowledge_base": "Knowledge Base"
+  },
   "teams": {
     "label_team_management": "Team Management",
     "label_team_name": "Team Name",
@@ -655,12 +667,8 @@
     "agreement": "User Agreement"
   },
   "footer": {
-    "copyright": "© 2024 AI Infra Sandbox Platform · Focused on AI Infrastructure Services",
+    "copyright": "© 2025 Biomni · AI-Powered Biomedical Assistant",
     "privacy_policy": "Privacy Policy",
-    "user_agreement": "User Agreement",
-    "contact_us": "Contact Us",
-    "legal_info": "Legal Information",
-    "icp_info": "ICP Information",
-    "icp_number": "沪ICP备2024000000号-1"
+    "user_agreement": "User Agreement"
   }
 }

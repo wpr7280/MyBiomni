@@ -6,16 +6,23 @@
       @click="handleBreadClick(item.path)"
     >
       <component :is="getIcon(item.meta)" />
-      {{ item.meta.title }}
+      {{ getTitle(item.meta.title) }}
     </n-breadcrumb-item>
   </n-breadcrumb>
 </template>
 
 <script setup>
 import { renderCustomIcon, renderIcon } from '@/utils'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
+
+function getTitle(title) {
+  if (!title) return ''
+  return title.startsWith('menu.') ? t(title) : title
+}
 
 function handleBreadClick(path) {
   if (path === route.path) return

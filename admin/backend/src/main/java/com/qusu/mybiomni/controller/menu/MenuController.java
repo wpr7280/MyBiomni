@@ -51,27 +51,25 @@ public class MenuController {
 //        adminMenuList.add(knowhow);
 
         // 4. 系统管理（仅管理员）
-        BaseMenu system = menu(10, "系统管理", "/system", MenuType.CATALOG,
+        BaseMenu system = menu(10, "menu.system_management", "/system", MenuType.CATALOG,
                 "carbon:gui-management", 10, 0,
                 "Layout", false, false, "/system/users");
 
         system.setChildren(List.of(
-                child(11, "用户管理", "users", 1, system, "material-symbols:person-outline", "/system/users"),
-//                child(12, "配额管理", "quota", 2, system, "material-symbols:data-usage-outline", "/system/quota"),
-                child(13, "对话记录", "conversations-admin", 3, system, "material-symbols:history", "/system/conversations")
-//                child(14, "文档管理", "knowhow-admin", 4, system, "material-symbols:library-books-outline", "/system/knowhow")
+                child(11, "menu.user_management", "users", 1, system, "material-symbols:person-outline", "/system/users"),
+                child(13, "menu.conversation_records", "conversations-admin", 3, system, "material-symbols:history", "/system/conversations")
         ));
         adminMenuList.add(system);
 
         // 5. 系统配置（仅管理员）
-        BaseMenu config = menu(20, "系统配置", "/config", MenuType.CATALOG,
+        BaseMenu config = menu(20, "menu.system_config", "/config", MenuType.CATALOG,
                 "material-symbols:settings-outline", 20, 0,
                 "Layout", false, false, "/config/model");
 
         config.setChildren(List.of(
-                child(21, "模型配置", "model", 1, config, "material-symbols:psychology-outline", "/config/model"),
-                child(22, "商用模式", "commercial", 2, config, "material-symbols:business-center-outline", "/config/commercial"),
-                child(23, "系统设置", "system", 3, config, "material-symbols:tune-outline", "/config/system")
+                child(21, "menu.model_config", "model", 1, config, "material-symbols:psychology-outline", "/config/model"),
+                child(22, "menu.commercial_mode", "commercial", 2, config, "material-symbols:business-center-outline", "/config/commercial")
+//                child(23, "menu.system_settings", "system", 3, config, "material-symbols:tune-outline", "/config/system")
         ));
         adminMenuList.add(config);
 
@@ -81,7 +79,7 @@ public class MenuController {
         List<BaseMenu> userMenuList = new ArrayList<>();
 
         // 1. 工作台
-        userMenuList.add(menu(1, "工作台", "/workbench", MenuType.MENU,
+        userMenuList.add(menu(1, "menu.workbench", "/workbench", MenuType.MENU,
                 "material-symbols:dashboard-outline", 1, 0,
                 "/workbench", false, true, null));
 

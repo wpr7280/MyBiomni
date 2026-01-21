@@ -259,6 +259,18 @@
       }
     }
   },
+  "menu": {
+    "workbench": "工作台",
+    "system_management": "系统管理",
+    "user_management": "用户管理",
+    "conversation_records": "对话记录",
+    "system_config": "系统配置",
+    "model_config": "模型配置",
+    "commercial_mode": "商用模式",
+    "system_settings": "系统设置",
+    "my_conversations": "我的对话",
+    "knowledge_base": "知识库"
+  },
   "common": {
     "text": {
       "update_success": "修改成功"

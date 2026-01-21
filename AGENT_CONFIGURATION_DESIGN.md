@@ -244,7 +244,7 @@ class AgentService:
 CREATE TABLE `system_config` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT '配置ID',
   `config_key` VARCHAR(100) NOT NULL COMMENT '配置键',
-  `config_value` TEXT COMMENT '配置值',
+  `config_value` VARCHAR(10000) COMMENT '配置值',
   `config_type` VARCHAR(20) NOT NULL DEFAULT 'string' COMMENT '配置类型: string, int, float, bool, json',
   `description` VARCHAR(500) COMMENT '配置说明',
   `is_sensitive` INT NOT NULL DEFAULT 0 COMMENT '是否敏感: 0-否, 1-是',

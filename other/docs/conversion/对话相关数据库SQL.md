@@ -1,9 +1,9 @@
 # 对话相关数据库 SQL（精简版）
 
-## 1. 对话表 (conversation) - 精简版
+## 1. 对话表 (conversations) - 精简版
 
 ```sql
-CREATE TABLE `conversation` (
+CREATE TABLE `conversations` (
   `id` INT NOT NULL AUTO_INCREMENT COMMENT '对话ID',
   `user_id` INT NOT NULL COMMENT '用户ID（关联 admin 表）',
   `title` VARCHAR(255) NOT NULL COMMENT '对话标题',
@@ -44,9 +44,7 @@ CREATE TABLE `messages` (
   `input_tokens` INT DEFAULT 0 COMMENT '输入Token数',
   `output_tokens` INT DEFAULT 0 COMMENT '输出Token数',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_messages_conversation_created` (`conversation_id`, `created_at` ASC),
-  CONSTRAINT `fk_messages_conversations` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='消息表';
 ```
 
@@ -79,11 +77,7 @@ CREATE TABLE `execution_steps` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_steps_conversation` (`conversation_id`),
-  KEY `idx_steps_message` (`message_id`),
-  KEY `idx_steps_order` (`conversation_id`, `step_order`),
-  KEY `idx_steps_status` (`status`),
-  CONSTRAINT `fk_steps_conversations` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_steps_messages` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE CASCADE
+  KEY `idx_steps_message` (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='执行步骤表';
 ```
 
