@@ -1,3 +1,4 @@
+other/record/*
 .gitignore
 .buildplan
 .env
@@ -232,3 +233,5 @@ data/ddinter_raw/
 # Sphinx build
 /docs/build/
 /docs/source/api/
+biomni.pem
+admin/frontend/src/biomni.pem

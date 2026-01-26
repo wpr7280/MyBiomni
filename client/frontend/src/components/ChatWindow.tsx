@@ -23,7 +23,7 @@ const exampleQuestions = [
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const { t } = useTranslation();
   const { messages, setMessages, executionSteps, setExecutionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
-  const [rightPanelWidth, setRightPanelWidth] = useState(420);
+  const [rightPanelWidth, setRightPanelWidth] = useState(750);  // Executor 默认更宽
   const [isDragging, setIsDragging] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -75,7 +75,20 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
         content,
         createdAt: new Date().toISOString(),
       };
+      
+      // 添加用户消息
       setMessages((prev) => [...prev, userMessage]);
+      
+      // 添加临时的"正在思考"消息
+      const thinkingMessage = {
+        id: Date.now() + 1,
+        conversationId,
+        role: 'assistant' as const,
+        content: '🤔 Thinking...',
+        createdAt: new Date().toISOString(),
+        isTemporary: true,  // 标记为临时消息
+      };
+      setMessages((prev) => [...prev, thinkingMessage]);
       
       // 直接通过 WebSocket 发送给 Python Agent
       // Python 会负责：保存用户消息、执行 Agent、保存 AI 消息
@@ -97,8 +110,9 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging || !containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
-      const newWidth = containerRect.right - e.clientX;
-      if (newWidth >= 300 && newWidth <= 600) setRightPanelWidth(newWidth);
+      const newWidth = containerRect.right - e.clientX;  // 从右边计算
+      // 调整范围：400-800
+      if (newWidth >= 400 && newWidth <= 800) setRightPanelWidth(newWidth);
     };
     const handleMouseUp = () => setIsDragging(false);
     if (isDragging) {
@@ -119,6 +133,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   return (
     <div ref={containerRef} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#f8f9fa' }}>
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', gap: 1 }}>
+        {/* 左侧 Chat 面板 */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
           <div style={{ flex: 1, overflow: 'auto', padding: '24px 32px' }}>
             {messages.length === 0 ? (
@@ -142,6 +157,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           </div>
         </div>
 
+        {/* 拖动分隔条 */}
         <div
           onMouseDown={handleMouseDown}
           style={{ width: 5, cursor: 'col-resize', background: isDragging ? '#1890ff' : '#e0e0e0', transition: 'all 0.2s' }}
@@ -149,6 +165,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           onMouseLeave={(e) => !isDragging && (e.currentTarget.style.background = '#e0e0e0')}
         />
 
+        {/* 右侧 Executor 面板 */}
         <div style={{ width: rightPanelWidth, background: '#fff', overflow: 'hidden' }}>
           <ExecutionPanel steps={executionSteps} />
         </div>

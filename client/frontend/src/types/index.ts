@@ -42,6 +42,11 @@ export interface ExecutionStep {
   toolName?: string;
   toolInput?: any;
   toolOutput?: string;
+  images?: Array<{
+    filename: string;
+    data: string;  // base64 data URL
+    path: string;
+  }>;
   status: 'running' | 'success' | 'failed';
   errorMessage?: string;
   durationMs: number;

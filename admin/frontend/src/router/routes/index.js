@@ -116,25 +116,6 @@ export const basicRoutes = [
       title: '登录页',
     },
   },
-  {
-    name: 'Register',
-    path: '/register',
-    component: () => import('@/views/login/register.vue'),
-    isHidden: true,
-    meta: {
-      title: '注册页',
-    },
-  },
-  {
-    name: 'Callback',
-    path: '/callback',
-    component: () => import('@/views/login/callback.vue'),
-    isHidden: true,
-    meta: {
-      title: '第三方登录回调页面',
-    },
-  },
-
 ]
 
 export const NOT_FOUND_ROUTE = {

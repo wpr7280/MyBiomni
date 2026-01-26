@@ -50,22 +50,33 @@ class AgentService:
             else:
                 print(f"⚠ 配置已变更，创建新的 Agent 实例（用户 {user_id}）")
         
+        # 在创建 A1 之前，修改 default_config 来设置 temperature
+        from biomni.config import default_config
+        if 'temperature' in config:
+            default_config.temperature = config['temperature']
+            print(f"   Temperature: {config['temperature']} (via default_config)")
+        
         # 创建新的 Agent 实例
         print(f"🔧 创建 Agent 实例（用户 {user_id}）")
+        print(f"   Path: {config.get('path', './data')}")
         print(f"   LLM: {config.get('llm', 'claude-sonnet-4-5')}")
         print(f"   Source: {config.get('source', 'Anthropic')}")
-        print(f"   Temperature: {config.get('temperature', 0.7)}")
+        print(f"   Base URL: {config.get('base_url', 'None')}")
+        print(f"   Timeout: {config.get('timeout_seconds', 600)}s")
+        print(f"   Tool Retriever: {config.get('use_tool_retriever', True)}")
+        print(f"   Commercial Mode: {config.get('commercial_mode', False)}")
         
+        # A1 只接受这些参数（temperature 通过 default_config 设置）
         agent = A1(
             path=config.get('path', './data'),
             llm=config.get('llm', 'claude-sonnet-4-5'),
-            source=config.get('source'),
-            temperature=config.get('temperature', 0.7),
-            base_url=config.get('base_url'),
-            api_key=config.get('api_key'),
-            timeout_seconds=config.get('timeout_seconds', 600),
+            source=config.get('source'),  # 可选: "OpenAI", "Anthropic", "Ollama", "Gemini", "Bedrock", "Custom"
             use_tool_retriever=config.get('use_tool_retriever', True),
-            commercial_mode=config.get('commercial_mode', False)
+            timeout_seconds=config.get('timeout_seconds', 600),
+            base_url=config.get('base_url'),  # 自定义模型服务的 URL
+            api_key=config.get('api_key'),  # API 密钥
+            commercial_mode=config.get('commercial_mode', False),  # 商业模式（排除非商业数据集）
+            expected_data_lake_files=None  # None = 自动下载所有数据
         )
         
         # 缓存实例
@@ -91,21 +102,47 @@ class AgentService:
                 usage = step.get('usage', None)
                 await callback.process_step(output, usage)
         else:
-            # 真实 A1 Agent 是同步的，需要在线程池中执行
-            loop = asyncio.get_event_loop()
+            # 真实 A1 Agent 是同步的，需要在线程中流式处理
+            import asyncio
+            import queue
+            import threading
             
-            def run_agent():
-                results = []
-                for step in agent.go_stream(query):
-                    results.append(step)
-                return results
+            # 创建队列用于线程间通信
+            step_queue = queue.Queue()
             
-            steps = await loop.run_in_executor(None, run_agent)
+            def run_agent_in_thread():
+                """在线程中运行 Agent，将步骤放入队列"""
+                try:
+                    for step in agent.go_stream(query):
+                        step_queue.put(('step', step))
+                    step_queue.put(('done', None))
+                except Exception as e:
+                    step_queue.put(('error', str(e)))
             
-            # 处理每个步骤
-            for step in steps:
-                output = step.get('output', '')
-                usage = step.get('usage', None)
-                await callback.process_step(output, usage)
+            # 启动线程
+            thread = threading.Thread(target=run_agent_in_thread, daemon=True)
+            thread.start()
+            
+            # 异步处理队列中的步骤
+            while True:
+                try:
+                    # 非阻塞获取，避免卡住事件循环
+                    msg_type, data = await asyncio.get_event_loop().run_in_executor(
+                        None, step_queue.get, True, 0.1  # 100ms 超时
+                    )
+                    
+                    if msg_type == 'step':
+                        output = data.get('output', '')
+                        usage = data.get('usage', None)
+                        await callback.process_step(output, usage)
+                    elif msg_type == 'done':
+                        break
+                    elif msg_type == 'error':
+                        raise Exception(f"Agent execution error: {data}")
+                        
+                except queue.Empty:
+                    # 队列为空，继续等待
+                    await asyncio.sleep(0.1)
+                    continue
         
         return callback.get_result()

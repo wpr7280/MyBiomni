@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import type { ExecutionStep } from '@/types';
 
@@ -20,6 +21,7 @@ interface ExecutionPanelProps {
 
 export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
   const { t } = useTranslation();
+  
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'running':
@@ -60,6 +62,161 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
   };
 
   const successCount = steps.filter((s) => s.status === 'success').length;
+
+  // 渲染代码块
+  const renderCode = (code: string, language: string = 'python') => {
+    return (
+      <SyntaxHighlighter
+        language={language}
+        style={vscDarkPlus}
+        customStyle={{
+          fontSize: 12,
+          margin: 0,
+          borderRadius: 4,
+          maxHeight: 400,
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
+    );
+  };
+
+  // 渲染步骤内容
+  const renderStepContent = (step: ExecutionStep) => {
+    // Reasoning 类型：使用 Markdown 渲染
+    if (step.stepType === 'reasoning' && step.toolOutput) {
+      return (
+        <div
+          style={{
+            padding: 12,
+            background: '#fafafa',
+            borderRadius: 4,
+            fontSize: 13,
+            lineHeight: 1.6,
+          }}
+        >
+          <ReactMarkdown
+            components={{
+              // 自定义代码块样式
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || '');
+                const language = match ? match[1] : '';
+                
+                return !inline && language ? (
+                  <SyntaxHighlighter
+                    language={language}
+                    style={vscDarkPlus}
+                    customStyle={{
+                      fontSize: 12,
+                      margin: '8px 0',
+                      borderRadius: 4,
+                    }}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code
+                    className={className}
+                    style={{
+                      background: '#f0f0f0',
+                      padding: '2px 6px',
+                      borderRadius: 3,
+                      fontSize: 12,
+                      fontFamily: 'monospace',
+                    }}
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                );
+              },
+              // 自定义列表样式
+              ul: ({ children }) => (
+                <ul style={{ marginLeft: 20, marginTop: 8, marginBottom: 8 }}>
+                  {children}
+                </ul>
+              ),
+              ol: ({ children }) => (
+                <ol style={{ marginLeft: 20, marginTop: 8, marginBottom: 8 }}>
+                  {children}
+                </ol>
+              ),
+              // 自定义标题样式
+              h1: ({ children }) => <h3 style={{ marginTop: 12, marginBottom: 8 }}>{children}</h3>,
+              h2: ({ children }) => <h4 style={{ marginTop: 10, marginBottom: 6 }}>{children}</h4>,
+              h3: ({ children }) => <h5 style={{ marginTop: 8, marginBottom: 4 }}>{children}</h5>,
+              // 自定义段落样式
+              p: ({ children }) => <p style={{ marginTop: 4, marginBottom: 4 }}>{children}</p>,
+            }}
+          >
+            {step.toolOutput}
+          </ReactMarkdown>
+        </div>
+      );
+    }
+
+    // Tool Call 类型：显示代码
+    if (step.stepType === 'tool_call' && step.toolInput) {
+      const input = typeof step.toolInput === 'string' ? JSON.parse(step.toolInput) : step.toolInput;
+      const code = input.code || '';
+      const language = input.language || 'python';
+      
+      return renderCode(code, language);
+    }
+
+    // Result 类型：显示执行结果 + 图片
+    if (step.stepType === 'result' && step.toolOutput) {
+      return (
+        <div>
+          {/* 文本输出 */}
+          <div
+            style={{
+              padding: 12,
+              background: '#f5f5f5',
+              borderRadius: 4,
+              fontSize: 12,
+              maxHeight: 400,
+              overflow: 'auto',
+              fontFamily: 'monospace',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+            }}
+          >
+            {step.toolOutput}
+          </div>
+          
+          {/* 图片展示 */}
+          {step.images && step.images.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 8 }}>
+                🖼️ Generated Images:
+              </Text>
+              {step.images.map((img, idx) => (
+                <div key={idx} style={{ marginBottom: 12 }}>
+                  <Text type="secondary" style={{ fontSize: 11, display: 'block', marginBottom: 4 }}>
+                    {img.filename}
+                  </Text>
+                  <img
+                    src={img.data}
+                    alt={img.filename}
+                    style={{
+                      maxWidth: '100%',
+                      borderRadius: 4,
+                      border: '1px solid #e8e8e8',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => window.open(img.data, '_blank')}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div
@@ -112,186 +269,106 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                style={{
-                  background: '#fff',
-                  borderRadius: 8,
-                  padding: 16,
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                  border: '1px solid #f0f0f0',
-                  position: 'relative',
-                  transition: 'all 0.3s',
-                }}
-              >
-                {/* 步骤序号 */}
-                <div
+            {steps.map((step, index) => {
+              const content = renderStepContent(step);
+              
+              return (
+                <Collapse
+                  key={step.id}
+                  defaultActiveKey={['1']}
+                  ghost
+                  items={[
+                    {
+                      key: '1',
+                      label: (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {/* 步骤序号 */}
+                            <div
+                              style={{
+                                background: getStepBadgeColor(step.stepType),
+                                color: '#fff',
+                                width: 24,
+                                height: 24,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 12,
+                                fontWeight: 'bold',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                              }}
+                            >
+                              {index + 1}
+                            </div>
+                            {getStepIcon(step.stepType)}
+                            <Text strong style={{ fontSize: 14 }}>
+                              {step.stepName || step.stepType}
+                            </Text>
+                            {/* 时间 */}
+                            <Text type="secondary" style={{ fontSize: 11, marginLeft: 8 }}>
+                              {step.startedAt ? new Date(step.startedAt).toLocaleTimeString('zh-CN', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                              }) : '--:--:--'}
+                            </Text>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {step.durationMs > 0 && (
+                              <Badge
+                                count={`${step.durationMs}ms`}
+                                style={{
+                                  background: '#f0f0f0',
+                                  color: '#595959',
+                                  fontSize: 11,
+                                  boxShadow: 'none',
+                                }}
+                              />
+                            )}
+                            {getStatusIcon(step.status)}
+                          </div>
+                        </div>
+                      ),
+                      children: content ? (
+                        <div style={{ marginTop: 8 }}>
+                          {content}
+                          {/* 错误信息 */}
+                          {step.errorMessage && (
+                            <div
+                              style={{
+                                marginTop: 12,
+                                padding: 12,
+                                background: '#fff2f0',
+                                border: '1px solid #ffccc7',
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Text type="danger" style={{ fontSize: 12 }}>
+                                {t('execution.error', { message: step.errorMessage })}
+                              </Text>
+                            </div>
+                          )}
+                        </div>
+                      ) : null,
+                    },
+                  ]}
                   style={{
-                    position: 'absolute',
-                    top: -8,
-                    left: 16,
-                    background: getStepBadgeColor(step.stepType),
-                    color: '#fff',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    background: '#fff',
+                    borderRadius: 8,
+                    border: '1px solid #f0f0f0',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
                   }}
-                >
-                  {index + 1}
-                </div>
-
-                {/* 步骤头部 */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 12,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {getStepIcon(step.stepType)}
-                    <Text strong style={{ fontSize: 14 }}>
-                      {step.stepName || step.stepType}
-                    </Text>
-                  </div>
-                  {getStatusIcon(step.status)}
-                </div>
-
-                {/* 工具调用信息 */}
-                {step.stepType === 'tool_call' && step.toolName && (
-                  <div style={{ marginBottom: 12 }}>
-                    <Badge
-                      color="#fa8c16"
-                      text={
-                        <Text type="secondary" style={{ fontSize: 13 }}>
-                          {step.toolName}
-                        </Text>
-                      }
-                    />
-                  </div>
-                )}
-
-                {/* 工具输入/输出 */}
-                {(step.toolInput || step.toolOutput) && (
-                  <Collapse
-                    ghost
-                    size="small"
-                    items={[
-                      ...(step.toolInput
-                        ? [
-                            {
-                              key: 'input',
-                              label: (
-                                <Text type="secondary" style={{ fontSize: 12 }}>
-                                  {t('execution.input')}
-                                </Text>
-                              ),
-                              children: (
-                                <SyntaxHighlighter
-                                  language="json"
-                                  style={vscDarkPlus}
-                                  customStyle={{
-                                    fontSize: 11,
-                                    margin: 0,
-                                    borderRadius: 4,
-                                  }}
-                                >
-                                  {JSON.stringify(step.toolInput, null, 2)}
-                                </SyntaxHighlighter>
-                              ),
-                            },
-                          ]
-                        : []),
-                      ...(step.toolOutput
-                        ? [
-                            {
-                              key: 'output',
-                              label: (
-                                <Text type="secondary" style={{ fontSize: 12 }}>
-                                  {t('execution.output')}
-                                </Text>
-                              ),
-                              children: (
-                                <div
-                                  style={{
-                                    background: '#f5f5f5',
-                                    padding: 12,
-                                    borderRadius: 4,
-                                    fontSize: 12,
-                                    maxHeight: 200,
-                                    overflow: 'auto',
-                                    fontFamily: 'monospace',
-                                    whiteSpace: 'pre-wrap',
-                                    wordBreak: 'break-word',
-                                  }}
-                                >
-                                  {step.toolOutput}
-                                </div>
-                              ),
-                            },
-                          ]
-                        : []),
-                    ]}
-                  />
-                )}
-
-                {/* 错误信息 */}
-                {step.errorMessage && (
-                  <div
-                    style={{
-                      marginTop: 12,
-                      padding: 12,
-                      background: '#fff2f0',
-                      border: '1px solid #ffccc7',
-                      borderRadius: 4,
-                    }}
-                  >
-                    <Text type="danger" style={{ fontSize: 12 }}>
-                      {t('execution.error', { message: step.errorMessage })}
-                    </Text>
-                  </div>
-                )}
-
-                {/* 时间和耗时 */}
-                <div
-                  style={{
-                    marginTop: 12,
-                    paddingTop: 12,
-                    borderTop: '1px solid #f0f0f0',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text type="secondary" style={{ fontSize: 11 }}>
-                    {step.startedAt ? new Date(step.startedAt).toLocaleTimeString('zh-CN', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                    }) : '--:--:--'}
-                  </Text>
-                  {step.durationMs > 0 && (
-                    <Badge
-                      count={`${step.durationMs}ms`}
-                      style={{
-                        background: '#f0f0f0',
-                        color: '#595959',
-                        fontSize: 11,
-                        boxShadow: 'none',
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
+                />
+              );
+            })}
           </div>
         )}
       </div>
