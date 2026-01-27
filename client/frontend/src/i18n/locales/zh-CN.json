@@ -117,13 +117,16 @@
     "attachButton": "附件",
     "sendFailed": "发送消息失败",
     "waitingExecution": "请等待当前问题执行完成",
-    "exampleQuestionsTitle": "📝 Example Research Questions",
-    "exportDownload": "Export & Download",
-    "exportMarkdown": "Export as Markdown",
-    "exportPDF": "Export as PDF",
-    "weeklyQuota": "📊 Weekly: {{used}}/{{total}}",
-    "tokensExpiry": "📅 Tokens: {{date}}",
-    "uploadHint": "Click or drag files to upload"
+    "exampleQuestionsTitle": "📝 示例研究问题",
+    "exportDownload": "导出与下载",
+    "exportMarkdown": "导出为 Markdown",
+    "exportPDF": "导出为 PDF",
+    "exporting": "正在导出对话...",
+    "exportSuccess": "对话导出成功",
+    "exportFailed": "导出对话失败",
+    "weeklyQuota": "📊 本周: {{used}}/{{total}}",
+    "tokensExpiry": "📅 Token 到期: {{date}}",
+    "uploadHint": "点击或拖拽文件上传"
   },
   "execution": {
     "title": "Biomni Executor",

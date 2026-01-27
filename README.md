@@ -40,15 +40,8 @@ rsync -az --relative \
 
 rsync -az --relative \
   -e "ssh -i ./biomni.pem -o StrictHostKeyChecking=accept-new" \
-  agent/services/agent_service.py \
-  agent/services/callback.py \
-  admin/frontend/src/router/routes/index.js \
-  admin/frontend/src/views/config/model/index.vue \
-  admin/frontend/src/views/knowhow/index.vue \
-  admin/frontend/i18n/messages/cn.json \
-  admin/frontend/i18n/messages/en.json \
-  agent/biomni/config.py \
-  agent/biomni/llm.py \
+  agent/api/websocket.py \
+  client/frontend/src/hooks/useWebSocket.ts \
   ubuntu@44.222.116.143:/home/ubuntu/myBiomni/
 
 scp  -i ./biomni.pem  ubuntu@44.222.116.143:/home/ubuntu/myBiomni/agent/log5 .

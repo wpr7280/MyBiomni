@@ -126,8 +126,20 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   }, [isDragging]);
 
   const exportMenuItems: MenuProps['items'] = [
-    { key: 'markdown', label: t('chat.exportMarkdown'), icon: <ExportOutlined /> },
-    { key: 'pdf', label: t('chat.exportPDF'), icon: <DownloadOutlined /> },
+    { 
+      key: 'markdown', 
+      label: t('chat.exportMarkdown'), 
+      icon: <DownloadOutlined />,
+      onClick: async () => {
+        try {
+          antdMessage.loading({ content: t('chat.exporting'), key: 'export' });
+          await conversationApi.exportConversation(conversationId, true);
+          antdMessage.success({ content: t('chat.exportSuccess'), key: 'export', duration: 2 });
+        } catch (error: any) {
+          antdMessage.error({ content: error.message || t('chat.exportFailed'), key: 'export', duration: 3 });
+        }
+      }
+    },
   ];
 
   return (

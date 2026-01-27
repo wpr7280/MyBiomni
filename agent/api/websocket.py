@@ -180,9 +180,11 @@ async def handle_agent_execution(
             db=db,
             user_id=user_id
         )
-        callback.current_message_id = user_message.id
+        # 注意：不设置 current_message_id，让它保持为 0
+        # 执行步骤会在 get_result() 中批量更新为 assistant_message.id
         
         # 5. 执行 Agent（流式）
+        print(f"🚀 开始执行 Agent: conversation_id={conversation_id}, user_id={user_id}")
         result = await AgentService.execute_agent_stream(
             conversation_id=conversation_id,
             user_id=user_id,
@@ -190,6 +192,7 @@ async def handle_agent_execution(
             callback=callback,
             db=db
         )
+        print(f"✓ Agent 执行完成，返回结果: {result}")
         
         # 6. 通知完成
         await manager.send_message(str(conversation_id), {

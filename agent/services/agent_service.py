@@ -116,10 +116,17 @@ class AgentService:
             def run_agent_in_thread():
                 """在线程中运行 Agent，将步骤放入队列"""
                 try:
+                    print(f"🚀 Agent 线程开始执行: conversation_id={conversation_id}")
+                    step_count = 0
                     for step in agent.go_stream(query):
+                        step_count += 1
                         step_queue.put(('step', step))
+                    print(f"✓ Agent 执行完成，共 {step_count} 个步骤")
                     step_queue.put(('done', None))
                 except Exception as e:
+                    print(f"❌ Agent 线程执行失败: {e}")
+                    import traceback
+                    traceback.print_exc()
                     step_queue.put(('error', str(e)))
             
             # 启动线程
@@ -127,6 +134,9 @@ class AgentService:
             thread.start()
             
             # 异步处理队列中的步骤
+            timeout_counter = 0
+            max_timeout = 6000  # 最多等待 600 秒（10 分钟）
+            
             while True:
                 try:
                     # 非阻塞获取，避免卡住事件循环
@@ -134,18 +144,29 @@ class AgentService:
                         None, step_queue.get, True, 0.1  # 100ms 超时
                     )
                     
+                    # 重置超时计数器
+                    timeout_counter = 0
+                    
                     if msg_type == 'step':
                         output = data.get('output', '')
                         usage = data.get('usage', None)
                         await callback.process_step(output, usage)
                     elif msg_type == 'done':
+                        print("✓ Agent 执行完成，准备保存结果")
                         break
                     elif msg_type == 'error':
                         raise Exception(f"Agent execution error: {data}")
                         
                 except queue.Empty:
                     # 队列为空，继续等待
+                    timeout_counter += 1
+                    if timeout_counter >= max_timeout:
+                        print(f"⚠️ Warning: Agent 执行超时（{max_timeout * 0.1}秒），强制结束")
+                        break
                     await asyncio.sleep(0.1)
                     continue
         
-        return callback.get_result()
+        print("✓ 开始调用 callback.get_result()")
+        result = callback.get_result()
+        print(f"✓ get_result() 返回: message_id={result.get('id')}")
+        return result

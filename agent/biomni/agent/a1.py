@@ -196,7 +196,7 @@ class A1:
 
         self.llm = get_llm(
             llm,
-            stop_sequences=["</execute>"],
+            stop_sequences=["</execute>", "</solution>"],
             source=source,
             base_url=base_url,
             api_key=api_key,

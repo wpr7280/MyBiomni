@@ -315,6 +315,18 @@ class WebSocketCallback:
     
     def get_result(self):
         """获取最终结果"""
+        # ✅ 修复：如果还有未完成的 tool_call 步骤，标记为成功
+        if self.pending_tool_call_step:
+            print(f"⚠️ Warning: 检测到未完成的 tool_call 步骤，自动标记为成功")
+            self.pending_tool_call_step.status = 'success'
+            self.pending_tool_call_step.completed_at = datetime.now()
+            self.pending_tool_call_step.duration_ms = int(
+                (self.pending_tool_call_step.completed_at - self.pending_tool_call_step.started_at).total_seconds() * 1000
+            )
+            self.pending_tool_call_step.tool_output = "(No observation received)"
+            self.db.commit()
+            self.pending_tool_call_step = None
+        
         # 保存 AI 消息
         assistant_message = Message(
             conversation_id=self.conversation_id,
@@ -329,6 +341,17 @@ class WebSocketCallback:
         self.db.add(assistant_message)
         self.db.commit()
         self.db.refresh(assistant_message)
+        
+        # ✅ 修复：更新所有 execution_steps 的 message_id
+        updated_count = self.db.query(ExecutionStep).filter(
+            ExecutionStep.conversation_id == self.conversation_id,
+            ExecutionStep.message_id == 0  # 找到所有临时使用 0 的步骤
+        ).update({
+            'message_id': assistant_message.id
+        })
+        self.db.commit()
+        
+        print(f"✓ 已将 {updated_count} 个执行步骤关联到消息 ID: {assistant_message.id}")
         
         # 更新用户配额
         from models.models import UserQuota

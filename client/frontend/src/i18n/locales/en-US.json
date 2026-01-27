@@ -121,6 +121,9 @@
     "exportDownload": "Export & Download",
     "exportMarkdown": "Export as Markdown",
     "exportPDF": "Export as PDF",
+    "exporting": "Exporting conversation...",
+    "exportSuccess": "Conversation exported successfully",
+    "exportFailed": "Failed to export conversation",
     "weeklyQuota": "📊 Weekly: {{used}}/{{total}}",
     "tokensExpiry": "📅 Tokens: {{date}}",
     "uploadHint": "Click or drag files to upload"

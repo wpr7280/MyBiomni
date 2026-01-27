@@ -128,4 +128,42 @@ export const conversationApi = {
     );
     return response.data.data;
   },
+
+  /**
+   * 导出对话为 Markdown
+   */
+  async exportConversation(conversationId: number, includeImages = true): Promise<void> {
+    // 如果启用 Mock，模拟下载
+    if (USE_MOCK) {
+      console.log('Mock: Exporting conversation', conversationId);
+      // 创建一个模拟的 Markdown 文件
+      const mockContent = `# Conversation ${conversationId}\n\nThis is a mock export.`;
+      const blob = new Blob([mockContent], { type: 'text/markdown' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `conversation_${conversationId}.md`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      return;
+    }
+
+    // 发送导出请求，后端返回文件流
+    const response = await apiClient.post(
+      '/api/conversations/export',
+      { conversationId, includeImages },
+      { responseType: 'blob' }  // 重要：告诉 axios 响应是二进制数据
+    );
+
+    // 创建下载链接
+    const blob = new Blob([response.data], { type: 'text/markdown' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversation_${conversationId}_${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  },
 };
