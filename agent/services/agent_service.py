@@ -50,11 +50,14 @@ class AgentService:
             else:
                 print(f"⚠ 配置已变更，创建新的 Agent 实例（用户 {user_id}）")
         
-        # 在创建 A1 之前，修改 default_config 来设置 temperature
+        # 在创建 A1 之前，修改 default_config 来设置 temperature 和 max_tokens
         from biomni.config import default_config
         if 'temperature' in config:
             default_config.temperature = config['temperature']
             print(f"   Temperature: {config['temperature']} (via default_config)")
+        if 'max_tokens' in config:
+            default_config.max_tokens = config['max_tokens']
+            print(f"   Max Tokens: {config['max_tokens']} (via default_config)")
         
         # 创建新的 Agent 实例
         print(f"🔧 创建 Agent 实例（用户 {user_id}）")

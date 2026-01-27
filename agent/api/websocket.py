@@ -199,17 +199,35 @@ async def handle_agent_execution(
         
     except Exception as e:
         error_msg = str(e)
-        print(f"Agent 执行失败: {error_msg}")
+        print(f"❌ Agent 执行失败: {error_msg}")
         import traceback
         traceback.print_exc()
         
-        # 检查是否是 API Key 相关错误
-        if 'api' in error_msg.lower() and 'key' in error_msg.lower():
-            error_msg = f'LLM API Key 配置错误：{error_msg}。请联系管理员检查配置'
-        elif 'anthropic' in error_msg.lower() or 'openai' in error_msg.lower():
-            error_msg = f'LLM 服务连接失败：{error_msg}。请联系管理员检查配置'
+        # 友好的错误消息
+        user_friendly_error = error_msg
         
+        # 检查常见错误类型
+        if 'Read timeout' in error_msg or 'ReadTimeoutError' in error_msg:
+            user_friendly_error = '⏱️ LLM 服务响应超时。请稍后重试，或联系管理员增加超时时间。'
+        elif 'api' in error_msg.lower() and 'key' in error_msg.lower():
+            user_friendly_error = '🔑 LLM API Key 配置错误。请联系管理员检查配置。'
+        elif 'bedrock' in error_msg.lower():
+            if 'timeout' in error_msg.lower():
+                user_friendly_error = '⏱️ AWS Bedrock 服务响应超时。请稍后重试。'
+            elif 'credentials' in error_msg.lower() or 'access' in error_msg.lower():
+                user_friendly_error = '🔑 AWS Bedrock 认证失败。请联系管理员检查 AWS 凭证配置。'
+            else:
+                user_friendly_error = f'☁️ AWS Bedrock 服务错误：{error_msg[:200]}'
+        elif 'anthropic' in error_msg.lower():
+            user_friendly_error = '🤖 Anthropic API 连接失败。请联系管理员检查配置。'
+        elif 'openai' in error_msg.lower():
+            user_friendly_error = '🤖 OpenAI API 连接失败。请联系管理员检查配置。'
+        elif 'connection' in error_msg.lower():
+            user_friendly_error = '🌐 网络连接失败。请检查网络连接或稍后重试。'
+        
+        # 发送错误消息到前端
         await manager.send_message(str(conversation_id), {
             'type': 'execution_error',
-            'error': error_msg
+            'error': user_friendly_error,
+            'technical_details': error_msg[:500]  # 提供技术细节供调试
         })

@@ -31,8 +31,12 @@ export function useWebSocket(conversationId: number | null) {
 
     // 判断是否使用 Mock WebSocket
     const ws = shouldUseMockWebSocket() ? new MockWebSocket(url) : new WebSocket(url);
+    
+    // 标记连接是否成功过
+    let hasConnected = false;
 
     ws.addEventListener('open', () => {
+      hasConnected = true;
       console.log('✅ WebSocket 连接成功:', {
         url: url.replace(/token=[^&]+/, 'token=***'),
         readyState: ws.readyState,
@@ -93,7 +97,26 @@ export function useWebSocket(conversationId: number | null) {
             setIsExecuting(false);
             // 移除临时消息
             setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
-            antdMessage.error(data.error || '执行失败');
+            
+            // 显示错误消息
+            const errorMessage = data.error || '执行失败';
+            const technicalDetails = data.technical_details;
+            
+            // 在聊天窗口显示错误消息
+            const errorBubble = {
+              id: Date.now(),
+              conversationId: conversationId!,
+              role: 'assistant' as const,
+              content: `❌ **执行失败**\n\n${errorMessage}${technicalDetails ? `\n\n<details>\n<summary>技术详情</summary>\n\n\`\`\`\n${technicalDetails}\n\`\`\`\n</details>` : ''}`,
+              createdAt: new Date().toISOString(),
+            };
+            setMessages((prev) => [...prev, errorBubble]);
+            
+            // 同时显示通知
+            antdMessage.error({
+              content: errorMessage,
+              duration: 8,
+            });
             break;
 
           case 'config_error':
@@ -129,13 +152,7 @@ export function useWebSocket(conversationId: number | null) {
         timestamp: new Date().toISOString(),
       });
       
-      // 显示详细错误信息
-      const errorMsg = `WebSocket 连接失败: ${wsUrl}/ws/chat/${conversationId}`;
-      console.error(errorMsg);
-      antdMessage.error({
-        content: 'WebSocket 连接失败，请检查网络或后端服务',
-        duration: 5,
-      });
+      // 不立即显示错误，等待 close 事件判断
     });
 
     ws.addEventListener('close', (event: any) => {
@@ -147,11 +164,24 @@ export function useWebSocket(conversationId: number | null) {
         timestamp: new Date().toISOString(),
       });
       
-      // 显示关闭原因
-      if (event.code !== 1000) {
-        console.error('WebSocket 异常关闭:', {
+      // 只有在从未成功连接过，且是异常关闭时才显示错误
+      if (!hasConnected && event.code !== 1000) {
+        console.error('WebSocket 连接失败:', {
           code: event.code,
           reason: event.reason || '未知原因',
+        });
+        
+        // 显示用户友好的错误信息
+        let errorMessage = 'WebSocket 连接失败';
+        if (event.code === 1006) {
+          errorMessage = 'WebSocket 连接失败：无法连接到服务器';
+        } else if (event.code === 1002) {
+          errorMessage = 'WebSocket 连接失败：认证失败';
+        }
+        
+        antdMessage.error({
+          content: errorMessage,
+          duration: 5,
         });
       }
       

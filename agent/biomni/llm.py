@@ -17,6 +17,7 @@ def get_llm(
     source: SourceType | None = None,
     base_url: str | None = None,
     api_key: str | None = None,
+    max_tokens: int | None = None,
     config: Optional["BiomniConfig"] = None,
 ) -> BaseChatModel:
     """
@@ -30,6 +31,7 @@ def get_llm(
                       If None, will attempt to auto-detect from model name
         base_url (str): The base URL for custom model serving (e.g., "http://localhost:8000/v1"), default is None
         api_key (str): The API key for the custom llm
+        max_tokens (int): Maximum number of tokens to generate
         config (BiomniConfig): Optional configuration object. If provided, unspecified parameters will use config values
     """
     # Use config values for any unspecified parameters
@@ -44,6 +46,8 @@ def get_llm(
             base_url = config.base_url
         if api_key is None:
             api_key = config.api_key or "EMPTY"
+        if max_tokens is None:
+            max_tokens = getattr(config, 'max_tokens', None)
 
     # Use defaults if still not specified
     if model is None:
@@ -52,6 +56,8 @@ def get_llm(
         temperature = 0.7
     if api_key is None:
         api_key = "EMPTY"
+    if max_tokens is None:
+        max_tokens = 8192  # 默认 8192
     # Auto-detect source from model name if not specified
     if source is None:
         env_source = os.getenv("LLM_SOURCE")
@@ -184,7 +190,7 @@ def get_llm(
         return ChatAnthropic(
             model=model,
             temperature=temperature,
-            max_tokens=8192,
+            max_tokens=max_tokens,
             stop_sequences=stop_sequences,
         )
 
@@ -246,6 +252,7 @@ def get_llm(
         return ChatBedrock(
             model=model,
             temperature=temperature,
+            max_tokens=max_tokens,
             stop_sequences=stop_sequences,
             region_name=os.getenv("AWS_REGION", "us-east-1"),
         )
@@ -262,7 +269,7 @@ def get_llm(
         llm = ChatOpenAI(
             model=model,
             temperature=temperature,
-            max_tokens=8192,
+            max_tokens=max_tokens,
             stop_sequences=stop_sequences,
             base_url=base_url,
             api_key=api_key,

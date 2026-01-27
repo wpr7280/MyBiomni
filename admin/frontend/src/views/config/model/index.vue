@@ -16,6 +16,7 @@ const configForm = ref({
   'agent.llm': 'claude-sonnet-4-5',
   'agent.source': 'Anthropic',
   'agent.temperature': '0.7',
+  'agent.max_tokens': '8192',
   'agent.timeout_seconds': '600',
   'agent.use_tool_retriever': 'true',
   'agent.commercial_mode': 'false',
@@ -138,6 +139,10 @@ async function loadConfigs() {
       if (configForm.value['agent.temperature']) {
         configForm.value['agent.temperature'] = parseFloat(configForm.value['agent.temperature'])
       }
+      // 确保 max_tokens 是数字类型
+      if (configForm.value['agent.max_tokens']) {
+        configForm.value['agent.max_tokens'] = parseInt(configForm.value['agent.max_tokens'])
+      }
       // 确保超时时间是数字类型
       if (configForm.value['agent.timeout_seconds']) {
         configForm.value['agent.timeout_seconds'] = parseInt(configForm.value['agent.timeout_seconds'])
@@ -157,6 +162,7 @@ async function saveConfigs() {
     // 转换数字类型为字符串
     const configsToSave = { ...configForm.value }
     configsToSave['agent.temperature'] = String(configsToSave['agent.temperature'])
+    configsToSave['agent.max_tokens'] = String(configsToSave['agent.max_tokens'])
     configsToSave['agent.timeout_seconds'] = String(configsToSave['agent.timeout_seconds'])
     
     await api.batchUpdateConfig({ configs: configsToSave })
@@ -267,6 +273,20 @@ onMounted(() => {
                     style="flex: 1;"
                   />
                   <span style="font-size: 12px; color: #999;">{{ t('views.config.model.text_temperature_hint') }}</span>
+                </div>
+              </NFormItem>
+
+              <NFormItem :label="t('views.config.model.label_max_tokens')">
+                <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                  <NInputNumber 
+                    v-model:value="configForm['agent.max_tokens']" 
+                    :min="1024"
+                    :max="200000"
+                    :step="1024"
+                    :default-value="8192"
+                    style="flex: 1;"
+                  />
+                  <span style="font-size: 12px; color: #999;">{{ t('views.config.model.text_max_tokens_hint') }}</span>
                 </div>
               </NFormItem>
             </div>
@@ -428,6 +448,7 @@ onMounted(() => {
                   llm: configForm['agent.llm'],
                   source: configForm['agent.source'],
                   temperature: parseFloat(configForm['agent.temperature']),
+                  max_tokens: parseInt(configForm['agent.max_tokens']),
                   timeout_seconds: parseInt(configForm['agent.timeout_seconds']),
                   use_tool_retriever: configForm['agent.use_tool_retriever'] === 'true',
                   commercial_mode: configForm['agent.commercial_mode'] === 'true',

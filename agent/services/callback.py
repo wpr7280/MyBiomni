@@ -27,6 +27,11 @@ class WebSocketCallback:
         if usage:
             self.total_input_tokens += usage.get('input_tokens', 0)
             self.total_output_tokens += usage.get('output_tokens', 0)
+        else:
+            # 真实 Agent 没有返回 usage，使用简单估算
+            # 粗略估算：1 token ≈ 4 个字符（英文）或 1.5 个字符（中文）
+            estimated_tokens = len(output) // 3
+            self.total_output_tokens += estimated_tokens
         
         # 提取 thinking/reasoning 部分（标签之前的文本）
         tag_positions = []
@@ -42,6 +47,19 @@ class WebSocketCallback:
             if thinking:
                 self.step_order += 1
                 await self.on_reasoning(thinking)
+                # 同时累积到 final_content（可能是总结的一部分）
+                if self.final_content:
+                    self.final_content += "\n\n" + thinking
+                else:
+                    self.final_content = thinking
+        elif output.strip() and not any(tag in output for tag in ["<execute>", "<solution>", "<observation>"]):
+            # 没有任何标签的纯文本，可能是总结
+            self.step_order += 1
+            await self.on_reasoning(output.strip())
+            if self.final_content:
+                self.final_content += "\n\n" + output.strip()
+            else:
+                self.final_content = output.strip()
         
         # 检查是否包含 <execute> 标签
         execute_match = re.search(r'<execute>(.*?)</execute>', output, re.DOTALL)
@@ -69,7 +87,18 @@ class WebSocketCallback:
         # 检查是否包含 <solution> 标签
         solution_match = re.search(r'<solution>(.*?)</solution>', output, re.DOTALL)
         if solution_match:
+            # solution 标签完整，使用其中的内容作为最终答案
             self.final_content = solution_match.group(1).strip()
+            print("✓ 检测到完整的 <solution> 标签")
+        elif '<solution>' in output:
+            # solution 标签存在但未闭合，提取 <solution> 之后的所有内容
+            solution_start = output.find('<solution>')
+            incomplete_solution = output[solution_start + len('<solution>'):].strip()
+            if incomplete_solution:
+                # 如果有内容，使用它（可能是被截断的答案）
+                self.final_content = incomplete_solution
+                print("⚠️ Warning: <solution> 标签未闭合，使用部分内容")
+            # 如果 <solution> 后面没有内容，保持使用累积的 final_content
     
     async def on_reasoning(self, content: str):
         """推理步骤 - 显示 AI 的思考过程"""

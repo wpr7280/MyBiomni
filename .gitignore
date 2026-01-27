@@ -1,3 +1,4 @@
+log*
 other/record/*
 .gitignore
 .buildplan
