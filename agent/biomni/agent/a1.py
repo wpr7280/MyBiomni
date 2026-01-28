@@ -1816,7 +1816,9 @@ Each library is listed with its description to help you understand its functiona
 
         for s in self.app.stream(inputs, stream_mode="values", config=config):
             message = s["messages"][-1]
-            out = pretty_print(message)
+            # 🔴 关键修复：不调用 pretty_print()，避免输出到 stdout
+            # out = pretty_print(message)
+            out = pretty_print(message, printout=False)  # 不打印，只返回格式化的字符串
             self.log.append(out)
             final_state = s  # Store the latest state
 

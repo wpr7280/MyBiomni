@@ -181,6 +181,7 @@ async def handle_agent_execution(
             user_id=user_id
         )
         # 注意：不设置 current_message_id，让它保持为 0
+        callback.current_message_id = user_message.id
         # 执行步骤会在 get_result() 中批量更新为 assistant_message.id
         
         # 5. 执行 Agent（流式）

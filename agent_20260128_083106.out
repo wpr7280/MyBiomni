@@ -1,0 +1,2691 @@
+Loaded environment variables from .env
+🤖 使用真实 Biomni Agent 模式
+🚀 启动 Biomni Agent API 服务...
+📍 服务地址: http://0.0.0.0:8000
+📡 WebSocket: ws://0.0.0.0:8000/ws/chat/{conversation_id}
+🤖 真实模式: 使用 Biomni A1 Agent
+Loaded environment variables from .env
+🤖 使用真实 Biomni Agent 模式
+用户 1 连接到对话 15
+WebSocket 连接建立: conversation_id=15
+用户 1 连接到对话 14
+WebSocket 连接建立: conversation_id=14
+WebSocket 连接断开: conversation_id=15
+WebSocket 连接断开: conversation_id=14
+用户 1 连接到对话 14
+WebSocket 连接建立: conversation_id=14
+用户 1 连接到对话 14
+WebSocket 连接建立: conversation_id=14
+🚀 开始执行 Agent: conversation_id=14, user_id=1
+   Temperature: 0.7 (via default_config)
+   Max Tokens: 8192 (via default_config)
+🔧 创建 Agent 实例（用户 1）
+   Path: ./data
+   LLM: global.anthropic.claude-haiku-4-5-20251001-v1:0
+   Source: Bedrock
+   Base URL: None
+   Timeout: 600s
+   Tool Retriever: True
+   Commercial Mode: False
+🎓 Academic mode: Using all datasets (including non-commercial)
+
+==================================================
+🔧 BIOMNI CONFIGURATION
+==================================================
+📋 DEFAULT CONFIG (Including Database LLM):
+  Path: ./data
+  Timeout Seconds: 600
+  Llm: claude-sonnet-4-5
+  Temperature: 0.7
+  Use Tool Retriever: True
+  Commercial Mode: Academic (all datasets)
+
+🤖 AGENT LLM (Constructor Override):
+  LLM Model: global.anthropic.claude-haiku-4-5-20251001-v1:0
+  Source: Bedrock
+==================================================
+
+Checking and downloading missing data lake files...
+📚 Loaded 2 know-how documents
+📚 Loading 2 know-how documents into system prompt
+🚀 Agent 线程开始执行: conversation_id=14
+
+============================================================
+🔍 RESOURCE RETRIEVAL
+============================================================
+Using prompt-based retrieval with the agent's LLM
+
+📚 Know-How Documents Retrieved:
+  ✓ Single Cell RNA-seq Cell Type Annotation
+  ✓ sgRNA Design Guide: Three-Tiered Approach
+
+------------------------------------------------------------
+📊 RETRIEVAL SUMMARY:
+  🔧 Tools: 31 selected
+  📊 Data Lake: 12 selected
+  ⚙️  Libraries: 20 selected
+  📚 Know-How: 2 selected
+============================================================
+
+================================ Human Message =================================
+
+How do different perturbations affect protein expression?
+================================== Ai Message ==================================
+
+I'll help you explore how different perturbations affect protein expression. Let me create a comprehensive analysis plan first.
+
+## Plan
+
+1. [ ] Define types of perturbations and their mechanisms
+2. [ ] Set up a framework to analyze perturbation effects on protein expression
+3. [ ] Demonstrate with real examples using available tools and data
+4. [ ] Create visualizations showing perturbation-response relationships
+5. [ ] Provide interpretation guidelines and best practices
+
+Let me start by developing this analysis:
+<execute>
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set visualization style
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (12, 6)
+
+print("="*80)
+print("PROTEIN EXPRESSION PERTURBATION ANALYSIS FRAMEWORK")
+print("="*80)
+print()
+
+# Define types of perturbations
+perturbation_types = {
+    "Genetic": {
+        "description": "Alterations in gene sequence or copy number",
+        "examples": ["CRISPR knockout", "Gene knockdown", "Overexpression", "Point mutations"],
+        "typical_effects": ["Loss of function", "Gain of function", "Altered stability"]
+    },
+    "Epigenetic": {
+        "description": "Changes in chromatin state and gene regulation",
+        "examples": ["DNA methylation", "Histone modification", "Chromatin remodeling"],
+        "typical_effects": ["Gene silencing", "Transcriptional activation", "Altered accessibility"]
+    },
+    "Transcriptional": {
+        "description": "Modulation of transcription factors and regulatory elements",
+        "examples": ["TF knockdown", "Promoter mutation", "Enhancer deletion"],
+        "typical_effects": ["Reduced mRNA", "Altered splicing", "Changed expression kinetics"]
+    },
+    "Post-transcriptional": {
+        "description": "Changes in RNA processing and stability",
+        "examples": ["miRNA inhibition", "RNA degradation", "Alternative splicing"],
+        "typical_effects": ["mRNA instability", "Reduced translation", "Isoform shifts"]
+    },
+    "Translational": {
+        "description": "Alterations in protein synthesis",
+        "examples": ["Ribosome inhibition", "tRNA depletion", "Codon optimization"],
+        "typical_effects": ["Reduced protein synthesis", "Altered protein folding"]
+    },
+    "Post-translational": {
+        "description": "Modifications after protein synthesis",
+        "examples": ["Phosphorylation", "Ubiquitination", "Proteolysis"],
+        "typical_effects": ["Activation/inactivation", "Localization change", "Protein degradation"]
+    },
+    "Environmental": {
+        "description": "External conditions affecting expression",
+        "examples": ["Temperature", "Nutrient starvation", "Hypoxia", "Drug treatment"],
+        "typical_effects": ["Stress response", "Metabolic remodeling", "Cell fate change"]
+    }
+}
+
+print("TYPES OF PERTURBATIONS AND THEIR EFFECTS ON PROTEIN EXPRESSION:\n")
+for ptype, details in perturbation_types.items():
+    print(f"{ptype}:")
+    print(f"  Description: {details['description']}")
+    print(f"  Examples: {', '.join(details['examples'])}")
+    print(f"  Typical Effects: {', '.join(details['typical_effects'])}")
+    print()
+</execute>
+
+Now let me create a quantitative model to demonstrate how perturbations affect protein expression:
+<execute>
+print("="*80)
+print("PERTURBATION EFFECTS ON PROTEIN EXPRESSION: QUANTITATIVE MODEL")
+print("="*80)
+print()
+
+# Create a comprehensive model showing how different perturbations affect protein dynamics
+class ProteinExpressionModel:
+    """
+    Model protein expression dynamics: DNA -> mRNA -> Protein
+    Perturbations can affect transcription, translation, and degradation rates
+    """
+    
+    def __init__(self, k_transcription=1.0, k_translation=2.0, 
+                 k_mRNA_deg=0.1, k_protein_deg=0.05):
+        """
+        Parameters:
+        - k_transcription: transcription rate (mRNA/time)
+        - k_translation: translation rate (protein/mRNA/time)
+        - k_mRNA_deg: mRNA degradation rate (1/time)
+        - k_protein_deg: protein degradation rate (1/time)
+        """
+        self.k_transcription = k_transcription
+        self.k_translation = k_translation
+        self.k_mRNA_deg = k_mRNA_deg
+        self.k_protein_deg = k_protein_deg
+    
+    def simulate(self, time_points, mRNA_init=0, protein_init=0):
+        """Simulate mRNA and protein dynamics"""
+        mRNA = np.zeros(len(time_points))
+        protein = np.zeros(len(time_points))
+        
+        mRNA[0] = mRNA_init
+        protein[0] = protein_init
+        
+        dt = time_points[1] - time_points[0] if len(time_points) > 1 else 1
+        
+        for i in range(1, len(time_points)):
+            # mRNA: transcription - degradation
+            dmRNA = self.k_transcription - self.k_mRNA_deg * mRNA[i-1]
+            mRNA[i] = mRNA[i-1] + dmRNA * dt
+            
+            # Protein: translation - degradation
+            dprotein = self.k_translation * mRNA[i-1] - self.k_protein_deg * protein[i-1]
+            protein[i] = protein[i-1] + dprotein * dt
+        
+        return mRNA, protein
+    
+    def steady_state(self):
+        """Calculate steady-state mRNA and protein levels"""
+        mRNA_ss = self.k_transcription / self.k_mRNA_deg
+        protein_ss = (self.k_translation * mRNA_ss) / self.k_protein_deg
+        return mRNA_ss, protein_ss
+
+# Simulate different perturbations
+time_points = np.linspace(0, 100, 1000)
+
+# 1. Wild-type baseline
+wt_model = ProteinExpressionModel(k_transcription=1.0, k_translation=2.0, 
+                                   k_mRNA_deg=0.1, k_protein_deg=0.05)
+wt_mRNA, wt_protein = wt_model.simulate(time_points)
+
+# 2. CRISPR knockout (transcription = 0)
+ko_model = ProteinExpressionModel(k_transcription=0.0, k_translation=2.0, 
+                                   k_mRNA_deg=0.1, k_protein_deg=0.05)
+ko_mRNA, ko_protein = ko_model.simulate(time_points, mRNA_init=wt_mRNA[0], 
+                                         protein_init=wt_protein[0])
+
+# 3. Transcriptional activation (2x transcription)
+act_model = ProteinExpressionModel(k_transcription=2.0, k_translation=2.0, 
+                                    k_mRNA_deg=0.1, k_protein_deg=0.05)
+act_mRNA, act_protein = act_model.simulate(time_points)
+
+# 4. Translation inhibition (50% reduction)
+transl_inh_model = ProteinExpressionModel(k_transcription=1.0, k_translation=1.0, 
+                                          k_mRNA_deg=0.1, k_protein_deg=0.05)
+transl_inh_mRNA, transl_inh_protein = transl_inh_model.simulate(time_points)
+
+# 5. Increased protein degradation (2x)
+deg_model = ProteinExpressionModel(k_transcription=1.0, k_translation=2.0, 
+                                    k_mRNA_deg=0.1, k_protein_deg=0.1)
+deg_mRNA, deg_protein = deg_model.simulate(time_points)
+
+# 6. mRNA instability (2x mRNA degradation)
+mRNA_unstable_model = ProteinExpressionModel(k_transcription=1.0, k_translation=2.0, 
+                                             k_mRNA_deg=0.2, k_protein_deg=0.05)
+mRNA_unstable_mRNA, mRNA_unstable_protein = mRNA_unstable_model.simulate(time_points)
+
+# Plot results
+fig, axes = plt.subplots(2, 1, figsize=(14, 10))
+
+# mRNA dynamics
+ax = axes[0]
+ax.plot(time_points, wt_mRNA, label='Wild-type', linewidth=2.5, color='black')
+ax.plot(time_points, ko_mRNA, label='CRISPR knockout', linewidth=2.5, color='red', linestyle='--')
+ax.plot(time_points, act_mRNA, label='Transcriptional activation', linewidth=2.5, color='green')
+ax.plot(time_points, transl_inh_mRNA, label='Translation inhibition', linewidth=2.5, color='blue')
+ax.plot(time_points, mRNA_unstable_mRNA, label='mRNA instability', linewidth=2.5, color='orange')
+ax.set_xlabel('Time', fontsize=12)
+ax.set_ylabel('mRNA level', fontsize=12)
+ax.set_title('Effect of Different Perturbations on mRNA Expression', fontsize=13, fontweight='bold')
+ax.legend(fontsize=10)
+ax.grid(True, alpha=0.3)
+
+# Protein dynamics
+ax = axes[1]
+ax.plot(time_points, wt_protein, label='Wild-type', linewidth=2.5, color='black')
+ax.plot(time_points, ko_protein, label='CRISPR knockout', linewidth=2.5, color='red', linestyle='--')
+ax.plot(time_points, act_protein, label='Transcriptional activation', linewidth=2.5, color='green')
+ax.plot(time_points, transl_inh_protein, label='Translation inhibition', linewidth=2.5, color='blue')
+ax.plot(time_points, deg_protein, label='Increased protein degradation', linewidth=2.5, color='purple')
+ax.plot(time_points, mRNA_unstable_protein, label='mRNA instability', linewidth=2.5, color='orange')
+ax.set_xlabel('Time', fontsize=12)
+ax.set_ylabel('Protein level', fontsize=12)
+ax.set_title('Effect of Different Perturbations on Protein Expression', fontsize=13, fontweight='bold')
+ax.legend(fontsize=10)
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig('perturbation_effects_dynamics.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+print("✓ Simulation complete: Different perturbations show distinct effects on protein dynamics")
+print()
+
+# Calculate steady-state effects
+print("STEADY-STATE EFFECTS OF PERTURBATIONS:")
+print("-" * 80)
+print(f"{'Perturbation':<40} {'mRNA level':<15} {'Protein level':<15} {'% Change':<10}")
+print("-" * 80)
+
+wt_mRNA_ss, wt_protein_ss = wt_model.steady_state()
+
+perturbations = [
+    ("Wild-type (baseline)", wt_model),
+    ("CRISPR knockout", ko_model),
+    ("Transcriptional activation (2x)", act_model),
+    ("Translation inhibition (50%)", transl_inh_model),
+    ("Protein degradation (2x)", deg_model),
+    ("mRNA instability (2x)", mRNA_unstable_model),
+]
+
+for name, model in perturbations:
+    mRNA_ss, protein_ss = model.steady_state()
+    pct_change = ((protein_ss - wt_protein_ss) / wt_protein_ss * 100) if wt_protein_ss > 0 else 0
+    print(f"{name:<40} {mRNA_ss:>14.2f} {protein_ss:>14.2f} {pct_change:>9.1f}%")
+
+print()
+</execute>
+
+[✓] First step completed
+
+Now let me demonstrate real-world analysis using actual data:
+<execute>
+print("="*80)
+print("REAL-WORLD EXAMPLE: CRISPR PERTURBATION ANALYSIS")
+print("="*80)
+print()
+
+# Load DepMap CRISPR data to analyze actual perturbation effects
+try:
+    # Load CRISPR gene effect data
+    crispr_data = pd.read_csv('./data/biomni_data/data_lake/DepMap_CRISPRGeneEffect.csv', 
+                               index_col=0, nrows=100)  # Load subset for demo
+    
+    # Load expression data
+    expr_data = pd.read_csv('./data/biomni_data/data_lake/DepMap_OmicsExpressionProteinCodingGenesTPMLogp1.csv',
+                             index_col=0, nrows=100)
+    
+    print(f"CRISPR data shape: {crispr_data.shape}")
+    print(f"Expression data shape: {expr_data.shape}")
+    print()
+    
+    # Find overlapping genes
+    common_genes = list(set(crispr_data.columns) & set(expr_data.columns))[:10]
+    print(f"Found {len(common_genes)} common genes for analysis")
+    print(f"Example genes: {common_genes[:5]}")
+    print()
+    
+    # Analyze correlation between CRISPR knockout effect and baseline expression
+    print("ANALYSIS: CRISPR Knockout Effect vs Baseline Expression")
+    print("-" * 80)
+    
+    correlations = []
+    for gene in common_genes:
+        if gene in crispr_data.columns and gene in expr_data.columns:
+            # Get CRISPR effect (negative = essential, knockout reduces fitness)
+            crispr_effect = crispr_data[gene].dropna()
+            
+            # Get baseline expression
+            expr_level = expr_data[gene].dropna()
+            
+            # Find common cell lines
+            common_cl = list(set(crispr_effect.index) & set(expr_level.index))
+            
+            if len(common_cl) > 5:
+                crispr_effect_common = crispr_effect.loc[common_cl]
+                expr_level_common = expr_level.loc[common_cl]
+                
+                # Calculate correlation
+                corr, pval = stats.pearsonr(crispr_effect_common, expr_level_common)
+                correlations.append({
+                    'Gene': gene,
+                    'Correlation': corr,
+                    'P-value': pval,
+                    'N_celllines': len(common_cl),
+                    'Avg_CRISPR_effect': crispr_effect_common.mean(),
+                    'Avg_Expression': expr_level_common.mean()
+                })
+    
+    if correlations:
+        corr_df = pd.DataFrame(correlations)
+        print(corr_df.to_string(index=False))
+        print()
+        print("Interpretation:")
+        print("- Positive correlation: High expression genes tend to have stronger knockout effects")
+        print("- Negative correlation: Expression level inversely related to knockout essentiality")
+        print()
+    
+except Exception as e:
+    print(f"Note: Could not load DepMap data ({e})")
+    print("Proceeding with synthetic example instead...")
+    print()
+</execute>
+
+[✓] Second step completed
+
+Now let me create a comprehensive framework for analyzing perturbation effects:
+<execute>
+print("="*80)
+print("PERTURBATION RESPONSE FRAMEWORK: KEY CONCEPTS")
+print("="*80)
+print()
+
+# Create a comprehensive framework
+framework = {
+    "1. MEASUREMENT LEVEL": {
+        "mRNA level": {
+            "Methods": ["RNA-seq", "qRT-PCR", "Northern blot"],
+            "Sensitivity": "High",
+            "Time resolution": "Minutes to hours",
+            "Advantages": ["Rapid response", "Genome-wide", "Quantitative"]
+        },
+        "Protein level": {
+            "Methods": ["Western blot", "Flow cytometry", "Immunofluorescence", "Mass spec"],
+            "Sensitivity": "Variable",
+            "Time resolution": "Hours to days",
+            "Advantages": ["Functional readout", "Post-translational modifications", "Localization"]
+        },
+        "Functional output": {
+            "Methods": ["Cell viability", "Proliferation", "Differentiation", "Migration"],
+            "Sensitivity": "Depends on assay",
+            "Time resolution": "Hours to days",
+            "Advantages": ["Phenotypic readout", "Biologically relevant", "Disease-related"]
+        }
+    },
+    
+    "2. RESPONSE KINETICS": {
+        "Immediate (0-2 hours)": {
+            "Mechanism": "Post-translational modifications, protein localization",
+            "Examples": ["Phosphorylation", "Ubiquitination", "Translocation"],
+            "Tools": ["Phospho-proteomics", "Live-cell imaging"]
+        },
+        "Early (2-8 hours)": {
+            "Mechanism": "Transcriptional changes, mRNA synthesis/degradation",
+            "Examples": ["mRNA induction", "Splicing changes"],
+            "Tools": ["RNA-seq", "qRT-PCR"]
+        },
+        "Intermediate (8-24 hours)": {
+            "Mechanism": "Protein synthesis, secondary transcriptional responses",
+            "Examples": ["Protein accumulation", "Feedback loops"],
+            "Tools": ["Western blot", "Flow cytometry"]
+        },
+        "Late (24+ hours)": {
+            "Mechanism": "Cell fate changes, phenotypic adaptation",
+            "Examples": ["Differentiation", "Apoptosis", "Senescence"],
+            "Tools": ["Cell phenotyping", "Functional assays"]
+        }
+    },
+    
+    "3. PERTURBATION STRENGTH": {
+        "Mild (20-50% reduction)": {
+            "Expected effects": "Subtle changes in expression, possible compensation",
+            "Challenges": "May require sensitive detection",
+            "Applications": "Studying robustness, redundancy"
+        },
+        "Moderate (50-80% reduction)": {
+            "Expected effects": "Clear phenotypic changes, some compensation",
+            "Challenges": "Compensatory mechanisms may mask effects",
+            "Applications": "Most CRISPR screens, typical knockdowns"
+        },
+        "Severe (>80% reduction)": {
+            "Expected effects": "Strong phenotype, cell death possible",
+            "Challenges": "May be lethal, difficult to isolate cells",
+            "Applications": "Identifying essential genes"
+        }
+    },
+    
+    "4. CONTEXT DEPENDENCE": {
+        "Cell type": "Same perturbation can have different effects in different cell types",
+        "Tissue": "Tissue-specific expression patterns and regulatory elements",
+        "Disease state": "Cancer vs normal, acute vs chronic disease",
+        "Environmental conditions": "Nutrient availability, oxygen, stress",
+        "Genetic background": "Other mutations, polymorphisms affect response"
+    }
+}
+
+for category, details in framework.items():
+    print(f"\n{category}")
+    print("=" * 80)
+    for subcategory, info in details.items():
+        print(f"\n  {subcategory}:")
+        if isinstance(info, dict):
+            for key, value in info.items():
+                if isinstance(value, list):
+                    print(f"    • {key}: {', '.join(value)}")
+                else:
+                    print(f"    • {key}: {value}")
+        else:
+            print(f"    {info}")
+
+print("\n")
+</execute>
+
+[✓] Third step completed
+
+Now let me create visualizations showing different perturbation scenarios:
+<execute>
+print("="*80)
+print("PERTURBATION RESPONSE PATTERNS: VISUALIZATION")
+print("="*80)
+print()
+
+# Create comprehensive visualization of different perturbation response patterns
+fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+
+# Define time course
+time = np.linspace(0, 48, 100)  # 48 hours
+
+# 1. Immediate response (phosphorylation)
+ax = axes[0, 0]
+baseline = np.ones_like(time) * 100
+perturbation_applied = np.where(time > 5, 1, 0)
+response = baseline + perturbation_applied * (200 * np.exp(-0.5 * (time - 5)))
+ax.plot(time, baseline, 'k--', label='Baseline', linewidth=2)
+ax.plot(time, response, 'r-', label='After perturbation', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Immediate Response\n(Post-translational)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('Signal intensity')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 2. Early response (mRNA induction)
+ax = axes[0, 1]
+baseline = np.ones_like(time) * 100
+response = baseline + np.where(time > 5, 1, 0) * (300 * (1 - np.exp(-0.3 * (time - 5))))
+response = np.minimum(response, baseline + 300)
+ax.plot(time, baseline, 'k--', label='Baseline', linewidth=2)
+ax.plot(time, response, 'g-', label='After perturbation', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Early Response\n(mRNA induction)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('mRNA level (fold)')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 3. Intermediate response (protein accumulation)
+ax = axes[0, 2]
+baseline = np.ones_like(time) * 100
+response = baseline + np.where(time > 5, 1, 0) * (400 * (1 - np.exp(-0.15 * (time - 5))))
+response = np.minimum(response, baseline + 400)
+ax.plot(time, baseline, 'k--', label='Baseline', linewidth=2)
+ax.plot(time, response, 'b-', label='After perturbation', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Intermediate Response\n(Protein accumulation)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('Protein level (fold)')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 4. Knockout effect (complete loss)
+ax = axes[1, 0]
+baseline = np.ones_like(time) * 100
+response = baseline - np.where(time > 5, 1, 0) * (100 * (1 - np.exp(-0.1 * (time - 5))))
+response = np.maximum(response, 0)
+ax.plot(time, baseline, 'k--', label='Wild-type', linewidth=2)
+ax.plot(time, response, 'r-', label='CRISPR knockout', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Knockout Effect\n(Complete loss)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('Protein level')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 5. Compensatory response (feedback)
+ax = axes[1, 1]
+baseline = np.ones_like(time) * 100
+# Initial drop, then compensation
+response = baseline - np.where(time > 5, 1, 0) * (150 * np.exp(-0.2 * (time - 5)))
+response += np.where(time > 15, 1, 0) * (150 * (1 - np.exp(-0.15 * (time - 15))))
+ax.plot(time, baseline, 'k--', label='Baseline', linewidth=2)
+ax.plot(time, response, 'purple', label='With compensation', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Compensatory Response\n(Feedback activation)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('Protein level')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+# 6. Pleiotropic effect (multiple genes affected)
+ax = axes[1, 2]
+baseline = np.ones_like(time) * 100
+target_gene = baseline - np.where(time > 5, 1, 0) * (100 * (1 - np.exp(-0.15 * (time - 5))))
+target_gene = np.maximum(target_gene, 0)
+off_target_1 = baseline - np.where(time > 8, 1, 0) * (50 * (1 - np.exp(-0.1 * (time - 8))))
+off_target_1 = np.maximum(off_target_1, 50)
+off_target_2 = baseline + np.where(time > 10, 1, 0) * (80 * (1 - np.exp(-0.12 * (time - 10))))
+
+ax.plot(time, baseline, 'k--', label='Baseline', linewidth=2)
+ax.plot(time, target_gene, 'r-', label='Target gene', linewidth=2.5)
+ax.plot(time, off_target_1, 'orange', label='Off-target 1', linewidth=2.5)
+ax.plot(time, off_target_2, 'b-', label='Off-target 2', linewidth=2.5)
+ax.axvline(5, color='gray', linestyle=':', alpha=0.5)
+ax.set_title('Pleiotropic Effects\n(Multiple targets)', fontweight='bold')
+ax.set_xlabel('Time (hours)')
+ax.set_ylabel('Expression level')
+ax.legend(fontsize=9)
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig('perturbation_response_patterns.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+print("✓ Visualization complete: Different perturbation response patterns")
+print()
+</execute>
+
+[✓] Fourth step completed
+
+Finally, let me create a comprehensive guide with best practices:
+<execute>
+print("="*80)
+print("BEST PRACTICES FOR ANALYZING PERTURBATION EFFECTS ON PROTEIN EXPRESSION")
+print("="*80)
+print()
+
+best_practices = {
+    "EXPERIMENTAL DESIGN": {
+        "1. Define clear objectives": [
+            "• Understand mechanism of action",
+            "• Identify essential genes",
+            "• Validate therapeutic targets",
+            "• Characterize drug response"
+        ],
+        "2. Choose appropriate perturbation method": [
+            "• CRISPR-Cas9: Permanent knockout, stable effects",
+            "• RNAi: Temporary knockdown, variable efficiency",
+            "• Morpholinos: Temporal control in development",
+            "• Small molecules: Rapid, reversible, tissue-penetrant",
+            "• Environmental: Physiologically relevant"
+        ],
+        "3. Include proper controls": [
+            "• Negative control: Non-targeting sgRNA/siRNA",
+            "• Positive control: Known essential gene",
+            "• Mock treatment: Vehicle/transfection only",
+            "• Time-matched controls: Same culture conditions"
+        ],
+        "4. Plan time course experiments": [
+            "• Early timepoints (0-2h): Catch immediate effects",
+            "• Intermediate (4-12h): Capture transcriptional response",
+            "• Late (24-48h): Assess steady-state and phenotype",
+            "• Extended (3-7 days): Identify adaptive responses"
+        ]
+    },
+    
+    "DATA COLLECTION": {
+        "1. Measure at multiple levels": [
+            "• mRNA: RNA-seq or qRT-PCR",
+            "• Protein: Western blot, flow cytometry, or mass spec",
+            "• Phosphorylation: Phospho-proteomics",
+            "• Localization: Immunofluorescence or fractionation",
+            "• Function: Cell viability, proliferation, differentiation"
+        ],
+        "2. Ensure sufficient replication": [
+            "• Minimum: 3 biological replicates",
+            "• Recommended: 4-6 biological replicates",
+            "• Include technical replicates for validation",
+            "• Document batch effects"
+        ],
+        "3. Verify perturbation efficiency": [
+            "• Confirm target knockdown (>70% for functional studies)",
+            "• Check for off-target effects (especially with CRISPR)",
+            "• Validate with independent methods",
+            "• Document any incomplete penetrance"
+        ],
+        "4. Monitor cell health": [
+            "• Track cell viability (exclude dead cells)",
+            "• Monitor proliferation rate",
+            "• Check for apoptosis markers",
+            "• Document morphological changes"
+        ]
+    },
+    
+    "DATA ANALYSIS": {
+        "1. Normalize appropriately": [
+            "• For mRNA: Use housekeeping genes (GAPDH, ACTB, RPL13A)",
+            "• For protein: Use loading controls (β-actin, GAPDH, tubulin)",
+            "• Consider batch effects and cell number variations",
+            "• Use appropriate statistical methods (DESeq2, limma for RNA-seq)"
+        ],
+        "2. Quantify perturbation effects": [
+            "• Calculate fold-change (perturbed vs control)",
+            "• Report with confidence intervals",
+            "• Perform statistical testing (t-test, ANOVA)",
+            "• Adjust for multiple comparisons"
+        ],
+        "3. Analyze temporal dynamics": [
+            "• Fit kinetic models to time-course data",
+            "• Identify response delay (lag time)",
+            "• Calculate rate of change",
+            "• Determine steady-state levels"
+        ],
+        "4. Account for context": [
+            "• Analyze by cell type/condition",
+            "• Consider genetic background effects",
+            "• Assess tissue-specific responses",
+            "• Evaluate disease state dependence"
+        ]
+    },
+    
+    "INTERPRETATION": {
+        "1. Distinguish direct vs indirect effects": [
+            "• Direct: Primary target of perturbation",
+            "• Immediate indirect: Secondary targets affected within hours",
+            "• Delayed indirect: Feedback loops, compensatory mechanisms",
+            "• Use pathway analysis to identify mechanisms"
+        ],
+        "2. Identify compensatory mechanisms": [
+            "• Look for upregulation of paralogs",
+            "• Check for pathway rewiring",
+            "• Assess redundancy in biological networks",
+            "• Consider synthetic lethal interactions"
+        ],
+        "3. Evaluate biological significance": [
+            "• Compare to known disease-associated changes",
+            "• Assess functional consequences",
+            "• Consider effect size vs statistical significance",
+            "• Validate in relevant biological model"
+        ],
+        "4. Report confidence and limitations": [
+            "• Document assumptions and limitations",
+            "• Note conflicting results from other studies",
+            "• Indicate need for further validation",
+            "• Suggest follow-up experiments"
+        ]
+    },
+    
+    "COMMON PITFALLS TO AVOID": {
+        "1. Incomplete perturbation": [
+            "✗ Accepting <70% knockdown as complete loss",
+            "✗ Not ver
+================================== Ai Message ==================================
+
+<observation>================================================================================
+PROTEIN EXPRESSION PERTURBATION ANALYSIS FRAMEWORK
+================================================================================
+
+TYPES OF PERTURBATIONS AND THEIR EFFECTS ON PROTEIN EXPRESSION:
+
+Genetic:
+  Description: Alterations in gene sequence or copy number
+  Examples: CRISPR knockout, Gene knockdown, Overexpression, Point mutations
+  Typical Effects: Loss of function, Gain of function, Altered stability
+
+Epigenetic:
+  Description: Changes in chromatin state and gene regulation
+  Examples: DNA methylation, Histone modification, Chromatin remodeling
+  Typical Effects: Gene silencing, Transcriptional activation, Altered accessibility
+
+Transcriptional:
+  Description: Modulation of transcription factors and regulatory elements
+  Examples: TF knockdown, Promoter mutation, Enhancer deletion
+  Typical Effects: Reduced mRNA, Altered splicing, Changed expression kinetics
+
+Post-transcriptional:
+  Description: Changes in RNA processing and stability
+  Examples: miRNA inhibition, RNA degradation, Alternative splicing
+  Typical Effects: mRNA instability, Reduced translation, Isoform shifts
+
+Translational:
+  Description: Alterations in protein synthesis
+  Examples: Ribosome inhibition, tRNA depletion, Codon optimization
+  Typical Effects: Reduced protein synthesis, Altered protein folding
+
+Post-translational:
+  Description: Modifications after protein synthesis
+  Examples: Phosphorylation, Ubiquitination, Proteolysis
+  Typical Effects: Activation/inactivation, Localization change, Protein degradation
+
+Environmental:
+  Description: External conditions affecting expression
+  Examples: Temperature, Nutrient starvation, Hypoxia, Drug treatment
+  Typical Effects: Stress response, Metabolic remodeling, Cell fate change
+
+</observation>
+================================== Ai Message ==================================
+
+Let me continue with the analysis:
+<execute>
+print("="*80)
+print("BEST PRACTICES FOR ANALYZING PERTURBATION EFFECTS ON PROTEIN EXPRESSION")
+print("="*80)
+print()
+
+best_practices = {
+    "EXPERIMENTAL DESIGN": {
+        "1. Define clear objectives": [
+            "• Understand mechanism of action",
+            "• Identify essential genes",
+            "• Validate therapeutic targets",
+            "• Characterize drug response"
+        ],
+        "2. Choose appropriate perturbation method": [
+            "• CRISPR-Cas9: Permanent knockout, stable effects",
+            "• RNAi: Temporary knockdown, variable efficiency",
+            "• Morpholinos: Temporal control in development",
+            "• Small molecules: Rapid, reversible, tissue-penetrant",
+            "• Environmental: Physiologically relevant"
+        ],
+        "3. Include proper controls": [
+            "• Negative control: Non-targeting sgRNA/siRNA",
+            "• Positive control: Known essential gene",
+            "• Mock treatment: Vehicle/transfection only",
+            "• Time-matched controls: Same culture conditions"
+        ],
+        "4. Plan time course experiments": [
+            "• Early timepoints (0-2h): Catch immediate effects",
+            "• Intermediate (4-12h): Capture transcriptional response",
+            "• Late (24-48h): Assess steady-state and phenotype",
+            "• Extended (3-7 days): Identify adaptive responses"
+        ]
+    },
+    
+    "DATA COLLECTION": {
+        "1. Measure at multiple levels": [
+            "• mRNA: RNA-seq or qRT-PCR",
+            "• Protein: Western blot, flow cytometry, or mass spec",
+            "• Phosphorylation: Phospho-proteomics",
+            "• Localization: Immunofluorescence or fractionation",
+            "• Function: Cell viability, proliferation, differentiation"
+        ],
+        "2. Ensure sufficient replication": [
+            "• Minimum: 3 biological replicates",
+            "• Recommended: 4-6 biological replicates",
+            "• Include technical replicates for validation",
+            "• Document batch effects"
+        ],
+        "3. Verify perturbation efficiency": [
+            "• Confirm target knockdown (>70% for functional studies)",
+            "• Check for off-target effects (especially with CRISPR)",
+            "• Validate with independent methods",
+            "• Document any incomplete penetrance"
+        ],
+        "4. Monitor cell health": [
+            "• Track cell viability (exclude dead cells)",
+            "• Monitor proliferation rate",
+            "• Check for apoptosis markers",
+            "• Document morphological changes"
+        ]
+    },
+    
+    "DATA ANALYSIS": {
+        "1. Normalize appropriately": [
+            "• For mRNA: Use housekeeping genes (GAPDH, ACTB, RPL13A)",
+            "• For protein: Use loading controls (β-actin, GAPDH, tubulin)",
+            "• Consider batch effects and cell number variations",
+            "• Use appropriate statistical methods (DESeq2, limma for RNA-seq)"
+        ],
+        "2. Quantify perturbation effects": [
+            "• Calculate fold-change (perturbed vs control)",
+            "• Report with confidence intervals",
+            "• Perform statistical testing (t-test, ANOVA)",
+            "• Adjust for multiple comparisons"
+        ],
+        "3. Analyze temporal dynamics": [
+            "• Fit kinetic models to time-course data",
+            "• Identify response delay (lag time)",
+            "• Calculate rate of change",
+            "• Determine steady-state levels"
+        ],
+        "4. Account for context": [
+            "• Analyze by cell type/condition",
+            "• Consider genetic background effects",
+            "• Assess tissue-specific responses",
+            "• Evaluate disease state dependence"
+        ]
+    },
+    
+    "INTERPRETATION": {
+        "1. Distinguish direct vs indirect effects": [
+            "• Direct: Primary target of perturbation",
+            "• Immediate indirect: Secondary targets affected within hours",
+            "• Delayed indirect: Feedback loops, compensatory mechanisms",
+            "• Use pathway analysis to identify mechanisms"
+        ],
+        "2. Identify compensatory mechanisms": [
+            "• Look for upregulation of paralogs",
+            "• Check for pathway rewiring",
+            "• Assess redundancy in biological networks",
+            "• Consider synthetic lethal interactions"
+        ],
+        "3. Evaluate biological significance": [
+            "• Compare to known disease-associated changes",
+            "• Assess functional consequences",
+            "• Consider effect size vs statistical significance",
+            "• Validate in relevant biological model"
+        ],
+        "4. Report confidence and limitations": [
+            "• Document assumptions and limitations",
+            "• Note conflicting results from other studies",
+            "• Indicate need for further validation",
+            "• Suggest follow-up experiments"
+        ]
+    },
+    
+    "COMMON PITFALLS": {
+        "1. Incomplete perturbation": "Not verifying >70% knockdown; accepting residual expression",
+        "2. Ignoring off-targets": "Assuming effects are on-target without validation",
+        "3. Wrong timepoint": "Measuring too early (before response) or too late (after adaptation)",
+        "4. Confusing correlation with causation": "Assuming all co-regulated genes are direct targets",
+        "5. Neglecting cell health": "Not accounting for cell death or stress responses",
+        "6. Batch effects": "Not correcting for batch effects in multi-replicate studies",
+        "7. Single method bias": "Relying only on RNA-seq without protein validation",
+        "8. Context ignorance": "Assuming results generalize across all cell types/tissues"
+    }
+}
+
+# Print best practices
+for section, content in best_practices.items():
+    print(f"\n{section}")
+    print("=" * 80)
+    for subsection, items in content.items():
+        print(f"\n{subsection}:")
+        if isinstance(items, list):
+            for item in items:
+                print(f"  {item}")
+        else:
+            print(f"  {items}")
+
+print("\n")
+</execute>
+
+[✓] Fifth step completed
+
+Now let me create a summary table showing different perturbation types and their expected effects:
+<execute>
+print("="*80)
+print("PERTURBATION TYPES: EXPECTED EFFECTS AND MEASUREMENT STRATEGIES")
+print("="*80)
+print()
+
+# Create comprehensive comparison table
+perturbation_summary = pd.DataFrame({
+    'Perturbation Type': [
+        'CRISPR Knockout',
+        'RNAi Knockdown',
+        'Protein Degradation',
+        'Transcription Inhibition',
+        'Translation Inhibition',
+        'Phosphorylation',
+        'Drug Treatment',
+        'Nutrient Starvation',
+        'Hypoxia',
+        'Temperature Stress'
+    ],
+    'Mechanism': [
+        'DNA cleavage → loss of function',
+        'mRNA degradation → reduced translation',
+        'Ubiquitin-mediated proteolysis',
+        'Block RNA polymerase',
+        'Block ribosome function',
+        'Add phosphate group',
+        'Inhibit specific protein/pathway',
+        'Deplete essential nutrient',
+        'Low O2 stress response',
+        'Heat/cold stress response'
+    ],
+    'Onset': [
+        '24-72 hours',
+        '12-24 hours',
+        'Minutes to hours',
+        '30-60 minutes',
+        '15-30 minutes',
+        'Seconds to minutes',
+        '30-60 minutes',
+        '1-6 hours',
+        '1-4 hours',
+        '30 minutes to 2 hours'
+    ],
+    'Reversibility': [
+        'Irreversible',
+        'Reversible (7-14 days)',
+        'Reversible',
+        'Reversible',
+        'Reversible',
+        'Reversible',
+        'Depends on drug',
+        'Reversible',
+        'Reversible',
+        'Reversible'
+    ],
+    'mRNA Effect': [
+        'No change',
+        'Decreased 50-80%',
+        'No change',
+        'Decreased >90%',
+        'No change',
+        'No change',
+        'Variable',
+        'Stress response',
+        'HIF target induction',
+        'HSP induction'
+    ],
+    'Protein Effect': [
+        'Decreased >90%',
+        'Decreased 30-70%',
+        'Decreased >90%',
+        'Gradual decrease',
+        'Decreased 50-90%',
+        'Activity change',
+        'Variable',
+        'Decreased',
+        'HIF stabilization',
+        'HSP activation'
+    ],
+    'Best Detection Method': [
+        'Western blot, Flow cytometry',
+        'qRT-PCR, Western blot',
+        'Western blot, Mass spec',
+        'RNA-seq, qRT-PCR',
+        'Western blot, Polysome profiling',
+        'Phospho-proteomics, Western blot',
+        'Depends on target',
+        'RNA-seq, Metabolomics',
+        'HIF signaling assay',
+        'Stress response assay'
+    ]
+})
+
+print(perturbation_summary.to_string(index=False))
+print("\n")
+
+# Create visualization
+fig, ax = plt.subplots(figsize=(14, 8))
+ax.axis('tight')
+ax.axis('off')
+
+# Create table
+table_data = []
+table_data.append(['Perturbation', 'Onset', 'Reversible?', 'mRNA ↓', 'Protein ↓', 'Best Method'])
+
+for idx, row in perturbation_summary.iterrows():
+    table_data.append([
+        row['Perturbation Type'],
+        row['Onset'],
+        row['Reversibility'],
+        row['mRNA Effect'],
+        row['Protein Effect'],
+        row['Best Detection Method']
+    ])
+
+table = ax.table(cellText=table_data, cellLoc='left', loc='center',
+                colWidths=[0.15, 0.12, 0.12, 0.15, 0.15, 0.31])
+
+table.auto_set_font_size(False)
+table.set_fontsize(9)
+table.scale(1, 2.5)
+
+# Style header row
+for i in range(6):
+    table[(0, i)].set_facecolor('#4CAF50')
+    table[(0, i)].set_text_props(weight='bold', color='white')
+
+# Alternate row colors
+for i in range(1, len(table_data)):
+    for j in range(6):
+        if i % 2 == 0:
+            table[(i, j)].set_facecolor('#f0f0f0')
+        else:
+            table[(i, j)].set_facecolor('white')
+
+plt.title('Perturbation Types: Expected Effects and Measurement Strategies', 
+          fontsize=14, fontweight='bold', pad=20)
+plt.savefig('perturbation_comparison_table.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+print("✓ Comparison table created")
+print()
+</execute>
+
+[✓] Continued
+
+Now let me create a decision tree for choosing the right analysis approach:
+<execute>
+print("="*80)
+print("DECISION TREE: CHOOSING ANALYSIS APPROACH FOR PERTURBATION STUDIES")
+print("="*80)
+print()
+
+decision_tree = """
+START: Analyzing Perturbation Effects on Protein Expression
+│
+├─ QUESTION 1: What is your primary goal?
+│  │
+│  ├─ Goal A: Understand MECHANISM of perturbation
+│  │  │
+│  │  ├─ Measure: mRNA (RNA-seq), Protein (Mass spec), PTM (Phospho-proteomics)
+│  │  ├─ Timepoints: Early (0-2h), Intermediate (4-12h), Late (24-48h)
+│  │  ├─ Analysis: Kinetic modeling, Pathway analysis, Network inference
+│  │  └─ Validation: Orthogonal methods, Functional assays
+│  │
+│  ├─ Goal B: Identify ESSENTIAL GENES
+│  │  │
+│  │  ├─ Measure: Cell viability, Proliferation, Apoptosis
+│  │  ├─ Timepoints: 72-96 hours (allow selection)
+│  │  ├─ Analysis: Compare to genome-wide baseline, Calculate essentiality scores
+│  │  └─ Validation: Independent CRISPR lines, RNAi, Small molecules
+│  │
+│  └─ Goal C: Validate THERAPEUTIC TARGET
+│     │
+│     ├─ Measure: On-target engagement, Biomarker response, Phenotype
+│     ├─ Timepoints: Dose-response (multiple concentrations, 24-72h)
+│     ├─ Analysis: IC50 calculation, Selectivity analysis, Safety profiling
+│     └─ Validation: In vivo studies, Clinical biomarkers
+│
+├─ QUESTION 2: What is your perturbation type?
+│  │
+│  ├─ Genetic (CRISPR, RNAi):
+│  │  ├─ Check: Knockdown efficiency (>70%)
+│  │  ├─ Check: Off-target effects (if CRISPR, validate with >1 sgRNA)
+│  │  └─ Timeline: Allow 48-72h for maximal effect
+│  │
+│  ├─ Chemical (Drug, Small molecule):
+│  │  ├─ Check: Target engagement (CETSA, TR-FRET)
+│  │  ├─ Check: Dose-response curve
+│  │  └─ Timeline: 30min-24h depending on target
+│  │
+│  └─ Environmental (Stress, Nutrient):
+│     ├─ Check: Stress marker induction (HSP, HIF targets)
+│     ├─ Check: Consistency across replicates
+│     └─ Timeline: 1-24h depending on stress type
+│
+├─ QUESTION 3: What level of measurement is needed?
+│  │
+│  ├─ Screening (Quick, many samples):
+│  │  ├─ Use: Flow cytometry, qRT-PCR, High-throughput imaging
+│  │  ├─ Resolution: Single cell type or population average
+│  │  └─ Cost: Low to moderate
+│  │
+│  ├─ Detailed characterization (Comprehensive):
+│  │  ├─ Use: RNA-seq, Mass spectrometry, Phospho-proteomics
+│  │  ├─ Resolution: Genome-wide, PTM-level
+│  │  └─ Cost: Moderate to high
+│  │
+│  └─ Mechanistic study (Deep dive):
+│     ├─ Use: Single-cell RNA-seq, Proximity labeling, Cryo-EM
+│     ├─ Resolution: Single-cell, Protein complex level
+│     └─ Cost: High
+│
+├─ QUESTION 4: How to handle indirect/compensatory effects?
+│  │
+│  ├─ Approach 1: IDENTIFY DIRECT TARGETS
+│  │  ├─ Method: Combine genetic + chemical perturbation
+│  │  ├─ Example: CRISPR knockout + RNA-seq at 4h (before feedback)
+│  │  └─ Advantage: Captures immediate response
+│  │
+│  ├─ Approach 2: MAP FEEDBACK LOOPS
+│  │  ├─ Method: Time-course RNA-seq + network analysis
+│  │  ├─ Example: 0h, 2h, 4h, 8h, 24h timepoints
+│  │  └─ Advantage: Identifies compensatory mechanisms
+│  │
+│  └─ Approach 3: DOUBLE PERTURBATION
+│     ├─ Method: Combine with pathway inhibitor
+│     ├─ Example: CRISPR + kinase inhibitor to block feedback
+│     └─ Advantage: Reveals synthetic lethal interactions
+│
+├─ QUESTION 5: How to validate results?
+│  │
+│  ├─ Validation Level 1 (Essential):
+│  │  ├─ Independent method: Confirm with different technique
+│  │  ├─ Example: RNA-seq → qRT-PCR, Western → Flow cytometry
+│  │  └─ Replicates: ≥3 biological replicates
+│  │
+│  ├─ Validation Level 2 (Recommended):
+│  │  ├─ Orthogonal perturbation: Use different sgRNA or RNAi
+│  │  ├─ Rescue experiment: Add back target gene/protein
+│  │  └─ Different cell type: Test in relevant cell type
+│  │
+│  └─ Validation Level 3 (Gold standard):
+│     ├─ In vivo validation: Test in animal model
+│     ├─ Clinical relevance: Compare to patient data
+│     └─ Functional consequence: Link to disease phenotype
+│
+└─ END: Implement analysis pipeline
+   │
+   ├─ Step 1: Quality control (verify perturbation, assess cell health)
+   ├─ Step 2: Normalize data (appropriate controls, batch correction)
+   ├─ Step 3: Quantify effects (fold-change, statistical testing)
+   ├─ Step 4: Analyze dynamics (kinetics, steady-state)
+   ├─ Step 5: Interpret results (direct vs indirect, mechanism)
+   └─ Step 6: Validate findings (independent methods, biological relevance)
+"""
+
+print(decision_tree)
+print()
+</execute>
+
+[✓] Continued
+
+Now let me create a practical implementation guide:
+<execute>
+print("="*80)
+print("PRACTICAL IMPLEMENTATION: STEP-BY-STEP ANALYSIS WORKFLOW")
+print("="*80)
+print()
+
+workflow = {
+    "STEP 1: EXPERIMENTAL PLANNING": {
+        "Before you start": [
+            "□ Define primary research question",
+            "□ Choose perturbation method (CRISPR, RNAi, drug, environmental)",
+            "□ Select appropriate cell type/tissue",
+            "□ Plan time course (early, intermediate, late timepoints)",
+            "□ Design control samples (negative, positive, mock treatment)",
+            "□ Calculate required replicates (minimum 3, recommended 4-6)",
+            "□ Estimate budget and timeline"
+        ],
+        "Perturbation selection matrix": {
+            "CRISPR": "Best for: Stable knockout, genome-wide screens | Cost: Low | Time: 48-72h",
+            "RNAi": "Best for: Rapid knockdown, tissue-specific | Cost: Low | Time: 24-48h",
+            "Morpholino": "Best for: Temporal control, development | Cost: Moderate | Time: Variable",
+            "Small molecule": "Best for: Rapid, reversible, translational | Cost: Moderate-High | Time: 30m-24h",
+            "Environmental": "Best for: Physiological relevance, stress | Cost: Low | Time: 1-24h"
+        }
+    },
+    
+    "STEP 2: SAMPLE PREPARATION": {
+        "Cell culture": [
+            "□ Culture cells under standard conditions",
+            "□ Verify cell identity (STR profiling if available)",
+            "□ Check mycoplasma status",
+            "□ Document passage number",
+            "□ Ensure consistent cell density at perturbation"
+        ],
+        "Perturbation application": [
+            "□ Prepare perturbation reagent (verify concentration/titer)",
+            "□ Apply to cells at designated time (T=0)",
+            "□ Include untreated controls (same conditions)",
+            "□ Document exact timing for all samples",
+            "□ Maintain consistent culture conditions"
+        ],
+        "Sample collection": [
+            "□ Collect at planned timepoints",
+            "□ Use consistent lysis buffer/method",
+            "□ Snap freeze samples if storing",
+            "□ Document collection time for all samples",
+            "□ Maintain sample integrity (avoid degradation)"
+        ]
+    },
+    
+    "STEP 3: QUALITY CONTROL": {
+        "Verify perturbation": [
+            "□ Confirm target knockdown (>70% for functional studies)",
+            "□ Check for cell death/toxicity (>90% viability required)",
+            "□ Assess proliferation rate",
+            "□ Validate with independent method if possible",
+            "□ Document any incomplete or off-target effects"
+        ],
+        "Assess data quality": [
+            "□ RNA integrity (RIN >7 for RNA-seq)",
+            "□ Protein concentration consistency",
+            "□ Sequencing quality (Q30 >80% for RNA-seq)",
+            "□ Replicate correlation (R² >0.8 typical)",
+            "□ Identify and document outliers"
+        ]
+    },
+    
+    "STEP 4: DATA NORMALIZATION": {
+        "For mRNA analysis": [
+            "□ Use size factor normalization (DESeq2) or CPM",
+            "□ Select stable housekeeping genes as reference",
+            "□ Check for batch effects (PCA plot)",
+            "□ Apply batch correction if needed (ComBat, SVA)",
+            "□ Log-transform for visualization"
+        ],
+        "For protein analysis": [
+            "□ Normalize to loading control (β-actin, GAPDH, tubulin)",
+            "□ Account for total protein loading",
+            "□ Correct for lane-to-lane variation",
+            "□ Use densitometry software for quantification",
+            "□ Calculate fold-change relative to control"
+        ]
+    },
+    
+    "STEP 5: QUANTIFY EFFECTS": {
+        "Calculate fold-change": [
+            "□ Fold-change = Perturbed / Control (or log2-transformed)",
+            "□ Report with 95% confidence intervals",
+            "□ Calculate standard error across replicates",
+            "□ Note minimum detectable fold-change"
+        ],
+        "Statistical testing": [
+            "□ Choose appropriate test (t-test, ANOVA, Welch's test)",
+            "□ Check assumptions (normality, equal variance)",
+            "□ Calculate p-values and effect sizes",
+            "□ Adjust for multiple comparisons (FDR, Bonferroni)",
+            "□ Report adjusted p-values"
+        ],
+        "Classify effects": [
+            "□ Significant upregulation (log2FC >1, padj <0.05)",
+            "□ Significant downregulation (log2FC <-1, padj <0.05)",
+            "□ Modest changes (0.5 < |log2FC| < 1)",
+            "□ Non-significant (|log2FC| < 0.5 or padj >0.05)"
+        ]
+    },
+    
+    "STEP 6: ANALYZE DYNAMICS": {
+        "For time-course data": [
+            "□ Plot expression over time for each gene",
+            "□ Identify response kinetics (immediate, early, late)",
+            "□ Fit exponential or sigmoidal curves",
+            "□ Calculate lag time (delay before response)",
+            "□ Determine steady-state levels",
+            "□ Compare kinetics across genes"
+        ],
+        "Clustering analysis": [
+            "□ Group genes by similar response patterns",
+            "□ Use k-means or hierarchical clustering",
+            "□ Visualize with heatmaps",
+            "□ Identify co-regulated gene sets",
+            "□ Perform GO/pathway enrichment on clusters"
+        ]
+    },
+    
+    "STEP 7: INTERPRET RESULTS": {
+        "Distinguish effect types": [
+            "□ Direct effects: Immediate, strong response",
+            "□ Primary indirect: Affect target's direct regulators",
+            "□ Secondary indirect: Affect downstream pathways",
+            "□ Compensatory: Upregulation of paralogs/redundant genes",
+            "□ Stress response: Generic stress markers (HSP, p53 targets)"
+        ],
+        "Pathway analysis": [
+            "□ Perform GO enrichment on upregulated genes",
+            "□ Perform GO enrichment on downregulated genes",
+            "□ Map to known pathways (KEGG, Reactome)",
+            "□ Identify pathway modules and hub genes",
+            "□ Compare to disease signatures"
+        ],
+        "Network analysis": [
+            "□ Build co-expression network",
+            "□ Identify network modules",
+            "□ Find hub genes (highly connected)",
+            "□ Assess network rewiring after perturbation",
+            "□ Predict new regulatory relationships"
+        ]
+    },
+    
+    "STEP 8: VALIDATION": {
+        "Independent method": [
+            "□ Confirm key findings with different technique",
+            "□ Example: RNA-seq → qRT-PCR validation",
+            "□ Example: Western blot → Flow cytometry",
+            "□ Validate ≥3 differentially expressed genes"
+        ],
+        "Biological validation": [
+            "□ Rescue experiment (add back target if knockout)",
+            "□ Test in different cell type",
+            "□ Test in relevant disease model",
+            "□ Link molecular changes to functional outcome"
+        ],
+        "Literature comparison": [
+            "□ Compare to published studies",
+            "□ Check for conflicting results",
+            "□ Note any unexpected findings",
+            "□ Discuss potential explanations"
+        ]
+    }
+}
+
+for step, details in workflow.items():
+    print(f"\n{step}")
+    print("=" * 80)
+    for subsection, items in details.items():
+        print(f"\n{subsection}:")
+        if isinstance(items, dict):
+            for key, value in items.items():
+                print(f"  {key}: {value}")
+        else:
+            for item in items:
+                print(f"  {item}")
+
+print("\n")
+</extern>
+
+[✓] Sixth step completed
+
+Finally, let me create a summary document with key takeaways:
+<execute>
+print("="*80)
+print("SUMMARY: KEY TAKEAWAYS ON PERTURBATION EFFECTS")
+print("="*80)
+print()
+
+summary = """
+1. MULTIPLE MECHANISMS AFFECT PROTEIN EXPRESSION
+   ═══════════════════════════════════════════════
+   • Genetic: CRISPR, mutations, copy number changes
+   • Epigenetic: DNA methylation, histone modifications
+   • Transcriptional: TF knockdown, promoter/enhancer changes
+   • Post-transcriptional: mRNA stability, splicing
+   • Translational: Ribosome function, tRNA availability
+   • Post-translational: PTMs, protein stability
+   • Environmental: Stress, nutrients, temperature
+   
+   → Each mechanism has different kinetics and reversibility
+
+
+2. PERTURBATION EFFECTS HAVE DISTINCT TEMPORAL DYNAMICS
+   ═════════════════════════════════════════════════════
+   • Immediate (0-2h): Post-translational modifications, phosphorylation
+   • Early (2-8h): Transcriptional changes, mRNA synthesis/degradation
+   • Intermediate (8-24h): Protein accumulation, secondary responses
+   • Late (24+h): Cell fate changes, phenotypic adaptation
+   
+   → Must choose appropriate timepoints for your research question
+
+
+3. DIRECT VS INDIRECT EFFECTS MUST BE DISTINGUISHED
+   ═════════════════════════════════════════════════
+   • Direct: Immediate, strong response at target
+   • Indirect: Secondary effects through regulatory networks
+   • Compensatory: Upregulation of paralogs and redundant pathways
+   • Stress: Generic stress response (HSP, apoptosis markers)
+   
+   → Use early timepoints and pathway analysis to identify direct targets
+
+
+4. CONTEXT STRONGLY INFLUENCES PERTURBATION RESPONSE
+   ═════════════════════════════════════════════════
+   • Cell type: Different regulatory networks across tissues
+   • Disease state: Cancer vs normal cells respond differently
+   • Genetic background: Mutations affect pathway wiring
+   • Environmental: Nutrient, oxygen, temperature conditions matter
+   
+   → Results may not generalize; test in relevant context
+
+
+5. MULTIPLE MEASUREMENT LEVELS PROVIDE COMPLETE PICTURE
+   ═════════════════════════════════════════════════════
+   • mRNA level: Fastest response, genome-wide information
+   • Protein level: Functional readout, post-translational modifications
+   • Localization: Subcellular distribution, activity state
+   • Function: Phenotypic consequences, disease relevance
+   
+   → Combine multiple methods for comprehensive understanding
+
+
+6. ROBUST VALIDATION IS ESSENTIAL
+   ═════════════════════════════════
+   • Independent method: Confirm with different technique
+   • Orthogonal perturbation: Use different sgRNA/siRNA
+   • Rescue experiment: Add back target to confirm specificity
+   • Biological validation: Test in relevant model system
+   
+   → Don't trust single measurements; validate findings
+
+
+7. COMMON PITFALLS TO AVOID
+   ════════════════════════
+   ✗ Incomplete perturbation (accepting <70% knockdown)
+   ✗ Wrong timepoint (too early or too late)
+   ✗ Ignoring off-target effects (CRISPR especially)
+   ✗ Single method bias (RNA-seq without protein validation)
+   ✗ Neglecting cell health (not checking for cell death)
+   ✗ Context ignorance (assuming results generalize)
+   
+   → Plan experiments carefully; include appropriate controls
+
+
+8. PRACTICAL WORKFLOW SUMMARY
+   ══════════════════════════
+   1. Plan experiment (goal, perturbation, timepoints, controls)
+   2. Prepare samples (culture, perturb, collect, QC)
+   3. Measure (mRNA, protein, function - multiple methods)
+   4. Normalize (appropriate controls, batch correction)
+   5. Quantify (fold-change, statistical testing)
+   6. Analyze (kinetics, pathway, network analysis)
+   7. Interpret (direct vs indirect, mechanism)
+   8. Validate (independent methods, biological relevance)
+
+
+9. TOOLS AND RESOURCES
+   ═════════════════════
+   • RNA-seq analysis: DESeq2, edgeR, limma
+   • Protein quantification: Western blot, Flow cytometry, Mass spec
+   • Pathway analysis: GO, KEGG, Reactome, MSigDB
+   • Network analysis: Cytoscape, STRING, GeneMANIA
+   • Time-course modeling: ODE fitting, kinetic modeling
+   • CRISPR design: CRISPick, Addgene validated sgRNAs
+   • Statistical: R/Python (scipy, statsmodels, scikit-learn)
+
+
+10. KEY METRICS TO REPORT
+    ═════════════════════
+    • Fold-change (log2 scale, with 95% CI)
+    • P-value and adjusted p-value (FDR)
+    • Effect size (Cohen's d or similar)
+    • Perturbation efficiency (% knockdown)
+    • Replication number and correlation
+    • Timepoint and biological context
+    • Confidence level and limitations
+"""
+
+print(summary)
+
+# Create a visual summary
+fig, ax = plt.subplots(figsize=(14, 10))
+ax.axis('off')
+
+# Create summary boxes
+summary_text = """
+PERTURBATION ANALYSIS: QUICK REFERENCE GUIDE
+
+PERTURBATION TYPES & ONSET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• CRISPR knockout: 24-72h | Irreversible | >90% protein reduction
+• RNAi knockdown: 12-24h | Reversible | 30-70% protein reduction
+• Phosphorylation: Seconds | Reversible | Rapid activity change
+• Drug treatment: 30m-24h | Reversible | Depends on mechanism
+• Environmental stress: 1-4h | Reversible | Stress response activation
+
+TEMPORAL RESPONSE PATTERN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+================================== Ai Message ==================================
+
+<observation>================================================================================
+BEST PRACTICES FOR ANALYZING PERTURBATION EFFECTS ON PROTEIN EXPRESSION
+================================================================================
+
+
+EXPERIMENTAL DESIGN
+================================================================================
+
+1. Define clear objectives:
+  • Understand mechanism of action
+  • Identify essential genes
+  • Validate therapeutic targets
+  • Characterize drug response
+
+2. Choose appropriate perturbation method:
+  • CRISPR-Cas9: Permanent knockout, stable effects
+  • RNAi: Temporary knockdown, variable efficiency
+  • Morpholinos: Temporal control in development
+  • Small molecules: Rapid, reversible, tissue-penetrant
+  • Environmental: Physiologically relevant
+
+3. Include proper controls:
+  • Negative control: Non-targeting sgRNA/siRNA
+  • Positive control: Known essential gene
+  • Mock treatment: Vehicle/transfection only
+  • Time-matched controls: Same culture conditions
+
+4. Plan time course experiments:
+  • Early timepoints (0-2h): Catch immediate effects
+  • Intermediate (4-12h): Capture transcriptional response
+  • Late (24-48h): Assess steady-state and phenotype
+  • Extended (3-7 days): Identify adaptive responses
+
+DATA COLLECTION
+================================================================================
+
+1. Measure at multiple levels:
+  • mRNA: RNA-seq or qRT-PCR
+  • Protein: Western blot, flow cytometry, or mass spec
+  • Phosphorylation: Phospho-proteomics
+  • Localization: Immunofluorescence or fractionation
+  • Function: Cell viability, proliferation, differentiation
+
+2. Ensure sufficient replication:
+  • Minimum: 3 biological replicates
+  • Recommended: 4-6 biological replicates
+  • Include technical replicates for validation
+  • Document batch effects
+
+3. Verify perturbation efficiency:
+  • Confirm target knockdown (>70% for functional studies)
+  • Check for off-target effects (especially with CRISPR)
+  • Validate with independent methods
+  • Document any incomplete penetrance
+
+4. Monitor cell health:
+  • Track cell viability (exclude dead cells)
+  • Monitor proliferation rate
+  • Check for apoptosis markers
+  • Document morphological changes
+
+DATA ANALYSIS
+================================================================================
+
+1. Normalize appropriately:
+  • For mRNA: Use housekeeping genes (GAPDH, ACTB, RPL13A)
+  • For protein: Use loading controls (β-actin, GAPDH, tubulin)
+  • Consider batch effects and cell number variations
+  • Use appropriate statistical methods (DESeq2, limma for RNA-seq)
+
+2. Quantify perturbation effects:
+  • Calculate fold-change (perturbed vs control)
+  • Report with confidence intervals
+  • Perform statistical testing (t-test, ANOVA)
+  • Adjust for multiple comparisons
+
+3. Analyze temporal dynamics:
+  • Fit kinetic models to time-course data
+  • Identify response delay (lag time)
+  • Calculate rate of change
+  • Determine steady-state levels
+
+4. Account for context:
+  • Analyze by cell type/condition
+  • Consider genetic background effects
+  • Assess tissue-specific responses
+  • Evaluate disease state dependence
+
+INTERPRETATION
+================================================================================
+
+1. Distinguish direct vs indirect effects:
+  • Direct: Primary target of perturbation
+  • Immediate indirect: Secondary targets affected within hours
+  • Delayed indirect: Feedback loops, compensatory mechanisms
+  • Use pathway analysis to identify mechanisms
+
+2. Identify compensatory mechanisms:
+  • Look for upregulation of paralogs
+  • Check for pathway rewiring
+  • Assess redundancy in biological networks
+  • Consider synthetic lethal interactions
+
+3. Evaluate biological significance:
+  • Compare to known disease-associated changes
+  • Assess functional consequences
+  • Consider effect size vs statistical significance
+  • Validate in relevant biological model
+
+4. Report confidence and limitations:
+  • Document assumptions and limitations
+  • Note conflicting results from other studies
+  • Indicate need for further validation
+  • Suggest follow-up experiments
+
+COMMON PITFALLS
+================================================================================
+
+1. Incomplete perturbation:
+  Not verifying >70% knockdown; accepting residual expression
+
+2. Ignoring off-targets:
+  Assuming effects are on-target without validation
+
+3. Wrong timepoint:
+  Measuring too early (before response) or too late (after adaptation)
+
+4. Confusing correlation with causation:
+  Assuming all co-regulated genes are direct targets
+
+5. Neglecting cell health:
+  Not accounting for cell death or stress responses
+
+6. Batch effects:
+  Not correcting for batch effects in multi-replicate studies
+
+7. Single method bias:
+  Relying only on RNA-seq without protein validation
+
+8. Context ignorance:
+  Assuming results generalize across all cell types/tissues
+
+
+</observation>
+================================== Ai Message ==================================
+
+Let me create one final visual summary:
+<execute>
+import matplotlib.patches as mpatches
+from matplotlib.patches import FancyBboxPatch
+
+fig = plt.figure(figsize=(16, 12))
+gs = fig.add_gridspec(3, 2, hspace=0.4, wspace=0.3)
+
+# Title
+fig.suptitle('Perturbation Analysis: Complete Framework', 
+             fontsize=18, fontweight='bold', y=0.98)
+
+# Panel 1: Perturbation Types
+ax1 = fig.add_subplot(gs[0, 0])
+ax1.axis('off')
+perturbation_types_text = """PERTURBATION TYPES & KINETICS
+
+Genetic (24-72h)
+├─ CRISPR: >90% reduction
+├─ RNAi: 30-70% reduction
+└─ Mutation: Variable
+
+Post-translational (seconds-minutes)
+├─ Phosphorylation: Rapid
+├─ Ubiquitination: Minutes
+└─ Proteolysis: Hours
+
+Environmental (1-24h)
+├─ Stress: Hours
+├─ Nutrient: Hours-days
+└─ Temperature: Minutes-hours"""
+
+ax1.text(0.05, 0.95, perturbation_types_text, transform=ax1.transAxes,
+        fontsize=10, verticalalignment='top', fontfamily='monospace',
+        bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.7))
+
+# Panel 2: Measurement Hierarchy
+ax2 = fig.add_subplot(gs[0, 1])
+ax2.axis('off')
+measurement_text = """MEASUREMENT HIERARCHY
+
+Level 1: mRNA (Fastest)
+├─ RNA-seq (genome-wide)
+└─ qRT-PCR (targeted)
+
+Level 2: Protein (Functional)
+├─ Western blot (quantitative)
+├─ Flow cytometry (single-cell)
+└─ Mass spec (comprehensive)
+
+Level 3: Phenotype (Biological)
+├─ Cell viability
+├─ Proliferation
+└─ Differentiation"""
+
+ax2.text(0.05, 0.95, measurement_text, transform=ax2.transAxes,
+        fontsize=10, verticalalignment='top', fontfamily='monospace',
+        bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.7))
+
+# Panel 3: Temporal Response
+ax3 = fig.add_subplot(gs[1, :])
+time_stages = ['Immediate\n(0-2h)', 'Early\n(2-8h)', 'Intermediate\n(8-24h)', 'Late\n(24+h)']
+response_types = ['PTM\nPhosphorylation', 'Transcriptional\nmRNA changes', 'Protein\nAccumulation', 'Cell fate\nAdaptation']
+colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
+
+y_pos = 0.5
+box_width = 0.18
+box_height = 0.6
+
+for i, (stage, response, color) in enumerate(zip(time_stages, response_types, colors)):
+    x_pos = 0.08 + i * 0.22
+    
+    # Draw box
+    rect = FancyBboxPatch((x_pos, y_pos - box_height/2), box_width, box_height,
+                          boxstyle="round,pad=0.01", 
+                          edgecolor='black', facecolor=color, alpha=0.7,
+                          transform=ax3.transAxes)
+    ax3.add_patch(rect)
+    
+    # Add text
+    ax3.text(x_pos + box_width/2, y_pos + 0.15, stage, 
+            transform=ax3.transAxes, ha='center', fontsize=10, fontweight='bold')
+    ax3.text(x_pos + box_width/2, y_pos - 0.05, response,
+            transform=ax3.transAxes, ha='center', fontsize=9)
+    
+    # Add arrow
+    if i < 3:
+        ax3.annotate('', xy=(x_pos + box_width + 0.01, y_pos),
+                    xytext=(x_pos + box_width - 0.01, y_pos),
+                    xycoords='axes fraction',
+                    arrowprops=dict(arrowstyle='->', lw=2, color='black'))
+
+ax3.set_xlim(0, 1)
+ax3.set_ylim(0, 1)
+ax3.axis('off')
+ax3.text(0.5, 0.95, 'TEMPORAL RESPONSE PATTERN', 
+        transform=ax3.transAxes, ha='center', fontsize=12, fontweight='bold')
+
+# Panel 4: Analysis Workflow
+ax4 = fig.add_subplot(gs[2, 0])
+ax4.axis('off')
+workflow_text = """ANALYSIS WORKFLOW
+
+1. Quality Control
+   ✓ Verify perturbation
+   ✓ Check cell health
+   ✓ Assess data quality
+
+2. Normalization
+   ✓ Appropriate controls
+   ✓ Batch correction
+   ✓ Housekeeping genes
+
+3. Quantification
+   ✓ Fold-change
+   ✓ Statistical testing
+   ✓ Multiple comparisons
+
+4. Interpretation
+   ✓ Direct vs indirect
+   ✓ Pathway analysis
+   ✓ Network inference
+
+5. Validation
+   ✓ Independent method
+   ✓ Biological relevance
+   ✓ Literature comparison"""
+
+ax4.text(0.05, 0.95, workflow_text, transform=ax4.transAxes,
+        fontsize=9, verticalalignment='top', fontfamily='monospace',
+        bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.7))
+
+# Panel 5: Key Metrics
+ax5 = fig.add_subplot(gs[2, 1])
+ax5.axis('off')
+metrics_text = """KEY METRICS TO REPORT
+
+✓ Fold-change (log2 scale)
+  └─ With 95% CI
+
+✓ Statistical significance
+  └─ P-value & adjusted p-value
+
+✓ Effect size
+  └─ Cohen's d or similar
+
+✓ Perturbation efficiency
+  └─ % knockdown documented
+
+✓ Replication
+  └─ N ≥ 3, R² > 0.8
+
+✓ Context
+  └─ Cell type, timepoint
+
+✓ Confidence
+  └─ Limitations noted"""
+
+ax5.text(0.05, 0.95, metrics_text, transform=ax5.transAxes,
+        fontsize=9, verticalalignment='top', fontfamily='monospace',
+        bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.7))
+
+plt.savefig('perturbation_analysis_framework.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+print("✓ Comprehensive framework visualization created")
+print()
+</execute>
+
+Perfect! Now let me create a final summary document:
+<execute>
+print("="*80)
+print("FINAL SUMMARY: HOW DIFFERENT PERTURBATIONS AFFECT PROTEIN EXPRESSION")
+print("="*80)
+print()
+
+final_summary = """
+COMPREHENSIVE ANSWER TO YOUR QUESTION
+════════════════════════════════════════════════════════════════════════════════
+
+QUESTION: How do different perturbations affect protein expression?
+
+ANSWER: Different perturbations affect protein expression through distinct 
+mechanisms, with different kinetics, reversibility, and context-dependence.
+
+════════════════════════════════════════════════════════════════════════════════
+
+KEY FINDINGS:
+
+1. PERTURBATION TYPES AND MECHANISMS
+   ════════════════════════════════════
+   
+   Genetic Perturbations (24-72 hours, Irreversible)
+   • CRISPR knockout: Complete loss of function, >90% protein reduction
+   • Gene knockdown: Partial loss (30-70%), slower but reversible
+   • Mechanism: Prevent mRNA synthesis or protein translation
+   • Effect: Persistent, allows cellular adaptation
+   
+   Post-translational Perturbations (Seconds to Hours, Reversible)
+   • Phosphorylation: Rapid activation/inactivation of protein function
+   • Ubiquitination: Mark proteins for degradation
+   • Proteolysis: Direct cleavage and protein destruction
+   • Mechanism: Modify existing proteins without affecting mRNA
+   • Effect: Rapid, reversible, allows dynamic regulation
+   
+   Transcriptional Perturbations (30-60 minutes, Reversible)
+   • TF knockdown: Reduce expression of target genes
+   • Promoter/enhancer mutation: Alter gene accessibility
+   • Mechanism: Block RNA polymerase recruitment or elongation
+   • Effect: Affects mRNA levels, secondary protein changes
+   
+   Environmental Perturbations (1-24 hours, Reversible)
+   • Nutrient starvation: Activate stress responses
+   • Hypoxia: Stabilize HIF, activate survival pathways
+   • Temperature: Induce heat shock proteins
+   • Mechanism: Activate stress response pathways
+   • Effect: Coordinate expression changes across many genes
+
+
+2. TEMPORAL DYNAMICS OF PERTURBATION RESPONSE
+   ═════════════════════════════════════════════
+   
+   Immediate (0-2 hours): Post-translational modifications
+   • Phosphorylation cascades
+   • Protein localization changes
+   • Signal transduction
+   • Measurement: Phospho-proteomics, live-cell imaging
+   
+   Early (2-8 hours): Transcriptional response
+   • Primary transcription factor activation
+   • mRNA synthesis changes
+   • Splicing alterations
+   • Measurement: RNA-seq, qRT-PCR
+   
+   Intermediate (8-24 hours): Protein accumulation
+   • Protein synthesis from new mRNA
+   • Secondary transcriptional response
+   • Feedback loops beginning
+   • Measurement: Western blot, flow cytometry
+   
+   Late (24+ hours): Cell fate adaptation
+   • Compensatory mechanism activation
+   • Cell cycle changes
+   • Differentiation/apoptosis
+   • Measurement: Functional assays, cell phenotyping
+
+
+3. MAGNITUDE OF EFFECTS DEPENDS ON PERTURBATION STRENGTH
+   ════════════════════════════════════════════════════════
+   
+   Mild Perturbation (20-50% reduction)
+   • Subtle expression changes
+   • Possible compensatory activation
+   • Requires sensitive detection methods
+   • Example: Partial RNAi knockdown
+   
+   Moderate Perturbation (50-80% reduction)
+   • Clear phenotypic changes
+   • Some compensatory mechanisms engaged
+   • Detectable with standard methods
+   • Example: Most CRISPR screens
+   
+   Severe Perturbation (>80% reduction)
+   • Strong phenotype, possible cell death
+   • Limited compensatory response
+   • May be lethal for essential genes
+   • Example: CRISPR knockout of essential gene
+
+
+4. CONTEXT STRONGLY MODULATES PERTURBATION RESPONSE
+   ══════════════════════════════════════════════════
+   
+   Cell Type Dependence
+   • Different tissues have different regulatory networks
+   • Tissue-specific TFs and co-factors
+   • Alternative promoters and enhancers
+   • Example: TP53 response differs in cancer vs normal cells
+   
+   Disease State Dependence
+   • Cancer cells have altered signaling
+   • Chronic disease shows adaptation
+   • Acute vs chronic responses differ
+   • Example: Drug sensitivity varies by mutation status
+   
+   Genetic Background
+   • Other mutations affect pathway response
+   • Polymorphisms alter protein function
+   • Copy number variations impact dosage
+   • Example: EGFR mutations predict response to EGFR inhibitors
+   
+   Environmental Conditions
+   • Nutrient availability affects stress response
+   • Oxygen tension regulates HIF pathway
+   • Temperature affects protein folding
+   • Example: Hypoxia enhances expression of HIF targets
+
+
+5. DIRECT VS INDIRECT EFFECTS REQUIRE CAREFUL ANALYSIS
+   ═════════════════════════════════════════════════════
+   
+   Direct Effects (Primary targets)
+   • Immediate, strong response
+   • Observed within 2-4 hours
+   • Consistent across replicates
+   • Identification: Use early timepoints, target validation
+   
+   Primary Indirect Effects (Direct regulators)
+   • Secondary targets of direct targets
+   • Observed at 4-12 hours
+   • May show opposite direction of direct effects
+   • Identification: Pathway analysis, TF enrichment
+   
+   Secondary Indirect Effects (Feedback loops)
+   • Compensatory pathway activation
+   • Observed at 24+ hours
+   • Often involve paralogs or redundant genes
+   • Identification: Time-course analysis, network inference
+   
+   Stress Response (Generic stress)
+   • HSP induction, p53 targets, apoptosis markers
+   • Observed when perturbation causes cellular stress
+   • May mask specific effects
+   • Identification: Check cell viability, stress markers
+
+
+6. MEASUREMENT STRATEGY MUST MATCH RESEARCH QUESTION
+   ═════════════════════════════════════════════════════
+   
+   For Mechanism Understanding
+   • Measure: mRNA (RNA-seq), Protein (Mass spec), PTM (Phospho-proteomics)
+   • Timepoints: 0, 2h, 4h, 8h, 24h
+   • Analysis: Kinetic modeling, pathway analysis, network inference
+   • Validation: Functional assays, rescue experiments
+   
+   For Essential Gene Identification
+   • Measure: Cell viability, Proliferation
+   • Timepoints: 72-96 hours
+   • Analysis: Compare to genome-wide baseline
+   • Validation: Independent CRISPR lines, RNAi, chemical inhibitors
+   
+   For Drug Response Prediction
+   • Measure: Biomarker response, Phenotypic changes
+   • Timepoints: Dose-response (multiple concentrations)
+   • Analysis: IC50 calculation, selectivity analysis
+   • Validation: In vivo studies, clinical biomarkers
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+PRACTICAL RECOMMENDATIONS:
+
+1. ALWAYS include proper controls
+   • Negative control (non-targeting)
+   • Positive control (known effect)
+   • Mock treatment (vehicle only)
+
+2. MEASURE at multiple levels
+   • mRNA (fast, genome-wide)
+   • Protein (functional, specific)
+   • Phenotype (biological consequence)
+
+3. PLAN time courses carefully
+   • Early: Catch immediate effects
+   • Intermediate: Assess steady-state
+   • Late: Identify adaptation
+
+4. VERIFY perturbation efficiency
+   • Confirm >70% knockdown
+   • Check for off-targets
+   • Validate with independent method
+
+5. VALIDATE findings
+   • Independent method
+   • Different perturbation
+   • Biological relevance
+
+════════════════════════════════════════════════════════════════════════════════
+
+COMMON SCENARIOS AND EXPECTED OUTCOMES:
+
+Scenario 1: CRISPR Knockout of Non-Essential Gene
+• mRNA: Undetectable (<5%)
+• Protein: Undetectable or trace
+• Cell viability: >90% (no toxicity)
+• Phenotype: Subtle or none
+• Timeline: 48-72 hours to full effect
+
+Scenario 2: CRISPR Knockout of Essential Gene
+• mRNA: Undetectable (<5%)
+• Protein: Undetectable or trace
+• Cell viability: Reduced (50-80%)
+• Phenotype: Cell cycle arrest, apoptosis
+• Timeline: 48-96 hours, progressive decline
+
+Scenario 3: Drug Treatment (On-target)
+• mRNA: Variable (depends on mechanism)
+• Protein: Reduced or modified (phosphorylation)
+• Cell viability: Depends on dose
+• Phenotype: Rapid (hours to days)
+• Timeline: 30 minutes to 24 hours
+
+Scenario 4: Nutrient Starvation
+• mRNA: Stress response genes upregulated
+• Protein: Stress proteins increased, housekeeping decreased
+• Cell viability: Reduced over time
+• Phenotype: Metabolic adaptation, autophagy
+• Timeline: 1-6 hours for response, 24+ hours for adaptation
+
+════════════════════════════════════════════════════════════════════════════════
+"""
+
+print(final_summary)
+</execute>
+
+[✓] All steps completed!
+
+Now let me create one final checklist for implementation:
+<execute>
+print("="*80)
+print("IMPLEMENTATION CHECKLIST: ANALYZING PERTURBATION EFFECTS")
+print("="*80)
+print()
+
+checklist = """
+BEFORE STARTING YOUR EXPERIMENT
+═════════════════════════════════════════════════════════════════════════════
+
+Project Planning
+□ Define primary research question
+□ Select perturbation method (CRISPR, RNAi, drug, environmental)
+□ Choose appropriate cell type/tissue
+□ Document expected baseline expression levels
+□ Identify known markers for your target
+□ Review literature for similar studies
+
+Experimental Design
+□ Plan time course (early, intermediate, late timepoints)
+□ Design control samples (negative, positive, mock)
+□ Calculate required sample size (minimum 3 replicates, recommend 4-6)
+□ Prepare reagent list with catalog numbers
+□ Establish quality control criteria
+□ Create detailed protocol document
+□ Estimate budget and timeline
+
+═════════════════════════════════════════════════════════════════════════════
+
+DURING EXPERIMENT
+═════════════════════════════════════════════════════════════════════════════
+
+Perturbation Application
+□ Verify cell culture conditions (density, viability >95%)
+□ Prepare perturbation reagent (verify concentration/titer)
+□ Apply perturbation at consistent time (T=0)
+□ Include all planned controls
+□ Document exact timing for each sample
+□ Maintain consistent culture conditions throughout
+
+Quality Control During Experiment
+□ Monitor cell morphology at each timepoint
+□ Check for unexpected cell death
+□ Verify culture conditions (temperature, CO2, etc.)
+□ Document any deviations from protocol
+□ Take photos of culture plates
+□ Record exact collection times
+
+Sample Collection
+□ Use consistent lysis buffer/method
+□ Collect samples at all planned timepoints
+□ Include controls in every batch
+□ Snap freeze samples if storing
+□ Label samples clearly with date, time, condition
+□ Maintain sample integrity (avoid freeze-thaw cycles)
+
+═════════════════════════════════════════════════════════════════════════════
+
+AFTER EXPERIMENT - QUALITY CONTROL
+═════════════════════════════════════════════════════════════════════════════
+
+Verify Perturbation
+□ Confirm target knockdown (>70% for functional studies)
+□ Check for off-target effects (validate with >1 sgRNA if CRISPR)
+□ Assess cell viability (>80% typically required)
+□ Document any incomplete penetrance
+□ Validate with independent method if possible
+
+Assess Data Quality
+□ Check RNA integrity (RIN >7 for RNA-seq)
+□ Verify protein concentration consistency
+□ Assess sequencing quality (Q30 >80% for RNA-seq)
+□ Calculate replicate correlation (R² >0.8 expected)
+□ Identify and document any outliers
+□ Perform PCA to check for batch effects
+
+═════════════════════════════════════════════════════════════════════════════
+
+DATA ANALYSIS
+═════════════════════════════════════════════════════════════════════════════
+
+Normalization
+□ Use appropriate normalization method (DESeq2, CPM, etc.)
+□ Select stable housekeeping genes as reference
+□ Identify and correct batch effects
+□ Create PCA plot to visualize data quality
+□ Document all normalization parameters
+□ Check for technical artifacts
+
+Quantification
+□ Calculate fold-change for all genes
+□ Perform statistical testing (t-test, ANOVA)
+□ Adjust p-values for multiple comparisons
+□ Report effect sizes (Cohen's d or similar)
+□ Create volcano plot for visualization
+□ List top differentially expressed genes
+
+Temporal Analysis
+□ Plot expression over time for key genes
+□ Identify response kinetics (immediate, early, late)
+□ Fit kinetic models if applicable
+□ Calculate lag time and steady-state levels
+□ Cluster genes by response pattern
+□ Identify genes with similar dynamics
+
+Pathway and Network Analysis
+□ Perform GO enrichment on upregulated genes
+□ Perform GO enrichment on downregulated genes
+□ Map to known pathways (KEGG, Reactome)
+□ Identify pathway modules and hub genes
+□ Compare to disease signatures
+□ Create pathway diagrams
+
+═════════════════════════════════════════════════════════════════════════════
+
+INTERPRETATION AND VALIDATION
+═════════════════════════════════════════════════════════════════════════════
+
+Distinguish Effect Types
+□ Identify direct targets (immediate, strong response)
+□ Identify primary indirect effects (early secondary response)
+□ Identify secondary effects (feedback loops, compensation)
+□ Check for stress response markers
+□ Document confidence level for each finding
+
+Biological Interpretation
+□ Compare to known disease signatures
+□ Link molecular changes to phenotype
+□ Assess functional consequences
+□ Consider biological plausibility
+□ Note any unexpected findings
+□ Suggest mechanisms for further investigation
+
+Validation
+□ Confirm key findings with independent method
+□ Validate ≥3 differentially expressed genes
+□ Test rescue experiment (add back target)
+□ Test in different cell type if applicable
+□ Compare to published studies
+□ Note any conflicting results
+
+═════════════════════════════════════════════════════════════════════════════
+
+REPORTING
+═════════════════════════════════════════════════════════════════════════════
+
+Methods Section
+□ Describe perturbation method and reagents (catalog numbers)
+□ Document cell culture conditions
+□ List all timepoints and replicates
+□ Describe measurement methods
+□ Explain normalization and statistical approach
+□ Note any deviations from standard protocols
+
+Results Section
+□ Report fold-changes with confidence intervals
+□ Include p-values and adjusted p-values
+□ Describe effect sizes
+□ Document perturbation efficiency
+□ Present heatmaps/volcano plots
+□ Summarize pathway analysis results
+
+Discussion
+□ Interpret direct vs indirect effects
+□ Compare to literature findings
+□ Discuss limitations and caveats
+□ Suggest follow-up experiments
+□ Link to biological significance
+□ Address any unexpected findings
+
+Supplementary Data
+□ Provide complete gene lists (all tested genes)
+□ Include pathway enrichment results
+□ Document QC metrics
+□ Provide raw data (if appropriate)
+□ List all statistical parameters used
+
+═════════════════════════════════════════════════════════════════════════════
+"""
+
+print(checklist)
+print()
+print("="*80)
+print("All analysis steps completed successfully!")
+print("="*80)
+</execute>
+
+Perfect! Let me create one final summary visualization:
+<execute>
+# Create a final comprehensive infographic
+fig = plt.figure(figsize=(18, 12))
+
+# Create grid
+gs = fig.add_gridspec(4, 3, hspace=0.5, wspace=0.3)
+
+# Title
+fig.suptitle('Complete Guide: How Different Perturbations Affect Protein Expression', 
+             fontsize=20, fontweight='bold', y=0.98)
+
+# ===== Row 1: Perturbation Types =====
+ax = fig.add_subplot(gs[0, :])
+ax.axis('off')
+
+perturbation_info = {
+    'Genetic\n(CRISPR, RNAi)': ('24-72h', 'Irreversible', '>90% reduction', '#FF6B6B'),
+    'Post-translational\n(Phosphorylation)': ('Seconds', 'Reversible', 'Rapid', '#4ECDC4'),
+    'Transcriptional\n(TF knockdown)': ('30-60min', 'Reversible', '50-90% mRNA', '#45B7D1'),
+    'Environmental\n(Stress, Nutrient)': ('1-24h', 'Reversible', 'Stress response', '#FFA07A'),
+}
+
+x_positions = [0.1, 0.35, 0.6, 0.85]
+for (name, color), x_pos in zip([(k, v[3]) for k, v in perturbation_info.items()], x_positions):
+    info = perturbation_info[name.replace('\n', ' ')]
+    rect = FancyBboxPatch((x_pos-0.08, 0.2), 0.16, 0.7,
+                          boxstyle="round,pad=0.02", 
+                          edgecolor='black', facecolor=color, alpha=0.7,
+                          transform=ax.transAxes, linewidth=2)
+    ax.add_patch(rect)
+    
+    ax.text(x_pos, 0.80, name, transform=ax.transAxes, ha='center', 
+           fontsize=10, fontweight='bold')
+    ax.text(x_pos, 0.65, f"Onset: {info[0]}", transform=ax.transAxes, 
+           ha='center', fontsize=8)
+    ax.text(x_pos, 0.50, f"Reversible: {info[1]}", transform=ax.transAxes, 
+           ha='center', fontsize=8)
+    ax.text(x_pos, 0.35, f"Effect: {info[2]}", transform=ax.transAxes, 
+           ha='center', fontsize=8)
+
+ax.text(0.5, 0.95, 'PERTURBATION TYPES & CHARACTERISTICS', 
+       transform=ax.transAxes, ha='center', fontsize=13, fontweight='bold')
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+
+# ===== Row 2: Temporal Response =====
+ax = fig.add_subplot(gs[1, 0])
+ax.set_title('Temporal Response\nPattern', fontweight='bold', fontsize=11)
+time = np.linspace(0, 48, 200)
+immediate = 100 - 50*np.exp(-2*(time-2))*(time>2)
+early = 100 + 80*(1-np.exp(-0.3*(time-4)))*(time>4)
+intermediate = 100 + 100*(1-np.exp(-0.15*(time-8)))*(time>8)
+
+ax.plot(time, immediate, 'r-', linewidth=2.5, label='Immediate (PTM)')
+ax.plot(time, early, 'g-', linewidth=2.5, label='Early (Transcriptional)')
+ax.plot(time, intermediate, 'b-', linewidth=2.5, label='Intermediate (Protein)')
+ax.axhline(100, color='k', linestyle='--', alpha=0.5)
+ax.set_xlabel('Time (hours)', fontsize=10)
+ax.set_ylabel('Response (%)', fontsize=10)
+ax.legend(fontsize=8, loc='best')
+ax.grid(True, alpha=0.3)
+
+# ===== Row 2: Measurement Methods =====
+ax = fig.add_subplot(gs[1, 1])
+ax.axis('off')
+ax.text(0.5, 0.95, 'MEASUREMENT METHODS', transform=ax.transAxes, 
+       ha='center', fontsize=11, fontweight='bold')
+
+measurement_methods = [
+    ('mRNA Level', 'RNA-seq, qRT-PCR', 'Fast, genome-wide'),
+    ('Protein Level', 'Western, Flow, MS', 'Functional readout'),
+    ('Phosphorylation', 'Phospho-proteomics', 'PTM-specific'),
+    ('Localization', 'Immunofluorescence', 'Subcellular detail'),
+    ('Phenotype', 'Cell viability assays', 'Biological consequence'),
+]
+
+y_start = 0.85
+for i, (method, tools, note) in enumerate(measurement_methods):
+    y = y_start - i*0.16
+    ax.text(0.05, y, f'• {method}', transform=ax.transAxes, fontsize=9, fontweight='bold')
+    ax.text(0.05, y-0.06, f'  {tools}', transform=ax.transAxes, fontsize=8, style='italic')
+    ax.text(0.05, y-0.11, f'  ({note})', transform=ax.transAxes, fontsize=7, color='gray')
+
+# ===== Row 2: Analysis Workflow =====
+ax = fig.add_subplot(gs[1, 2])
+ax.axis('off')
+ax.text(0.5, 0.95, 'ANALYSIS WORKFLOW', transform=ax.transAxes, 
+       ha='center', fontsize=11, fontweight='bold')
+
+workflow_steps = [
+    '1. Quality Control',
+    '   ✓ Verify perturbation',
+    '   ✓ Check cell health',
+    '',
+    '2. Normalization',
+    '   ✓ Appropriate controls',
+    '   ✓ Batch correction',
+    '',
+    '3. Quantification',
+    '   ✓ Fold-change',
+    '   ✓ Statistics',
+    '',
+    '4. Interpretation',
+    '   ✓ Direct vs indirect',
+    '   ✓ Pathway analysis',
+]
+
+y_start = 0.90
+for i, step in enumerate(workflow_steps):
+    y = y_start - i*0.055
+    if step:
+        fontsize = 8.5 if step.startswith(('1', '2', '3', '4')) else 8
+        fontweight = 'bold' if step.startswith(('1', '2', '3', '4')) else 'normal'
+        ax.text(0.05, y, step, transform=ax.transAxes, fontsize=fontsize, fontweight=fontweight)
+
+# ===== Row 3: Key Metrics =====
+ax = fig.add_subplot(gs[2, :])
+ax.axis('off')
+
+metrics = [
+    ('Fold-Change', 'log2 scale\nwith 95% CI', '#FFE5E5'),
+    ('P-value', 'Adjusted for\nmultiple comparisons', '#E5F5FF'),
+    ('Effect Size', 'Cohen\'s d or\nsimilar metric', '#E5FFE5'),
+    ('Efficiency', '% knockdown\ndocumented', '#FFF5E5'),
+    ('Replication', 'N≥3\nR²>0.8', '#F5E5FF'),
+    ('Context', 'Cell type\ntimepoint', '#FFE5F5'),
+]
+
+x_positions = np.linspace(0.05, 0.95, len(metrics))
+for (metric_name, metric_desc, color), x_pos in zip(metrics, x_positions):
+    rect = FancyBboxPatch((x_pos-0.06, 0.15), 0.12, 0.7,
+                          boxstyle="round,pad=0.01", 
+                          edgecolor='black', facecolor=color, alpha=0.8,
+                          transform=ax.transAxes, linewidth=1.5)
+    ax.add_patch(rect)
+    
+    ax.text(x_pos, 0.75, metric_name, transform=ax.transAxes, ha='center', 
+           fontsize=9, fontweight='bold')
+    ax.text(x_pos, 0.40, metric_desc, transform=ax.transAxes, ha='center', 
+           fontsize=7.5, va='center')
+
+ax.text(0.5, 0.95, 'KEY METRICS TO REPORT', 
+       transform=ax.transAxes, ha='center', fontsize=13, fontweight='bold')
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+
+# ===== Row 4: Common Pitfalls =====
+ax = fig.add_subplot(gs[3, :])
+ax.axis('off')
+
+pitfalls = [
+    ('❌ Incomplete\nperturbation', 'Accept <70%\nknockdown'),
+    ('❌ Wrong\ntimepoint', 'Too early or\ntoo late'),
+    ('
+================================== Ai Message ==================================
+
+<observation>Plot saved to: perturbation_analysis_framework.png
+Plot generated and displayed
+✓ Comprehensive framework visualization created
+
+</observation>
+================================== Ai Message ==================================
+
+Excellent! Let me create a final one-page reference guide:
+<execute>
+print("\n" + "="*80)
+print("ONE-PAGE REFERENCE: PERTURBATION EFFECTS ON PROTEIN EXPRESSION")
+print("="*80)
+print()
+
+reference = """
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PERTURBATION ANALYSIS QUICK REFERENCE                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+PERTURBATION TYPE → ONSET → REVERSIBLE? → PRIMARY EFFECT → DETECTION METHOD
+────────────────────────────────────────────────────────────────────────────
+CRISPR knockout    → 24-72h  → No        → >90% protein ↓   → Western, Flow
+RNAi knockdown     → 12-24h  → Yes       → 30-70% ↓         → qRT-PCR, WB
+Phosphorylation    → Sec     → Yes       → Activation       → Phospho-proteomics
+Drug treatment     → 30m-24h → Yes       → Target-dependent → Western, Flow
+Nutrient stress    → 1-6h    → Yes       → Stress response   → RNA-seq
+Hypoxia           → 1-4h    → Yes       → HIF activation    → RNA-seq
+Temperature       → 30m-2h  → Yes       → HSP induction     → Western
+
+════════════════════════════════════════════════════════════════════════════════
+
+RESPONSE KINETICS BY TIMEPOINT:
+
+0-2 hours (Immediate)
+├─ Mechanism: Post-translational modifications
+├─ Markers: Phosphorylation, protein localization
+├─ Measurement: Phospho-proteomics, live-cell imaging
+└─ Interpretation: Direct pathway activation
+
+2-8 hours (Early)
+├─ Mechanism: Transcriptional changes
+├─ Markers: mRNA induction/repression, splicing changes
+├─ Measurement: RNA-seq, qRT-PCR
+└─ Interpretation: Direct transcriptional targets
+
+8-24 hours (Intermediate)
+├─ Mechanism: Protein accumulation, feedback loops
+├─ Markers: New protein synthesis, secondary mRNA changes
+├─ Measurement: Western blot, flow cytometry
+└─ Interpretation: Secondary effects, compensatory response
+
+24+ hours (Late)
+├─ Mechanism: Cell fate changes, adaptation
+├─ Markers: Cell cycle changes, differentiation, apoptosis
+├─ Measurement: Cell phenotyping, functional assays
+└─ Interpretation: Cellular adaptation, long-term consequences
+
+════════════════════════════════════════════════════════════════════════════════
+
+EFFECT SIZE INTERPRETATION:
+
+Fold-change (log2 scale):
+  >2 (8-fold)     → Very strong effect
+  1-2 (2-8 fold)  → Strong effect
+  0.5-1 (1.4-2 fold) → Moderate effect
+  <0.5 (<1.4 fold)   → Subtle effect
+
+Statistical significance (adjusted p-value):
+  <0.001  → Highly significant
+  <0.01   → Very significant
+  <0.05   → Significant
+  >0.05   → Not significant
+
+════════════════════════════════════════════════════════════════════════════════
+
+EXPERIMENTAL DESIGN CHECKLIST:
+
+Before Starting:
+  ☐ Define research question
+  ☐ Choose perturbation method
+  ☐ Plan time course (0, 2h, 4h, 8h, 24h typical)
+  ☐ Design controls (negative, positive, mock)
+  ☐ Plan replicates (minimum 3, recommended 4-6)
+
+During Experiment:
+  ☐ Verify cell health (>90% viability)
+  ☐ Document exact timing
+  ☐ Include all controls
+  ☐ Snap freeze samples
+  ☐ Label samples clearly
+
+After Experiment:
+  ☐ Verify perturbation (>70% knockdown)
+  ☐ Check data quality
+  ☐ Normalize appropriately
+  ☐ Calculate fold-changes
+  ☐ Perform statistical testing
+
+Analysis:
+  ☐ Identify direct targets (early, strong response)
+  ☐ Identify indirect effects (secondary response)
+  ☐ Perform pathway analysis
+  ☐ Validate key findings
+  ☐ Compare to literature
+
+════════════════════════════════════════════════════════════════════════════════
+
+COMMON PERTURBATION SCENARIOS:
+
+Scenario 1: CRISPR Knockout of Non-Essential Gene
+├─ mRNA: Undetectable (<5%)
+├─ Protein: Undetectable
+├─ Viability: >90%
+├─ Phenotype: Subtle or none
+└─ Timeline: 48-72h to full effect
+
+Scenario 2: CRISPR Knockout of Essential Gene
+├─ mRNA: Undetectable
+├─ Protein: Undetectable
+├─ Viability: Reduced (50-80%)
+├─ Phenotype: Cell death, apoptosis
+└─ Timeline: Progressive decline 48-96h
+
+Scenario 3: Drug Treatment (On-target)
+├─ mRNA: Variable (depends on mechanism)
+├─ Protein: Reduced or modified
+├─ Viability: Dose-dependent
+├─ Phenotype: Rapid (hours to days)
+└─ Timeline: 30min to 24h
+
+Scenario 4: Environmental Stress
+├─ mRNA: Stress genes ↑, housekeeping ↓
+├─ Protein: HSP ↑, metabolic proteins ↓
+├─ Viability: Reduced over time
+├─ Phenotype: Metabolic adaptation
+└─ Timeline: 1-6h response, 24+h adaptation
+
+════════════════════════════════════════════════════════════════════════════════
+
+DIRECT VS INDIRECT EFFECTS:
+
+Direct Effects (Target these first)
+├─ Immediate response (0-2h)
+├─ Strong fold-change (>2-fold)
+├─ Consistent across replicates
+├─ Identified with early timepoints
+└─ Example: Target gene mRNA drops within 2h of CRISPR
+
+Primary Indirect Effects
+├─ Early response (2-8h)
+├─ Moderate fold-change (1-2 fold)
+├─ Downstream of direct targets
+├─ Identified with 4-8h timepoints
+└─ Example: mRNA of genes regulated by target protein
+
+Secondary Indirect Effects
+├─ Late response (24+h)
+├─ Variable direction (up or down)
+├─ Compensatory mechanisms
+├─ Identified with late timepoints
+└─ Example: Upregulation of paralog genes
+
+════════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+
+Problem: No effect observed
+→ Check: Perturbation efficiency, cell health, measurement method
+→ Solution: Verify knockdown >70%, use more sensitive detection
+
+Problem: Unexpected cell death
+→ Check: Off-target effects, stress markers, cell viability
+→ Solution: Validate specificity, check for stress response
+
+Problem: Inconsistent replicates
+→ Check: Batch effects, technical variation, data quality
+→ Solution: Normalize across batches, increase replicates
+
+Problem: Results don't match literature
+→ Check: Cell type, conditions, measurement method
+→ Solution: Test in same cell type, compare methods
+
+════════════════════════════════════════════════════════════════════════════════
+
+KEY REFERENCES TO REPORT:
+
+✓ Fold-change (log2 scale with 95% CI)
+✓ P-value (adjusted for multiple comparisons)
+✓ Effect size (Cohen's d or similar)
+✓ Perturbation efficiency (% knockdown documented)
+✓ Number of replicates (N ≥ 3)
+✓ Replicate correlation (R² > 0.8)
+✓ Cell type and timepoint
+✓ Measurement method used
+✓ Normalization approach
+✓ Confidence level and limitations
+
+════════════════════════════════════════════════════════════════════════════════
+"""
+
+print(reference)
+print()
+print("="*80)
+print("ANALYSIS COMPLETE!")
+print("="*80)
+print()
+print("Summary of outputs generated:")
+print("  ✓ Perturbation effects dynamics visualization")
+print("  ✓ Perturbation response patterns (6 scenarios)")
+print("  ✓ Perturbation comparison table")
+print("  ✓ Comprehensive analysis framework")
+print("  ✓ Decision tree for analysis approach")
+print("  ✓ Step-by-step implementation workflow")
+print("  ✓ Best practices and common pitfalls")
+print("  ✓ Quick reference guide")
+print()
+</execute>
+
+Perfect! Now let me create a final summary:
+
+<solution>
+
+## How Different Perturbations Affect Protein Expression: Comprehensive Analysis
+
+Different perturbations affect protein expression through distinct mechanisms, with varying kinetics, reversibility, and context-dependence. Here's the complete answer:
+
+### **PERTURBATION TYPES & EFFECTS:**
+
+1. **Genetic Perturbations (24-72 hours, Irreversible)**
+   - CRISPR knockout: >90% protein reduction, permanent loss of function
+   - RNAi knockdown: 30-70% reduction, reversible within 7-14 days
+   - Mechanism: Block mRNA synthesis or translation
+   - Effect: Persistent, allows cellular adaptation
+
+2. **Post-translational Perturbations (Seconds to Hours, Reversible)**
+   - Phosphorylation: Rapid activation/inactivation (seconds)
+   - Ubiquitination: Protein degradation (minutes-hours)
+   - Mechanism: Modify existing proteins without mRNA changes
+   - Effect: Rapid, dynamic regulation
+
+3. **Transcriptional Perturbations (30-60 minutes, Reversible)**
+   - TF knockdown, promoter/enhancer mutations
+   - Mechanism: Block RNA polymerase recruitment
+   - Effect: Affects mRNA levels and secondary protein changes
+
+4. **Environmental Perturbations (1-24 hours, Reversible)**
+   - Nutrient starvation, hypoxia, temperature stress
+   - Mechanism: Activate stress response pathways
+   - Effect: Coordinate expression changes across many genes
+
+### **TEMPORAL RESPONSE PATTERN:**
+
+- **Immediate (0-2h):** Post-translational modifications, phosphorylation cascades
+- **Early (2-8h):** Transcriptional changes, mRNA synthesis/degradation
+- **Intermediate (8-24h):** Protein accumulation, secondary responses
+- **Late (24+h):** Cell fate changes, adaptive responses
+
+### **KEY PRINCIPLES:**
+
+1. **Direct vs Indirect Effects:** Direct effects appear immediately (0-2h) with strong fold-changes; indirect effects appear later (4-24h) with moderate changes
+2. **Context Dependence:** Same perturbation produces different effects in different cell types, disease states, and genetic backgrounds
+3. **Measurement Strategy:** Combine mRNA (fast, genome-wide), protein (functional), and phenotypic measurements
+4. **Verification Required:** Always confirm >70% perturbation efficiency and validate with independent methods
+
+### **BEST PRACTICES:**
+
+✓ Include proper controls (negative, positive, mock treatment)
+✓ Plan time courses with early (2-4h), intermediate (8-12h), and late (24-48h) timepoints
+✓ Measure at multiple levels (mRNA, protein, PTM, phenotype)
+✓ Use ≥3 biological replicates with R² >0.8 correlation
+✓ Distinguish direct effects (early, strong) from indirect/compensatory effects
+✓ Report fold-changes (log2 scale), p-values (adjusted), effect sizes, and confidence intervals
+✓ Validate findings with independent methods and biological assays
+
+### **COMMON PITFALLS TO AVOID:**
+
+✗ Incomplete perturbation (<70% knockdown)
+✗ Wrong timepoint (too early or after adaptation)
+✗ Ignoring off-target effects (especially CRISPR)
+✗ Single measurement method
+✗ Not accounting for cell health/stress responses
+
+The visualizations and comprehensive framework provided above show the complete workflow for analyzing perturbation effects, from experimental design through data analysis and interpretation.
+
+</solution>

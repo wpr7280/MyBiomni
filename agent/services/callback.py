@@ -21,49 +21,59 @@ class WebSocketCallback:
         self.pending_tool_call_step = None  # 保存待更新的 tool_call 步骤
     
     async def process_step(self, output: str, usage: dict = None):
-        """处理每个步骤的输出 - 匹配 A1 的流式输出格式"""
+        """处理每个步骤的输出 - 完整处理所有标签
+        
+        注意：一个输出可能包含多个部分（thinking + execute + observe）
+        需要全部处理，不能只处理一个就返回
+        """
+        import sys
         
         # 累计 Token 使用量
         if usage:
             self.total_input_tokens += usage.get('input_tokens', 0)
             self.total_output_tokens += usage.get('output_tokens', 0)
-        else:
-            # 真实 Agent 没有返回 usage，使用简单估算
-            # 粗略估算：1 token ≈ 4 个字符（英文）或 1.5 个字符（中文）
-            estimated_tokens = len(output) // 3
-            self.total_output_tokens += estimated_tokens
         
-        # 提取 thinking/reasoning 部分（标签之前的文本）
+        # 清理输出，移除分隔符
+        output = output.replace('================================== Ai Message ==================================', '')
+        output = output.replace('================================ Human Message =================================', '')
+        output = output.strip()
+        
+        if not output:
+            return
+        
+        # 使用 stderr 输出调试日志
+        print(f"\n{'='*60}", file=sys.stderr)
+        print(f"📝 Processing output (length: {len(output)})", file=sys.stderr)
+        print(f"   First 200 chars: {output[:200]}...", file=sys.stderr)
+        print(f"{'='*60}", file=sys.stderr)
+        
+        # 🔴 关键修复：按顺序处理所有部分，不要提前返回
+        
+        # 1. 提取 thinking/reasoning 部分（标签之前的文本）
         tag_positions = []
-        for tag in ["<execute>", "<solution>", "<observation>"]:
+        for tag in ["<execute>", "<solution>", "<observe>", "<observation>", "<function_calls>"]:
             pos = output.find(tag)
             if pos != -1:
-                tag_positions.append(pos)
+                tag_positions.append((pos, tag))
         
         # 如果有标签，提取标签前的思考内容
         if tag_positions:
-            first_tag_pos = min(tag_positions)
+            first_tag_pos = min(tag_positions, key=lambda x: x[0])[0]
             thinking = output[:first_tag_pos].strip()
-            if thinking:
+            if thinking and len(thinking) > 10:
+                print(f"   ✓ 检测到 thinking 内容 (length: {len(thinking)})", file=sys.stderr)
                 self.step_order += 1
                 await self.on_reasoning(thinking)
-                # 同时累积到 final_content（可能是总结的一部分）
-                if self.final_content:
-                    self.final_content += "\n\n" + thinking
-                else:
-                    self.final_content = thinking
-        elif output.strip() and not any(tag in output for tag in ["<execute>", "<solution>", "<observation>"]):
-            # 没有任何标签的纯文本，可能是总结
+        elif len(output) > 10:
+            print(f"   ✓ 无标签，作为 reasoning 处理 (length: {len(output)})", file=sys.stderr)
             self.step_order += 1
-            await self.on_reasoning(output.strip())
-            if self.final_content:
-                self.final_content += "\n\n" + output.strip()
-            else:
-                self.final_content = output.strip()
+            await self.on_reasoning(output)
+            return  # 如果没有标签，处理完就返回
         
-        # 检查是否包含 <execute> 标签
+        # 2. 检查并处理 <execute> 标签
         execute_match = re.search(r'<execute>(.*?)</execute>', output, re.DOTALL)
         if execute_match:
+            print("   ✓ 检测到 <execute> 标签", file=sys.stderr)
             self.step_order += 1
             code = execute_match.group(1).strip()
             
@@ -78,37 +88,46 @@ class WebSocketCallback:
             
             await self.on_tool_call('execute_code', {'code': code, 'language': language})
         
-        # 检查是否包含 <observation> 标签
+        # 3. 检查并处理 <observe> 标签（A1 实际使用的标签）
+        observe_match = re.search(r'<observe>(.*?)</observe>', output, re.DOTALL)
+        if observe_match:
+            print("   ✓ 检测到 <observe> 标签", file=sys.stderr)
+            observation = observe_match.group(1).strip()
+            await self.on_tool_result(observation)
+        
+        # 4. 检查并处理 <observation> 标签（备用）
         observation_match = re.search(r'<observation>(.*?)</observation>', output, re.DOTALL)
         if observation_match:
+            print("   ✓ 检测到 <observation> 标签", file=sys.stderr)
             observation = observation_match.group(1).strip()
             await self.on_tool_result(observation)
         
-        # 检查是否包含 <solution> 标签
+        # 5. 检查并处理 <solution> 标签
         solution_match = re.search(r'<solution>(.*?)</solution>', output, re.DOTALL)
         if solution_match:
-            # solution 标签完整，使用其中的内容作为最终答案
+            print("   ✓ 检测到 <solution> 标签", file=sys.stderr)
             self.final_content = solution_match.group(1).strip()
-            print("✓ 检测到完整的 <solution> 标签")
-        elif '<solution>' in output:
-            # solution 标签存在但未闭合，提取 <solution> 之后的所有内容
-            solution_start = output.find('<solution>')
-            incomplete_solution = output[solution_start + len('<solution>'):].strip()
-            if incomplete_solution:
-                # 如果有内容，使用它（可能是被截断的答案）
-                self.final_content = incomplete_solution
-                print("⚠️ Warning: <solution> 标签未闭合，使用部分内容")
-            # 如果 <solution> 后面没有内容，保持使用累积的 final_content
     
     async def on_reasoning(self, content: str):
-        """推理步骤 - 显示 AI 的思考过程"""
-        # 清理内容，移除不必要的分隔符
+        """推理步骤 - 显示 AI 的思考过程（不拆分，保持完整）"""
+        import sys
+        
+        # 清理内容
         content = content.replace('================================== Ai Message ==================================', '')
         content = content.replace('================================ Human Message =================================', '')
+        content = content.replace('<function_calls>', '')
+        content = content.replace('</function_calls>', '')
         content = content.strip()
         
-        if not content:
+        if not content or len(content) < 5:
             return
+        
+        # 简单策略：不拆分，保持完整
+        # 只限制最大长度
+        if len(content) > 8000:
+            content = content[:8000] + "\n... (content truncated for display)"
+        
+        self.step_order += 1
         
         step = ExecutionStep(
             conversation_id=self.conversation_id,
@@ -125,6 +144,8 @@ class WebSocketCallback:
         self.db.add(step)
         self.db.commit()
         self.db.refresh(step)
+        
+        print(f"✓ Saved reasoning step {self.step_order}: {content[:100]}...", file=sys.stderr)
         
         # 推送到前端
         await self.manager.send_message(str(self.conversation_id), {
@@ -146,6 +167,8 @@ class WebSocketCallback:
     
     async def on_tool_call(self, tool_name: str, tool_input: dict):
         """工具调用 - 显示正在执行的代码"""
+        import sys
+        
         code = tool_input.get('code', '')
         language = tool_input.get('language', 'python')
         
@@ -167,6 +190,8 @@ class WebSocketCallback:
         # 保存这个步骤，等待 observation 时更新
         self.pending_tool_call_step = step
         
+        print(f"✓ Saved tool_call step {self.step_order}: {language} code ({len(code)} chars)", file=sys.stderr)
+        
         # 推送到前端 - 代码在 toolInput 中
         await self.manager.send_message(str(self.conversation_id), {
             'type': 'execution_step',
@@ -185,7 +210,9 @@ class WebSocketCallback:
         })
     
     async def on_tool_result(self, tool_output: str):
-        """工具结果 - 显示执行结果，并检测生成的图片"""
+        """工具结果 - 显示执行结果（不拆分，保持完整）"""
+        import sys
+        
         # 更新之前的 tool_call 步骤状态
         if self.pending_tool_call_step:
             self.pending_tool_call_step.status = 'success'
@@ -194,6 +221,8 @@ class WebSocketCallback:
                 (self.pending_tool_call_step.completed_at - self.pending_tool_call_step.started_at).total_seconds() * 1000
             )
             self.db.commit()
+            
+            print(f"✓ Updated tool_call step {self.pending_tool_call_step.step_order} to success", file=sys.stderr)
             
             # 推送更新到前端
             await self.manager.send_message(str(self.conversation_id), {
@@ -216,10 +245,14 @@ class WebSocketCallback:
             
             self.pending_tool_call_step = None
         
+        # 简单策略：不拆分，保持完整
+        # 只限制最大长度
+        if len(tool_output) > 10000:
+            tool_output = tool_output[:10000] + "\n... (content truncated for display)"
+        
         # 检测输出中的图片文件
         images = self._extract_images_from_output(tool_output)
         
-        # 创建新的 result 步骤
         self.step_order += 1
         
         step = ExecutionStep(
@@ -240,6 +273,8 @@ class WebSocketCallback:
         
         self.total_duration_ms += step.duration_ms
         
+        print(f"✓ Saved result step {self.step_order}: {tool_output[:100]}...", file=sys.stderr)
+        
         # 推送到前端
         await self.manager.send_message(str(self.conversation_id), {
             'type': 'execution_step',
@@ -251,7 +286,7 @@ class WebSocketCallback:
                 'stepType': 'result',
                 'stepName': '📋 Observation',
                 'toolOutput': tool_output,
-                'images': images,  # 添加图片数据
+                'images': images,
                 'status': 'success',
                 'startedAt': step.started_at.isoformat(),
                 'completedAt': step.completed_at.isoformat(),
@@ -260,72 +295,69 @@ class WebSocketCallback:
         })
     
     def _extract_images_from_output(self, output: str) -> list:
-        """从输出中提取图片文件路径并转为 base64"""
+        """从输出中提取图片文件路径并转为 base64（参考 Gradio demo 的简化逻辑）"""
         import os
         import base64
+        import sys
         
         images = []
         
-        # 支持的图片格式
-        image_extensions = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')
+        # 支持的图片格式（与 Gradio demo 一致）
+        SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')
         
-        # 使用正则提取文件路径
-        file_patterns = [
-            r"saved to[:\s]+['\"]?([^'\"\s]+\.(?:png|jpg|jpeg|gif|bmp|webp))['\"]?",
-            r"Plot saved to[:\s]+['\"]?([^'\"\s]+\.(?:png|jpg|jpeg|gif|bmp|webp))['\"]?",
-            r"Figure saved as[:\s]+['\"]?([^'\"\s]+\.(?:png|jpg|jpeg|gif|bmp|webp))['\"]?",
-            r"Saved (?:visualization|plot|figure) to[:\s]+['\"]?([^'\"\s]+\.(?:png|jpg|jpeg|gif|bmp|webp))['\"]?",
-            r"([^\s]+\.(?:png|jpg|jpeg|gif|bmp|webp))",  # 通用匹配
-        ]
+        # 检查输出中是否包含图片文件扩展名
+        if not any(ext in output for ext in SUPPORTED_EXTENSIONS):
+            return images
         
-        for pattern in file_patterns:
-            matches = re.findall(pattern, output, re.IGNORECASE)
-            for match in matches:
-                file_path = match.strip("'\"")
-                
-                # 尝试多个可能的路径
-                possible_paths = [
-                    file_path,  # 原始路径
-                    os.path.join(os.getcwd(), file_path),  # 当前目录
-                    os.path.join('./data', file_path),  # data 目录
-                    os.path.join('./data/biomni_data', file_path),  # biomni_data 目录
-                ]
-                
-                for path in possible_paths:
-                    if os.path.exists(path) and path.lower().endswith(image_extensions):
-                        try:
-                            with open(path, 'rb') as f:
-                                image_data = base64.b64encode(f.read()).decode('utf-8')
-                                # 检测图片格式
-                                ext = os.path.splitext(path)[1][1:].lower()
-                                mime_type = f'image/{ext}' if ext != 'jpg' else 'image/jpeg'
-                                
-                                images.append({
-                                    'filename': os.path.basename(path),
-                                    'data': f'data:{mime_type};base64,{image_data}',
-                                    'path': path
-                                })
-                                print(f"✓ 检测到图片: {path}")
-                                break  # 找到就跳出
-                        except Exception as e:
-                            print(f"读取图片失败 {path}: {e}")
-                            continue
+        # 使用简单的正则匹配文件路径（与 Gradio demo 类似）
+        matches = re.findall(r'(\S+?\.(?:png|jpg|jpeg|gif|bmp|webp))', output, re.IGNORECASE)
+        
+        valid_matches = []
+        for match in matches:
+            # 过滤掉明显的错误匹配
+            if not (match.startswith('Warning:') or match.startswith('Error:') or match.startswith("'")):
+                if not match.startswith('.'):
+                    valid_matches.append(match)
+        
+        for file_path in valid_matches:
+            file_path = file_path.strip("\"'").strip()
+            
+            # 尝试多个可能的路径（与 Gradio demo 类似）
+            abs_path = None
+            if os.path.isabs(file_path) and os.path.exists(file_path):
+                abs_path = file_path
+            elif os.path.exists(os.path.join(os.getcwd(), file_path)):
+                abs_path = os.path.join(os.getcwd(), file_path)
+            elif os.path.exists(os.path.join('./data', file_path)):
+                abs_path = os.path.join('./data', file_path)
+            elif os.path.exists(os.path.join('./data/biomni_data', file_path)):
+                abs_path = os.path.join('./data/biomni_data', file_path)
+            
+            if abs_path and abs_path.lower().endswith(SUPPORTED_EXTENSIONS):
+                try:
+                    with open(abs_path, 'rb') as f:
+                        image_data = base64.b64encode(f.read()).decode('utf-8')
+                        # 检测图片格式
+                        ext = os.path.splitext(abs_path)[1][1:].lower()
+                        mime_type = f'image/{ext}' if ext != 'jpg' else 'image/jpeg'
+                        
+                        images.append({
+                            'filename': os.path.basename(abs_path),
+                            'data': f'data:{mime_type};base64,{image_data}',
+                            'path': abs_path
+                        })
+                        print(f"✓ 检测到图片: {abs_path}", file=sys.stderr)
+                except Exception as e:
+                    print(f"⚠️ 读取图片失败 {abs_path}: {e}", file=sys.stderr)
+                    continue
         
         return images
     
     def get_result(self):
         """获取最终结果"""
-        # ✅ 修复：如果还有未完成的 tool_call 步骤，标记为成功
-        if self.pending_tool_call_step:
-            print(f"⚠️ Warning: 检测到未完成的 tool_call 步骤，自动标记为成功")
-            self.pending_tool_call_step.status = 'success'
-            self.pending_tool_call_step.completed_at = datetime.now()
-            self.pending_tool_call_step.duration_ms = int(
-                (self.pending_tool_call_step.completed_at - self.pending_tool_call_step.started_at).total_seconds() * 1000
-            )
-            self.pending_tool_call_step.tool_output = "(No observation received)"
-            self.db.commit()
-            self.pending_tool_call_step = None
+        import sys
+        
+        print(f"📊 get_result() 开始: conversation_id={self.conversation_id}", file=sys.stderr)
         
         # 保存 AI 消息
         assistant_message = Message(
@@ -342,35 +374,39 @@ class WebSocketCallback:
         self.db.commit()
         self.db.refresh(assistant_message)
         
-        # ✅ 修复：更新所有 execution_steps 的 message_id
-        updated_count = self.db.query(ExecutionStep).filter(
-            ExecutionStep.conversation_id == self.conversation_id,
-            ExecutionStep.message_id == 0  # 找到所有临时使用 0 的步骤
-        ).update({
-            'message_id': assistant_message.id
-        })
-        self.db.commit()
-        
-        print(f"✓ 已将 {updated_count} 个执行步骤关联到消息 ID: {assistant_message.id}")
+        print(f"✓ 保存 assistant message: id={assistant_message.id}, tokens={assistant_message.tokens}", file=sys.stderr)
         
         # 更新用户配额
         from models.models import UserQuota
         
         quota = self.db.query(UserQuota).filter(UserQuota.user_id == self.user_id).first()
         if quota:
+            old_used = quota.total_token_used
             quota.total_token_used += (self.total_input_tokens + self.total_output_tokens)
             quota.updated_at = datetime.now()
             self.db.commit()
+            print(f"✓ 更新配额: {old_used} → {quota.total_token_used} (+{self.total_input_tokens + self.total_output_tokens})", file=sys.stderr)
         
         # 更新对话统计
         conversation = self.db.query(Conversation).get(self.conversation_id)
         if conversation:
+            old_count = conversation.message_count
+            old_tokens = conversation.total_tokens
+            old_duration = conversation.total_duration_ms
+            
             conversation.message_count += 1
             conversation.total_tokens += assistant_message.tokens
             conversation.total_duration_ms += self.total_duration_ms
             conversation.last_message_at = datetime.now()
             conversation.updated_at = datetime.now()
             self.db.commit()
+            
+            print(f"✓ 更新 conversation:", file=sys.stderr)
+            print(f"  - message_count: {old_count} → {conversation.message_count}", file=sys.stderr)
+            print(f"  - total_tokens: {old_tokens} → {conversation.total_tokens}", file=sys.stderr)
+            print(f"  - total_duration_ms: {old_duration} → {conversation.total_duration_ms}", file=sys.stderr)
+        else:
+            print(f"⚠️ Warning: Conversation {self.conversation_id} not found!", file=sys.stderr)
         
         return {
             'id': assistant_message.id,

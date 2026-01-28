@@ -60,6 +60,25 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
         return '#d9d9d9';
     }
   };
+  
+  // 格式化步骤名称
+  const formatStepName = (step: ExecutionStep) => {
+    if (step.stepName) {
+      return step.stepName;
+    }
+    
+    // 根据类型生成默认名称
+    switch (step.stepType) {
+      case 'reasoning':
+        return '🤔 Thinking';
+      case 'tool_call':
+        return '🛠️ Executing';
+      case 'result':
+        return '📋 Result';
+      default:
+        return step.stepType;
+    }
+  };
 
   const successCount = steps.filter((s) => s.status === 'success').length;
 
@@ -85,6 +104,23 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
   const renderStepContent = (step: ExecutionStep) => {
     // Reasoning 类型：使用 Markdown 渲染
     if (step.stepType === 'reasoning' && step.toolOutput) {
+      // 清理内容
+      let content = step.toolOutput;
+      
+      // 移除多余的分隔符
+      content = content.replace(/={50,}/g, '');
+      content = content.replace(/Ai Message/g, '');
+      content = content.replace(/Human Message/g, '');
+      
+      // 移除 function_calls 标签
+      content = content.replace(/<\/?function_calls>/g, '');
+      
+      // 清理多余的空行
+      content = content.replace(/\n{3,}/g, '\n\n');
+      content = content.trim();
+      
+      if (!content) return null;
+      
       return (
         <div
           style={{
@@ -149,7 +185,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
               p: ({ children }) => <p style={{ marginTop: 4, marginBottom: 4 }}>{children}</p>,
             }}
           >
-            {step.toolOutput}
+            {content}
           </ReactMarkdown>
         </div>
       );
@@ -310,7 +346,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                             </div>
                             {getStepIcon(step.stepType)}
                             <Text strong style={{ fontSize: 14 }}>
-                              {step.stepName || step.stepType}
+                              {formatStepName(step)}
                             </Text>
                             {/* 时间 */}
                             <Text type="secondary" style={{ fontSize: 11, marginLeft: 8 }}>

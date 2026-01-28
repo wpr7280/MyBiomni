@@ -26,22 +26,13 @@ rsync -az --dry-run --delete \
 
 rsync -az --relative \
   -e "ssh -i ./biomni.pem -o StrictHostKeyChecking=accept-new" \
-  client/frontend/src/components/ChatWindow.tsx \
-  client/frontend/src/components/ExecutionPanel.tsx \
-  client/frontend/src/components/MarkdownContent.tsx \
-  client/frontend/src/components/MarkdownContent.tsx \
-  client/frontend/src/hooks/useWebSocket.ts \
-  client/frontend/src/types/index.ts \
-  client/frontend/package.json \
-  client/frontend/package-lock.json \
-  agent/services/agent_service.py \
   agent/services/callback.py \
   ubuntu@44.222.116.143:/home/ubuntu/myBiomni/
 
 rsync -az --relative \
   -e "ssh -i ./biomni.pem -o StrictHostKeyChecking=accept-new" \
   agent/api/websocket.py \
-  client/frontend/src/hooks/useWebSocket.ts \
   ubuntu@44.222.116.143:/home/ubuntu/myBiomni/
 
 scp  -i ./biomni.pem  ubuntu@44.222.116.143:/home/ubuntu/myBiomni/agent/log5 .
+git log -10
