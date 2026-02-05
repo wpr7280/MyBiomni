@@ -18,7 +18,256 @@ class WebSocketCallback:
         self.total_duration_ms = 0
         self.final_content = ""
         self.start_time = datetime.now()
-        self.pending_tool_call_step = None  # 保存待更新的 tool_call 步骤
+        self.pending_tool_call_steps = []  # 保存待更新的 tool_call 步骤（栈）
+        self.plan_items = []  # 规划步骤列表
+        self.plan_step = None  # 规划步骤的 ExecutionStep（用于更新）
+        self.current_plan_index = None  # 当前进行中的 plan 序号
+
+    def _normalize_output(self, output: str) -> str:
+        """清理 pretty_print 头部与 ANSI，并过滤 Human Message。"""
+        if not output:
+            return ""
+
+        # 去除 ANSI 颜色码
+        output = re.sub(r"\x1b\[[0-9;]*m", "", output)
+
+        lines = output.splitlines()
+        if lines and re.match(r"^=+ .* Message =+$", lines[0]):
+            # Human Message 直接跳过（避免把用户输入当 reasoning）
+            if "Human Message" in lines[0]:
+                return ""
+            # 去掉头部、Name 行、空行
+            lines = lines[1:]
+            if lines and lines[0].startswith("Name:"):
+                lines = lines[1:]
+            if lines and lines[0].strip() == "":
+                lines = lines[1:]
+            output = "\n".join(lines)
+
+        # 兼容旧逻辑的分隔符清理
+        output = output.replace('================================== Ai Message ==================================', '')
+        output = output.replace('================================ Human Message =================================', '')
+        return output.strip()
+
+    def _extract_plan_items(self, text: str) -> list[dict]:
+        """从输出中提取 Plan 列表项（1. [ ] xxx）。仅取首个 Plan 区块，避免重复。"""
+        lines = text.splitlines()
+        checkbox_re = re.compile(r"^\s*(\d+)\.\s+\[( |x|X|✓)\]\s+(.*\S)\s*$")
+        checkmark_re = re.compile(r"^\s*(\d+)\.\s+(✓|☑)\s+(.*\S)\s*$")
+
+        # 1) 优先从 “Plan” 标题之后提取
+        start_idx = None
+        for i, line in enumerate(lines):
+            if re.match(r"^\s*(#+\s*)?Plan\b", line, re.IGNORECASE):
+                start_idx = i + 1
+                break
+
+        # 2) 如果没有标题，则寻找首个连续的 checkbox 区块
+        if start_idx is None:
+            for i, line in enumerate(lines):
+                if checkbox_re.match(line):
+                    start_idx = i
+                    break
+
+        if start_idx is None:
+            return []
+
+        items = []
+        seen = set()
+        started = False
+        for line in lines[start_idx:]:
+            if line.strip() == "":
+                if started:
+                    break
+                continue
+
+            match = checkbox_re.match(line)
+            if match:
+                started = True
+                index = int(match.group(1))
+                checked = match.group(2) in ("x", "X", "✓")
+                title = match.group(3).strip()
+                key = (index, title)
+                if key in seen:
+                    continue
+                seen.add(key)
+                items.append({"index": index, "title": title, "done": checked})
+                continue
+            match = checkmark_re.match(line)
+            if match:
+                started = True
+                index = int(match.group(1))
+                title = match.group(3).strip()
+                key = (index, title)
+                if key in seen:
+                    continue
+                seen.add(key)
+                items.append({"index": index, "title": title, "done": True})
+                continue
+
+            # 遇到非 checkbox 行，且已经开始收集，则结束
+            if started:
+                break
+
+        if len(items) >= 2:
+            return items
+        return []
+
+    def _merge_plan_items(self, new_items: list[dict]) -> bool:
+        """合并 plan 状态，返回是否发生更新。"""
+        if not new_items:
+            return False
+        updated = False
+        if not self.plan_items:
+            self.plan_items = new_items
+            return True
+        # 按 index 合并 done 状态与标题
+        for item in new_items:
+            idx = item["index"]
+            for existing in self.plan_items:
+                if existing["index"] == idx:
+                    if existing["done"] != item["done"]:
+                        existing["done"] = item["done"]
+                        updated = True
+                    if existing["title"] != item["title"]:
+                        existing["title"] = item["title"]
+                        updated = True
+                    break
+        return updated
+
+    def _render_plan_markdown(self) -> str:
+        lines = ["## Plan", ""]
+        for item in sorted(self.plan_items, key=lambda x: x["index"]):
+            mark = "✓" if item["done"] else "[ ]"
+            suffix = ""
+            if self.current_plan_index == item["index"] and not item["done"]:
+                suffix = " (in progress)"
+            if item["done"]:
+                lines.append(f"{item['index']}. {mark} {item['title']}{suffix}")
+            else:
+                lines.append(f"{item['index']}. {mark} {item['title']}{suffix}")
+        return "\n".join(lines)
+
+    def _clean_reasoning_segment(self, content: str) -> str:
+        """清理非标签文本片段，去掉 Plan 列表与 Step 状态行。"""
+        content = content.replace("<function_calls>", "").replace("</function_calls>", "")
+        lines = content.splitlines()
+        cleaned = []
+        skipping_plan = False
+
+        checkbox_re = re.compile(r"^\s*\d+\.\s+\[( |x|X|✓)\]\s+.*\S$")
+        checkmark_re = re.compile(r"^\s*\d+\.\s+(✓|☑)\s+.*\S$")
+        step_status_re = re.compile(r"^\s*\[.*\]\s*Step\b", re.IGNORECASE)
+
+        for line in lines:
+            if re.match(r"^\s*(#+\s*)?Plan\b", line, re.IGNORECASE):
+                skipping_plan = True
+                continue
+
+            if skipping_plan:
+                if checkbox_re.match(line) or line.strip() == "":
+                    continue
+                # 非计划项，结束跳过
+                skipping_plan = False
+
+            if checkbox_re.match(line) or checkmark_re.match(line):
+                continue
+            if step_status_re.match(line):
+                continue
+
+            cleaned.append(line)
+
+        cleaned_text = "\n".join(cleaned).strip()
+        return cleaned_text
+
+    async def _upsert_plan_step(self):
+        """创建或更新 Plan 步骤。"""
+        if not self.plan_items:
+            return
+
+        content = self._render_plan_markdown()
+        if self.plan_step is None:
+            self.step_order += 1
+            step = ExecutionStep(
+                conversation_id=self.conversation_id,
+                message_id=self.current_message_id or 0,
+                step_order=self.step_order,
+                step_type='reasoning',
+                step_name='🗺️ Plan',
+                status='success',
+                tool_output=content,
+                started_at=datetime.now(),
+                completed_at=datetime.now(),
+                duration_ms=50
+            )
+            self.db.add(step)
+            self.db.commit()
+            self.db.refresh(step)
+            self.plan_step = step
+
+            await self.manager.send_message(str(self.conversation_id), {
+                'type': 'execution_step',
+                'step': {
+                    'id': step.id,
+                    'conversationId': self.conversation_id,
+                    'messageId': self.current_message_id or 0,
+                    'stepOrder': self.step_order,
+                    'stepType': 'reasoning',
+                    'stepName': '🗺️ Plan',
+                    'toolOutput': content,
+                    'status': 'success',
+                    'startedAt': step.started_at.isoformat(),
+                    'completedAt': step.completed_at.isoformat(),
+                    'durationMs': step.duration_ms
+                }
+            })
+        else:
+            self.plan_step.tool_output = content
+            self.plan_step.completed_at = datetime.now()
+            self.db.commit()
+
+            await self.manager.send_message(str(self.conversation_id), {
+                'type': 'execution_step',
+                'step': {
+                    'id': self.plan_step.id,
+                    'conversationId': self.conversation_id,
+                    'messageId': self.current_message_id or 0,
+                    'stepOrder': self.plan_step.step_order,
+                    'stepType': 'reasoning',
+                    'stepName': self.plan_step.step_name,
+                    'toolOutput': content,
+                    'status': 'success',
+                    'startedAt': self.plan_step.started_at.isoformat(),
+                    'completedAt': self.plan_step.completed_at.isoformat(),
+                    'durationMs': self.plan_step.duration_ms
+                }
+            })
+
+    def _advance_plan_on_execute(self) -> bool:
+        """通用策略：每次 execute 开始时，将下一个未完成的 plan 标记为进行中。"""
+        if not self.plan_items:
+            return False
+        if self.current_plan_index is not None:
+            return False
+        for item in sorted(self.plan_items, key=lambda x: x["index"]):
+            if not item["done"]:
+                self.current_plan_index = item["index"]
+                return True
+        return False
+
+    def _complete_plan_on_observation(self) -> bool:
+        """通用策略：每次 observation 完成时，完成当前进行中的 plan。"""
+        if self.current_plan_index is None:
+            return False
+        updated = False
+        for item in self.plan_items:
+            if item["index"] == self.current_plan_index:
+                if not item["done"]:
+                    item["done"] = True
+                    updated = True
+                break
+        self.current_plan_index = None
+        return updated
     
     async def process_step(self, output: str, usage: dict = None):
         """处理每个步骤的输出 - 完整处理所有标签
@@ -33,10 +282,8 @@ class WebSocketCallback:
             self.total_input_tokens += usage.get('input_tokens', 0)
             self.total_output_tokens += usage.get('output_tokens', 0)
         
-        # 清理输出，移除分隔符
-        output = output.replace('================================== Ai Message ==================================', '')
-        output = output.replace('================================ Human Message =================================', '')
-        output = output.strip()
+        # 清理输出，移除分隔符 & pretty_print 头部
+        output = self._normalize_output(output)
         
         if not output:
             return
@@ -46,67 +293,74 @@ class WebSocketCallback:
         print(f"📝 Processing output (length: {len(output)})", file=sys.stderr)
         print(f"   First 200 chars: {output[:200]}...", file=sys.stderr)
         print(f"{'='*60}", file=sys.stderr)
+
+        # Plan 提取与更新
+        new_plan_items = self._extract_plan_items(output)
+        if new_plan_items:
+            if self._merge_plan_items(new_plan_items):
+                await self._upsert_plan_step()
         
         # 🔴 关键修复：按顺序处理所有部分，不要提前返回
         
-        # 1. 提取 thinking/reasoning 部分（标签之前的文本）
-        tag_positions = []
-        for tag in ["<execute>", "<solution>", "<observe>", "<observation>", "<function_calls>"]:
-            pos = output.find(tag)
-            if pos != -1:
-                tag_positions.append((pos, tag))
-        
-        # 如果有标签，提取标签前的思考内容
-        if tag_positions:
-            first_tag_pos = min(tag_positions, key=lambda x: x[0])[0]
-            thinking = output[:first_tag_pos].strip()
-            if thinking and len(thinking) > 10:
-                print(f"   ✓ 检测到 thinking 内容 (length: {len(thinking)})", file=sys.stderr)
-                self.step_order += 1
-                await self.on_reasoning(thinking)
-        elif len(output) > 10:
-            print(f"   ✓ 无标签，作为 reasoning 处理 (length: {len(output)})", file=sys.stderr)
-            self.step_order += 1
-            await self.on_reasoning(output)
-            return  # 如果没有标签，处理完就返回
-        
-        # 2. 检查并处理 <execute> 标签
-        execute_match = re.search(r'<execute>(.*?)</execute>', output, re.DOTALL)
-        if execute_match:
-            print("   ✓ 检测到 <execute> 标签", file=sys.stderr)
-            self.step_order += 1
-            code = execute_match.group(1).strip()
-            
-            # 检测代码语言
-            language = "python"
-            if code.strip().startswith("#!R"):
-                language = "r"
-                code = re.sub(r"^#!R", "", code, count=1).strip()
-            elif code.strip().startswith("#!BASH") or code.strip().startswith("#!CLI"):
-                language = "bash"
-                code = re.sub(r"^#!BASH|^#!CLI", "", code, count=1).strip()
-            
-            await self.on_tool_call('execute_code', {'code': code, 'language': language})
-        
-        # 3. 检查并处理 <observe> 标签（A1 实际使用的标签）
-        observe_match = re.search(r'<observe>(.*?)</observe>', output, re.DOTALL)
-        if observe_match:
-            print("   ✓ 检测到 <observe> 标签", file=sys.stderr)
-            observation = observe_match.group(1).strip()
-            await self.on_tool_result(observation)
-        
-        # 4. 检查并处理 <observation> 标签（备用）
-        observation_match = re.search(r'<observation>(.*?)</observation>', output, re.DOTALL)
-        if observation_match:
-            print("   ✓ 检测到 <observation> 标签", file=sys.stderr)
-            observation = observation_match.group(1).strip()
-            await self.on_tool_result(observation)
-        
-        # 5. 检查并处理 <solution> 标签
-        solution_match = re.search(r'<solution>(.*?)</solution>', output, re.DOTALL)
-        if solution_match:
-            print("   ✓ 检测到 <solution> 标签", file=sys.stderr)
-            self.final_content = solution_match.group(1).strip()
+        # 1. 解析标签与非标签片段（支持中间 reasoning）
+        tag_re = re.compile(r'<(execute|observation|observe|solution)>(.*?)</\1>', re.DOTALL)
+        matches = list(tag_re.finditer(output))
+
+        if not matches:
+            # 全部作为 reasoning 处理
+            cleaned = self._clean_reasoning_segment(output)
+            if cleaned and len(cleaned) > 10:
+                print(f"   ✓ 无标签，作为 reasoning 处理 (length: {len(cleaned)})", file=sys.stderr)
+                await self.on_reasoning(cleaned)
+            return
+
+        cursor = 0
+        for match in matches:
+            # 处理标签前的文本片段
+            if match.start() > cursor:
+                text_segment = output[cursor:match.start()]
+                cleaned = self._clean_reasoning_segment(text_segment)
+                if cleaned and len(cleaned) > 10:
+                    print(f"   ✓ 检测到 reasoning 片段 (length: {len(cleaned)})", file=sys.stderr)
+                    await self.on_reasoning(cleaned)
+
+            tag = match.group(1)
+            body = match.group(2).strip()
+
+            if tag == "execute":
+                print("   ✓ 检测到 <execute> 标签", file=sys.stderr)
+                code = body
+
+                # 检测代码语言
+                language = "python"
+                if code.strip().startswith("#!R"):
+                    language = "r"
+                    code = re.sub(r"^#!R", "", code, count=1).strip()
+                elif code.strip().startswith("#!BASH") or code.strip().startswith("#!CLI"):
+                    language = "bash"
+                    code = re.sub(r"^#!BASH|^#!CLI", "", code, count=1).strip()
+
+                await self.on_tool_call('execute_code', {'code': code, 'language': language})
+                if self._advance_plan_on_execute():
+                    await self._upsert_plan_step()
+            elif tag in ("observe", "observation"):
+                print(f"   ✓ 检测到 <{tag}> 标签", file=sys.stderr)
+                await self.on_tool_result(body)
+                if self._complete_plan_on_observation():
+                    await self._upsert_plan_step()
+            elif tag == "solution":
+                print("   ✓ 检测到 <solution> 标签", file=sys.stderr)
+                self.final_content = body
+
+            cursor = match.end()
+
+        # 处理最后一个标签后的文本片段
+        if cursor < len(output):
+            tail_segment = output[cursor:]
+            cleaned = self._clean_reasoning_segment(tail_segment)
+            if cleaned and len(cleaned) > 10:
+                print(f"   ✓ 检测到 reasoning 片段 (length: {len(cleaned)})", file=sys.stderr)
+                await self.on_reasoning(cleaned)
     
     async def on_reasoning(self, content: str):
         """推理步骤 - 显示 AI 的思考过程（不拆分，保持完整）"""
@@ -171,6 +425,8 @@ class WebSocketCallback:
         
         code = tool_input.get('code', '')
         language = tool_input.get('language', 'python')
+
+        self.step_order += 1
         
         step = ExecutionStep(
             conversation_id=self.conversation_id,
@@ -188,7 +444,7 @@ class WebSocketCallback:
         self.db.refresh(step)
         
         # 保存这个步骤，等待 observation 时更新
-        self.pending_tool_call_step = step
+        self.pending_tool_call_steps.append(step)
         
         print(f"✓ Saved tool_call step {self.step_order}: {language} code ({len(code)} chars)", file=sys.stderr)
         
@@ -214,36 +470,35 @@ class WebSocketCallback:
         import sys
         
         # 更新之前的 tool_call 步骤状态
-        if self.pending_tool_call_step:
-            self.pending_tool_call_step.status = 'success'
-            self.pending_tool_call_step.completed_at = datetime.now()
-            self.pending_tool_call_step.duration_ms = int(
-                (self.pending_tool_call_step.completed_at - self.pending_tool_call_step.started_at).total_seconds() * 1000
+        if self.pending_tool_call_steps:
+            pending_step = self.pending_tool_call_steps.pop()
+            pending_step.status = 'success'
+            pending_step.completed_at = datetime.now()
+            pending_step.duration_ms = int(
+                (pending_step.completed_at - pending_step.started_at).total_seconds() * 1000
             )
             self.db.commit()
             
-            print(f"✓ Updated tool_call step {self.pending_tool_call_step.step_order} to success", file=sys.stderr)
+            print(f"✓ Updated tool_call step {pending_step.step_order} to success", file=sys.stderr)
             
             # 推送更新到前端
             await self.manager.send_message(str(self.conversation_id), {
                 'type': 'execution_step',
                 'step': {
-                    'id': self.pending_tool_call_step.id,
+                    'id': pending_step.id,
                     'conversationId': self.conversation_id,
                     'messageId': self.current_message_id or 0,
-                    'stepOrder': self.pending_tool_call_step.step_order,
+                    'stepOrder': pending_step.step_order,
                     'stepType': 'tool_call',
-                    'stepName': self.pending_tool_call_step.step_name,
-                    'toolName': self.pending_tool_call_step.tool_name,
-                    'toolInput': json.loads(self.pending_tool_call_step.tool_input) if self.pending_tool_call_step.tool_input else {},
+                    'stepName': pending_step.step_name,
+                    'toolName': pending_step.tool_name,
+                    'toolInput': json.loads(pending_step.tool_input) if pending_step.tool_input else {},
                     'status': 'success',
-                    'startedAt': self.pending_tool_call_step.started_at.isoformat(),
-                    'completedAt': self.pending_tool_call_step.completed_at.isoformat(),
-                    'durationMs': self.pending_tool_call_step.duration_ms
+                    'startedAt': pending_step.started_at.isoformat(),
+                    'completedAt': pending_step.completed_at.isoformat(),
+                    'durationMs': pending_step.duration_ms
                 }
             })
-            
-            self.pending_tool_call_step = None
         
         # 简单策略：不拆分，保持完整
         # 只限制最大长度

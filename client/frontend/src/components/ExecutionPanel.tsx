@@ -100,22 +100,16 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
     );
   };
 
-  // 渲染步骤内容
+  // 渲染步骤内容（简单显示，不拆分）
   const renderStepContent = (step: ExecutionStep) => {
     // Reasoning 类型：使用 Markdown 渲染
     if (step.stepType === 'reasoning' && step.toolOutput) {
       // 清理内容
       let content = step.toolOutput;
-      
-      // 移除多余的分隔符
       content = content.replace(/={50,}/g, '');
       content = content.replace(/Ai Message/g, '');
       content = content.replace(/Human Message/g, '');
-      
-      // 移除 function_calls 标签
       content = content.replace(/<\/?function_calls>/g, '');
-      
-      // 清理多余的空行
       content = content.replace(/\n{3,}/g, '\n\n');
       content = content.trim();
       
@@ -129,11 +123,12 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
             borderRadius: 4,
             fontSize: 13,
             lineHeight: 1.6,
+            maxHeight: 600,
+            overflow: 'auto',
           }}
         >
           <ReactMarkdown
             components={{
-              // 自定义代码块样式
               code({ node, inline, className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || '');
                 const language = match ? match[1] : '';
@@ -166,7 +161,6 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                   </code>
                 );
               },
-              // 自定义列表样式
               ul: ({ children }) => (
                 <ul style={{ marginLeft: 20, marginTop: 8, marginBottom: 8 }}>
                   {children}
@@ -177,11 +171,9 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                   {children}
                 </ol>
               ),
-              // 自定义标题样式
               h1: ({ children }) => <h3 style={{ marginTop: 12, marginBottom: 8 }}>{children}</h3>,
               h2: ({ children }) => <h4 style={{ marginTop: 10, marginBottom: 6 }}>{children}</h4>,
               h3: ({ children }) => <h5 style={{ marginTop: 8, marginBottom: 4 }}>{children}</h5>,
-              // 自定义段落样式
               p: ({ children }) => <p style={{ marginTop: 4, marginBottom: 4 }}>{children}</p>,
             }}
           >
@@ -211,7 +203,7 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
               background: '#f5f5f5',
               borderRadius: 4,
               fontSize: 12,
-              maxHeight: 400,
+              maxHeight: 600,
               overflow: 'auto',
               fontFamily: 'monospace',
               whiteSpace: 'pre-wrap',

@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     
     # Agent 配置
     AGENT_DATA_PATH: str = "./data"
+    AGENT_UPLOAD_DATA_PATH: str = "./upload"
+
     DEFAULT_LLM: str = "claude-sonnet-4-5"
     DEFAULT_TEMPERATURE: float = 0.7
     

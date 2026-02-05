@@ -66,6 +66,7 @@ async def websocket_endpoint(
                     conversation_id=int(conversation_id),
                     user_id=user_id,
                     content=data['content'],
+                    file_ids=data.get('file_ids', []),
                     manager=manager,
                     db=db
                 )
@@ -84,6 +85,7 @@ async def handle_agent_execution(
     conversation_id: int,
     user_id: int,
     content: str,
+    file_ids: list[int] | None,
     manager: ConnectionManager,
     db: Session
 ):
@@ -168,6 +170,22 @@ async def handle_agent_execution(
             conversation.updated_at = datetime.now()
             db.commit()
         
+        # 2.1 处理上传文件（绑定 message_id，并拼接到 prompt）
+        content_with_files = content
+        if file_ids:
+            from models.models import Attachment
+
+            attachments = (
+                db.query(Attachment)
+                .filter(Attachment.id.in_(file_ids), Attachment.user_id == user_id)
+                .all()
+            )
+            for attachment in attachments:
+                attachment.conversation_id = conversation_id
+                attachment.message_id = user_message.id
+                content_with_files += f"\n\nUser uploaded this file: {attachment.path}\nPlease use it if needed."
+            db.commit()
+
         # 3. 通知开始执行
         await manager.send_message(str(conversation_id), {
             'type': 'execution_start'
@@ -189,7 +207,7 @@ async def handle_agent_execution(
         result = await AgentService.execute_agent_stream(
             conversation_id=conversation_id,
             user_id=user_id,
-            query=content,
+            query=content_with_files,
             callback=callback,
             db=db
         )

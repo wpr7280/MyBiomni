@@ -6,6 +6,7 @@ from typing import Dict
 import asyncio
 import re
 import os
+import threading
 
 # Agent 实例池（每个用户一个实例）
 agent_pool: Dict[int, tuple] = {}  # {user_id: (config_hash, agent)}
@@ -105,68 +106,35 @@ class AgentService:
                 usage = step.get('usage', None)
                 await callback.process_step(output, usage)
         else:
-            # 真实 A1 Agent 是同步的，需要在线程中流式处理
-            import asyncio
-            import queue
-            import threading
-            
-            # 创建队列用于线程间通信
-            step_queue = queue.Queue()
-            
-            def run_agent_in_thread():
-                """在线程中运行 Agent，将步骤放入队列"""
+            # 真实 A1 Agent 是同步的，使用线程 + asyncio.Queue 实现真正流式
+            loop = asyncio.get_event_loop()
+            queue: asyncio.Queue = asyncio.Queue()
+            stop_sentinel = object()
+
+            def run_agent_stream():
                 try:
-                    print(f"🚀 Agent 线程开始执行: conversation_id={conversation_id}")
-                    step_count = 0
-                    for step in agent.go_stream(query):
-                        step_count += 1
-                        step_queue.put(('step', step))
-                    print(f"✓ Agent 执行完成，共 {step_count} 个步骤")
-                    step_queue.put(('done', None))
+                    for step in agent.go_stream(query, thread_id=conversation_id):
+                        loop.call_soon_threadsafe(queue.put_nowait, step)
                 except Exception as e:
-                    print(f"❌ Agent 线程执行失败: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    step_queue.put(('error', str(e)))
-            
-            # 启动线程
-            thread = threading.Thread(target=run_agent_in_thread, daemon=True)
+                    loop.call_soon_threadsafe(queue.put_nowait, {"__error__": str(e)})
+                finally:
+                    loop.call_soon_threadsafe(queue.put_nowait, stop_sentinel)
+
+            thread = threading.Thread(target=run_agent_stream, daemon=True)
             thread.start()
-            
-            # 异步处理队列中的步骤
-            timeout_counter = 0
-            max_timeout = 6000  # 最多等待 600 秒（10 分钟）
-            
+
+            # 逐步处理输出（实时推送）
             while True:
-                try:
-                    # 非阻塞获取，避免卡住事件循环
-                    msg_type, data = await asyncio.get_event_loop().run_in_executor(
-                        None, step_queue.get, True, 0.1  # 100ms 超时
-                    )
-                    
-                    # 重置超时计数器
-                    timeout_counter = 0
-                    
-                    if msg_type == 'step':
-                        output = data.get('output', '')
-                        usage = data.get('usage', None)
-                        await callback.process_step(output, usage)
-                    elif msg_type == 'done':
-                        print("✓ Agent 执行完成，准备保存结果")
-                        break
-                    elif msg_type == 'error':
-                        raise Exception(f"Agent execution error: {data}")
-                        
-                except queue.Empty:
-                    # 队列为空，继续等待
-                    timeout_counter += 1
-                    if timeout_counter >= max_timeout:
-                        print(f"⚠️ Warning: Agent 执行超时（{max_timeout * 0.1}秒），强制结束")
-                        break
-                    await asyncio.sleep(0.1)
-                    continue
-        
-        print("✓ 开始调用 callback.get_result()")
-        result = callback.get_result()
-        print(f"✓ get_result() 返回: message_id={result.get('id')}")
-        return result
+                step = await queue.get()
+                if step is stop_sentinel:
+                    break
+                if isinstance(step, dict) and step.get("__error__"):
+                    raise RuntimeError(step["__error__"])
+
+                output = step.get('output', '')
+                usage = step.get('usage', None)
+                await callback.process_step(output, usage)
+            print("✓ 开始调用 callback.get_result()")
+            result = callback.get_result()
+            print(f"✓ get_result() 返回: message_id={result.get('id')}")
+            return result

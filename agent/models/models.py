@@ -73,3 +73,16 @@ class SystemConfig(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
 
+class Attachment(Base):
+    __tablename__ = 'attachments'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    conversation_id = Column(Integer, nullable=True)
+    message_id = Column(Integer, nullable=True)
+    filename = Column(String(255), nullable=False)
+    path = Column(Text, nullable=False)
+    size = Column(Integer, nullable=False, default=0)
+    mime_type = Column(String(100))
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+

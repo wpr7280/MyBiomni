@@ -7,6 +7,7 @@ import ExecutionPanel from './ExecutionPanel';
 import MarkdownContent from './MarkdownContent';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { conversationApi } from '@/api/conversation';
+import { uploadAttachment } from '@/api/upload';
 import type { MenuProps } from 'antd';
 
 interface ChatWindowProps {
@@ -90,9 +91,20 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
       };
       setMessages((prev) => [...prev, thinkingMessage]);
       
+      let uploadedFileIds: number[] = [];
+      if (fileList.length > 0) {
+        const uploads = await Promise.all(
+          fileList.map((file: any) => {
+            const originFile = file.originFileObj || file;
+            return uploadAttachment(conversationId, originFile);
+          })
+        );
+        uploadedFileIds = uploads.map((item) => item.id);
+      }
+
       // 直接通过 WebSocket 发送给 Python Agent
       // Python 会负责：保存用户消息、执行 Agent、保存 AI 消息
-      sendMessage(content);
+      sendMessage(content, uploadedFileIds);
       
       setFileList([]);
       setShowUpload(false);
@@ -203,7 +215,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           
           {showUpload && (
             <div style={{ marginBottom: 12 }}>
-              <Upload.Dragger beforeUpload={(file) => { setFileList([...fileList, { uid: file.uid, name: file.name, status: 'done' }]); setShowUpload(false); return false; }} fileList={[]} showUploadList={false} style={{ background: '#fafafa', borderColor: '#d9d9d9' }}>
+              <Upload.Dragger beforeUpload={(file) => { setFileList([...fileList, { uid: file.uid, name: file.name, status: 'done', originFileObj: file }]); setShowUpload(false); return false; }} fileList={[]} showUploadList={false} style={{ background: '#fafafa', borderColor: '#d9d9d9' }}>
                 <div style={{ padding: '20px 0' }}>
                   <PaperClipOutlined style={{ fontSize: 24, color: '#1890ff' }} />
                   <div style={{ marginTop: 8, fontSize: 14, color: '#8c8c8c' }}>{t('chat.uploadHint')}</div>

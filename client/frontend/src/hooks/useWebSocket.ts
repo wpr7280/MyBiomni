@@ -9,6 +9,8 @@ export function useWebSocket(conversationId: number | null) {
   const [isExecuting, setIsExecuting] = useState(false);
   const wsRef = useRef<WebSocket | MockWebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const retryCountRef = useRef(0);  // 重试计数器
+  const maxRetries = 3;  // 最多重试3次
 
   const connect = useCallback(() => {
     if (!conversationId) return;
@@ -26,6 +28,7 @@ export function useWebSocket(conversationId: number | null) {
       url: url.replace(/token=[^&]+/, 'token=***'),
       conversationId,
       wsUrl,
+      retryCount: retryCountRef.current,
       timestamp: new Date().toISOString(),
     });
 
@@ -37,6 +40,7 @@ export function useWebSocket(conversationId: number | null) {
 
     ws.addEventListener('open', () => {
       hasConnected = true;
+      retryCountRef.current = 0;  // 重置重试计数
       console.log('✅ WebSocket 连接成功:', {
         url: url.replace(/token=[^&]+/, 'token=***'),
         readyState: ws.readyState,
@@ -160,37 +164,40 @@ export function useWebSocket(conversationId: number | null) {
         code: event.code,
         reason: event.reason,
         wasClean: event.wasClean,
+        hasConnected,
+        retryCount: retryCountRef.current,
         url,
         timestamp: new Date().toISOString(),
       });
       
-      // 只有在从未成功连接过，且是异常关闭时才显示错误
-      if (!hasConnected && event.code !== 1000) {
-        console.error('WebSocket 连接失败:', {
-          code: event.code,
-          reason: event.reason || '未知原因',
-        });
+      // 只有在从未成功连接过，且是异常关闭（code 1006），且重试次数超过限制时才显示错误
+      if (!hasConnected && event.code === 1006) {
+        retryCountRef.current += 1;
         
-        // 显示用户友好的错误信息
-        let errorMessage = 'WebSocket 连接失败';
-        if (event.code === 1006) {
-          errorMessage = 'WebSocket 连接失败：无法连接到服务器';
-        } else if (event.code === 1002) {
-          errorMessage = 'WebSocket 连接失败：认证失败';
+        // 只在重试多次后才显示错误
+        if (retryCountRef.current > maxRetries) {
+          console.error('WebSocket 连接失败（多次重试后）:', {
+            code: event.code,
+            reason: event.reason || '未知原因',
+            retryCount: retryCountRef.current,
+          });
+          
+          antdMessage.error({
+            content: 'WebSocket 连接失败：无法连接到服务器',
+            duration: 5,
+          });
+        } else {
+          console.log(`WebSocket 连接失败，将进行第 ${retryCountRef.current} 次重试...`);
         }
-        
-        antdMessage.error({
-          content: errorMessage,
-          duration: 5,
-        });
       }
       
-      // 5秒后尝试重连（仅在非 Mock 模式下）
-      if (!shouldUseMockWebSocket()) {
+      // 自动重连（仅在非 Mock 模式下，且未超过重试次数）
+      if (!shouldUseMockWebSocket() && event.code === 1006 && retryCountRef.current <= maxRetries) {
+        const retryDelay = Math.min(1000 * Math.pow(2, retryCountRef.current - 1), 5000);  // 指数退避，最多5秒
         reconnectTimeoutRef.current = setTimeout(() => {
-          console.log('尝试重新连接 WebSocket...');
+          console.log(`尝试重新连接 WebSocket (第 ${retryCountRef.current} 次)...`);
           connect();
-        }, 5000);
+        }, retryDelay);
       }
     });
 
@@ -210,12 +217,13 @@ export function useWebSocket(conversationId: number | null) {
     };
   }, [connect]);
 
-  const sendMessage = useCallback((content: string) => {
+  const sendMessage = useCallback((content: string, fileIds: number[] = []) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       // 只发送消息，不添加到界面（等待 WebSocket 返回）
       wsRef.current.send(JSON.stringify({
         type: 'send_message',
         content,
+        file_ids: fileIds,
       }));
     } else {
       antdMessage.error('连接未建立，请稍后重试');
