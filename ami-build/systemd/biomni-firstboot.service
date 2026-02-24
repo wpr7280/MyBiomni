@@ -1,0 +1,15 @@
+[Unit]
+Description=Biomni First Boot Initialization
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+ConditionPathExists=!/opt/biomni/.initialized
+
+[Service]
+Type=oneshot
+ExecStart=/opt/biomni/scripts/first-boot.sh
+RemainAfterExit=yes
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
