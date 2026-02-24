@@ -3,7 +3,7 @@ import type { ApiResponse } from '@/types';
 
 // 创建 axios 实例
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8083',
+  baseURL: import.meta.env.VITE_API_URL || '',  // 空字符串 = 同源，由 Nginx 代理
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

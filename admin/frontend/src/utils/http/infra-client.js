@@ -68,7 +68,7 @@ export async function infraResReject(error) {
 
 // 创建Infra API客户端
 export const infraRequest = axios.create({
-  baseURL: import.meta.env.VITE_INFRA_API_URL || 'https://api.e2b.9527.tech',
+  baseURL: import.meta.env.VITE_INFRA_API_URL || '',  // 留空或由环境变量配置
   timeout: 12000,
 })
 

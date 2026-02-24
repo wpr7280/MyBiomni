@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     USE_MOCK_AGENT: bool = False
     
     # CORS
-    CORS_ORIGINS: list = ["http://localhost:3001", "http://localhost:3000"]
+    CORS_ORIGINS: list = ["http://127.0.0.1"]
     
     class Config:
         env_file = ".env"

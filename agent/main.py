@@ -18,6 +18,6 @@ if __name__ == "__main__":
         "api.app:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,
+        reload=False,  # 生产环境关闭热重载
         log_level="info"
     )

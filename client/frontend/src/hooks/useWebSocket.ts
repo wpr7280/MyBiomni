@@ -21,7 +21,9 @@ export function useWebSocket(conversationId: number | null) {
       return;
     }
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+    // WebSocket 地址同源推导
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}`;
     const url = `${wsUrl}/ws/chat/${conversationId}?token=${encodeURIComponent(token)}`;
 
     console.log('正在连接 WebSocket:', {

@@ -1,0 +1,21 @@
+[Unit]
+Description=Biomni AI Agent (FastAPI)
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=biomni
+Group=biomni
+WorkingDirectory=/opt/biomni/agent
+EnvironmentFile=/opt/biomni/config/biomni.env
+ExecStart=/opt/biomni/agent/venv/bin/uvicorn api.app:app \
+  --host 127.0.0.1 --port 8000 --log-level info
+Restart=always
+RestartSec=10
+Environment="PYTHONUNBUFFERED=1"
+StandardOutput=append:/opt/biomni/logs/agent.log
+StandardError=append:/opt/biomni/logs/agent-error.log
+
+[Install]
+WantedBy=multi-user.target

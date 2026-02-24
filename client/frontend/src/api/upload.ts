@@ -13,7 +13,7 @@ export async function uploadAttachment(conversationId: number, file: File): Prom
   formData.append('file', file);
   formData.append('conversation_id', String(conversationId));
 
-  const response = await agentApiClient.post('/api/upload', formData, {
+  const response = await agentApiClient.post('/agent-api/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data as UploadResult;

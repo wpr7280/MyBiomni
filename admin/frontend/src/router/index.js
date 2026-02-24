@@ -5,8 +5,9 @@ import { getToken, isNullOrWhitespace } from '@/utils'
 import { useUserStore, usePermissionStore } from '@/store'
 
 const isHash = import.meta.env.VITE_USE_HASH === 'true'
+const base = import.meta.env.VITE_PUBLIC_PATH || '/'
 export const router = createRouter({
-  history: isHash ? createWebHashHistory('/') : createWebHistory('/'),
+  history: isHash ? createWebHashHistory(base) : createWebHistory(base),
   routes: basicRoutes,
   scrollBehavior: () => ({ left: 0, top: 0 }),
 })

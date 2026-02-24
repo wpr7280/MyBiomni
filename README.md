@@ -26,9 +26,7 @@ rsync -az --dry-run --delete \
 
 rsync -az --relative \
   -e "ssh -i ./biomni.pem -o StrictHostKeyChecking=accept-new" \
-  agent/biomni/agent/a1.py \
-  agent/services/agent_service.py \
-  agent/services/callback.py \
+  client/frontend/src/api/agentClient.ts \
   ubuntu@44.222.116.143:/home/ubuntu/myBiomni/
 
 rsync -az --relative \
