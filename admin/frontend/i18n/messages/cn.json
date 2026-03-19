@@ -217,6 +217,7 @@
         "text_anthropic_hint": "从 https://console.anthropic.com/settings/keys 获取",
         "text_gemini_hint": "从 https://aistudio.google.com/app/apikey 获取",
         "text_groq_hint": "从 https://console.groq.com/keys 获取",
+        "text_dashscope_hint": "从 https://dashscope.console.aliyun.com/apiKey 获取",
         "alert_config_notice": "配置修改后，新创建的对话将使用新配置。现有对话不受影响。",
         "message_save_success": "配置保存成功",
         "message_save_failed": "保存失败",

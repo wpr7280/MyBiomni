@@ -151,6 +151,8 @@ class WebSocketCallback:
     def _clean_reasoning_segment(self, content: str) -> str:
         """清理非标签文本片段，去掉 Plan 列表与 Step 状态行。"""
         content = content.replace("<function_calls>", "").replace("</function_calls>", "")
+        # 清理孤立的 closing tags
+        content = re.sub(r'</(?:execute|observation|observe|solution)>', '', content)
         lines = content.splitlines()
         cleaned = []
         skipping_plan = False
@@ -307,9 +309,23 @@ class WebSocketCallback:
         matches = list(tag_re.finditer(output))
 
         if not matches:
+            # 尝试匹配不完整的 solution 标签（AI 可能只输出 <solution>content 没有 closing tag）
+            incomplete_solution = re.search(r'<solution>(.*?)$', output, re.DOTALL)
+            if incomplete_solution:
+                body = incomplete_solution.group(1).strip()
+                if body:
+                    print(f"   ✓ 检测到不完整的 <solution> 标签", file=sys.stderr)
+                    self.final_content = body
+                    # 处理 solution 前的文本为 reasoning
+                    pre_text = output[:incomplete_solution.start()]
+                    cleaned = self._clean_reasoning_segment(pre_text)
+                    if cleaned and len(cleaned) > 2:
+                        await self.on_reasoning(cleaned)
+                    return
+            
             # 全部作为 reasoning 处理
             cleaned = self._clean_reasoning_segment(output)
-            if cleaned and len(cleaned) > 10:
+            if cleaned and len(cleaned) > 2:
                 print(f"   ✓ 无标签，作为 reasoning 处理 (length: {len(cleaned)})", file=sys.stderr)
                 await self.on_reasoning(cleaned)
             return
@@ -320,7 +336,7 @@ class WebSocketCallback:
             if match.start() > cursor:
                 text_segment = output[cursor:match.start()]
                 cleaned = self._clean_reasoning_segment(text_segment)
-                if cleaned and len(cleaned) > 10:
+                if cleaned and len(cleaned) > 2:
                     print(f"   ✓ 检测到 reasoning 片段 (length: {len(cleaned)})", file=sys.stderr)
                     await self.on_reasoning(cleaned)
 
@@ -358,7 +374,7 @@ class WebSocketCallback:
         if cursor < len(output):
             tail_segment = output[cursor:]
             cleaned = self._clean_reasoning_segment(tail_segment)
-            if cleaned and len(cleaned) > 10:
+            if cleaned and len(cleaned) > 2:
                 print(f"   ✓ 检测到 reasoning 片段 (length: {len(cleaned)})", file=sys.stderr)
                 await self.on_reasoning(cleaned)
     
@@ -371,15 +387,39 @@ class WebSocketCallback:
         content = content.replace('================================ Human Message =================================', '')
         content = content.replace('<function_calls>', '')
         content = content.replace('</function_calls>', '')
+        content = re.sub(r'</(?:execute|observation|observe|solution)>', '', content)
         content = content.strip()
         
-        if not content or len(content) < 5:
+        if not content or len(content) < 2:
             return
+        
+        # 过滤掉 A1 的自我纠正提示（这些是框架自动生成的，对用户没有价值）
+        skip_patterns = [
+            "Each response must include thinking process followed by either",
+            "There are no tags in the current response",
+            "Please follow the instruction, fix and regenerate",
+            "Execution terminated due to repeated parsing errors",
+        ]
+        for pattern in skip_patterns:
+            if pattern in content:
+                print(f"   ⏭️ 跳过自我纠正消息: {content[:80]}...", file=sys.stderr)
+                return
         
         # 简单策略：不拆分，保持完整
         # 只限制最大长度
         if len(content) > 8000:
             content = content[:8000] + "\n... (content truncated for display)"
+        
+        # 根据内容生成更有描述性的名称
+        step_name = '🤔 Reasoning'
+        first_line = content.split('\n')[0].strip()
+        if first_line.startswith('#'):
+            # 如果内容以标题开头，用标题作为名称
+            step_name = '🤔 ' + first_line.lstrip('#').strip()[:60]
+        elif 'plan' in first_line.lower():
+            step_name = '🤔 Planning'
+        elif 'analy' in first_line.lower():
+            step_name = '🤔 Analysis'
         
         self.step_order += 1
         
@@ -388,7 +428,7 @@ class WebSocketCallback:
             message_id=self.current_message_id or 0,
             step_order=self.step_order,
             step_type='reasoning',
-            step_name='🤔 Reasoning',
+            step_name=step_name,
             status='success',
             tool_output=content,
             started_at=datetime.now(),
@@ -410,7 +450,7 @@ class WebSocketCallback:
                 'messageId': self.current_message_id or 0,
                 'stepOrder': self.step_order,
                 'stepType': 'reasoning',
-                'stepName': '🤔 Reasoning',
+                'stepName': step_name,
                 'toolOutput': content,
                 'status': 'success',
                 'startedAt': step.started_at.isoformat(),

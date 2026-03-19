@@ -44,6 +44,7 @@ const sourceOptions = [
   { label: 'Groq', value: 'Groq' },
   { label: 'AWS Bedrock', value: 'Bedrock' },
   { label: 'Azure OpenAI', value: 'AzureOpenAI' },
+  { label: '通义千问 (DashScope)', value: 'DashScope' },
   { label: '自定义模型', value: 'Custom' }
 ]
 
@@ -58,6 +59,7 @@ const recommendedModels = computed(() => {
     'Groq': ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-70b-versatile'],
     'Bedrock': ['anthropic.claude-3-5-sonnet-20241022-v2:0', 'anthropic.claude-3-opus-20240229-v1:0'],
     'AzureOpenAI': ['gpt-4o', 'gpt-4-turbo', 'gpt-35-turbo'],
+    'DashScope': ['qwen-max', 'qwen-plus', 'qwen-turbo', 'qwen-long', 'qwen2.5-72b-instruct', 'qwen2.5-32b-instruct', 'qwen2.5-14b-instruct'],
     'Custom': []
   }
   return models[source] || []
@@ -104,21 +106,16 @@ const apiKeyConfig = computed(() => {
       hint: t('views.config.model.text_azure_hint')
     },
     'Bedrock': {
-      groups: [
-        {
-          title: t('views.config.model.text_auth_method_1'),
-          keys: ['llm.aws_region', 'llm.aws_access_key_id', 'llm.aws_secret_access_key'],
-          labels: ['AWS Region', 'AWS Access Key ID', 'AWS Secret Access Key'],
-          placeholders: ['us-east-1', 'AKIA...', '...']
-        },
-        {
-          title: t('views.config.model.text_auth_method_2'),
-          keys: ['llm.aws_bearer_token'],
-          labels: ['AWS Bearer Token'],
-          placeholders: ['Bearer Token...']
-        }
-      ],
+      keys: ['llm.aws_region', 'llm.aws_bearer_token'],
+      labels: ['AWS Region', 'AWS Bearer Token'],
+      placeholders: ['us-east-1', 'Bearer Token...'],
       hint: t('views.config.model.text_bedrock_hint')
+    },
+    'DashScope': {
+      key: 'llm.dashscope_api_key',
+      label: 'DashScope API Key',
+      placeholder: 'sk-...',
+      hint: t('views.config.model.text_dashscope_hint')
     }
   }
   

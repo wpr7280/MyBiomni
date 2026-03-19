@@ -1824,19 +1824,52 @@ Each library is listed with its description to help you understand its functiona
             # 🔴 提取 token 用量
             usage = None
             if isinstance(message, AIMessage):
+                # Try usage_metadata first (LangChain standard)
                 if hasattr(message, 'usage_metadata') and message.usage_metadata:
-                    usage = {
-                        'input_tokens': message.usage_metadata.get('input_tokens', 0),
-                        'output_tokens': message.usage_metadata.get('output_tokens', 0),
-                    }
-                elif hasattr(message, 'response_metadata') and message.response_metadata:
-                    metadata = message.response_metadata
-                    if 'usage' in metadata:
-                        usage_data = metadata['usage']
+                    um = message.usage_metadata
+                    # usage_metadata can be dict or object with attribute access
+                    if isinstance(um, dict):
                         usage = {
-                            'input_tokens': usage_data.get('input_tokens', 0) or usage_data.get('prompt_tokens', 0),
-                            'output_tokens': usage_data.get('output_tokens', 0) or usage_data.get('completion_tokens', 0),
+                            'input_tokens': um.get('input_tokens', 0),
+                            'output_tokens': um.get('output_tokens', 0),
                         }
+                    else:
+                        usage = {
+                            'input_tokens': getattr(um, 'input_tokens', 0),
+                            'output_tokens': getattr(um, 'output_tokens', 0),
+                        }
+                
+                # Fallback to response_metadata
+                if (not usage or (usage['input_tokens'] == 0 and usage['output_tokens'] == 0)):
+                    if hasattr(message, 'response_metadata') and message.response_metadata:
+                        metadata = message.response_metadata
+                        # Bedrock Converse format
+                        if 'usage' in metadata:
+                            usage_data = metadata['usage']
+                            usage = {
+                                'input_tokens': usage_data.get('inputTokens', 0) or usage_data.get('input_tokens', 0) or usage_data.get('prompt_tokens', 0),
+                                'output_tokens': usage_data.get('outputTokens', 0) or usage_data.get('output_tokens', 0) or usage_data.get('completion_tokens', 0),
+                            }
+                        # Direct in metadata
+                        elif 'inputTokens' in metadata:
+                            usage = {
+                                'input_tokens': metadata.get('inputTokens', 0),
+                                'output_tokens': metadata.get('outputTokens', 0),
+                            }
+                
+                if usage and (usage['input_tokens'] > 0 or usage['output_tokens'] > 0):
+                    print(f"📊 Token usage: input={usage['input_tokens']}, output={usage['output_tokens']}", file=__import__('sys').stderr)
+                else:
+                    # Debug: dump metadata structure to find where tokens are
+                    import sys
+                    if hasattr(message, 'usage_metadata') and message.usage_metadata:
+                        print(f"🔍 usage_metadata type={type(message.usage_metadata)}: {message.usage_metadata}", file=sys.stderr)
+                    if hasattr(message, 'response_metadata') and message.response_metadata:
+                        print(f"🔍 response_metadata keys: {list(message.response_metadata.keys()) if isinstance(message.response_metadata, dict) else type(message.response_metadata)}", file=sys.stderr)
+                        if isinstance(message.response_metadata, dict):
+                            for k, v in message.response_metadata.items():
+                                if 'token' in str(k).lower() or 'usage' in str(k).lower():
+                                    print(f"   {k}: {v}", file=sys.stderr)
             
             # Yield the current step with usage
             yield {"output": out, "usage": usage}

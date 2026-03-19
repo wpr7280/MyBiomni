@@ -290,6 +290,7 @@
         "text_anthropic_hint": "Get from https://console.anthropic.com/settings/keys",
         "text_gemini_hint": "Get from https://aistudio.google.com/app/apikey",
         "text_groq_hint": "Get from https://console.groq.com/keys",
+        "text_dashscope_hint": "Get from https://dashscope.console.aliyun.com/apiKey",
         "alert_config_notice": "After configuration changes, new conversations will use the new configuration. Existing conversations are not affected.",
         "message_save_success": "Configuration saved successfully",
         "message_save_failed": "Save failed",

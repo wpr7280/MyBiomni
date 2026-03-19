@@ -6,7 +6,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 if TYPE_CHECKING:
     from biomni.config import BiomniConfig
 
-SourceType = Literal["OpenAI", "AzureOpenAI", "Anthropic", "Ollama", "Gemini", "Bedrock", "Groq", "Custom"]
+SourceType = Literal["OpenAI", "AzureOpenAI", "Anthropic", "Ollama", "Gemini", "Bedrock", "Groq", "DashScope", "Custom"]
 ALLOWED_SOURCES: set[str] = set(SourceType.__args__)
 
 
@@ -37,7 +37,7 @@ def get_llm(
     # Use config values for any unspecified parameters
     if config is not None:
         if model is None:
-            model = config.llm_model
+            model = config.llm
         if temperature is None:
             temperature = config.temperature
         if source is None:
@@ -76,6 +76,8 @@ def get_llm(
                 source = "Gemini"
             elif "groq" in model.lower():
                 source = "Groq"
+            elif model.lower().startswith("qwen"):
+                source = "DashScope"
             elif base_url is not None:
                 source = "Custom"
             elif "/" in model or any(
@@ -249,12 +251,37 @@ def get_llm(
             raise ImportError(  # noqa: B904
                 "langchain-aws package is required for Bedrock models. Install with: pip install langchain-aws"
             )
+        import botocore.config
+        bedrock_config = botocore.config.Config(
+            read_timeout=600,
+            connect_timeout=10,
+            retries={"max_attempts": 2},
+        )
         return ChatBedrockConverse(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
             stop_sequences=stop_sequences,
             region_name=os.getenv("AWS_REGION", "us-east-1"),
+            config=bedrock_config,
+        )
+
+    elif source == "DashScope":
+        try:
+            from langchain_openai import ChatOpenAI
+        except ImportError:
+            raise ImportError(  # noqa: B904
+                "langchain-openai package is required for DashScope models. Install with: pip install langchain-openai"
+            )
+        dashscope_api_key = api_key if api_key != "EMPTY" else os.getenv("DASHSCOPE_API_KEY")
+        dashscope_base_url = base_url or os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        return ChatOpenAI(
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            stop_sequences=stop_sequences,
+            api_key=dashscope_api_key,
+            base_url=dashscope_base_url,
         )
 
     elif source == "Custom":
@@ -278,5 +305,5 @@ def get_llm(
 
     else:
         raise ValueError(
-            f"Invalid source: {source}. Valid options are 'OpenAI', 'AzureOpenAI', 'Anthropic', 'Gemini', 'Groq', 'Bedrock', or 'Ollama'"
+            f"Invalid source: {source}. Valid options are 'OpenAI', 'AzureOpenAI', 'Anthropic', 'Gemini', 'Groq', 'DashScope', 'Bedrock', or 'Ollama'"
         )

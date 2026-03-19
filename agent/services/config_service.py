@@ -90,9 +90,9 @@ class ConfigService:
         elif source == 'Bedrock':
             if credentials.get('aws_region'):
                 os.environ['AWS_REGION'] = credentials['aws_region']
-            if credentials.get('aws_access_key_id'):
-                os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
-            if credentials.get('aws_secret_access_key'):
-                os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
             if credentials.get('aws_bearer_token'):
                 os.environ['AWS_BEARER_TOKEN_BEDROCK'] = credentials['aws_bearer_token']
+
+        elif source == 'DashScope':
+            if credentials.get('dashscope_api_key'):
+                os.environ['DASHSCOPE_API_KEY'] = credentials['dashscope_api_key']

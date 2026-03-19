@@ -155,12 +155,28 @@ export const conversationApi = {
       { responseType: 'blob' }  // 重要：告诉 axios 响应是二进制数据
     );
 
+    // 从 Content-Disposition 获取文件名
+    const contentDisposition = response.headers['content-disposition'];
+    const contentType = response.headers['content-type'] || 'text/markdown';
+    let filename = `conversation_${conversationId}_${Date.now()}.md`;
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^";\n]+)"?/);
+      if (match) filename = match[1];
+    }
+
+    // 检查是否返回了错误（JSON 而非文件）
+    if (contentType.includes('application/json')) {
+      const text = await (response.data as Blob).text();
+      const error = JSON.parse(text);
+      throw new Error(error.error || error.message || 'Export failed');
+    }
+
     // 创建下载链接
-    const blob = new Blob([response.data], { type: 'text/markdown' });
+    const blob = new Blob([response.data], { type: contentType });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `conversation_${conversationId}_${Date.now()}.md`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
