@@ -12,13 +12,13 @@ import './i18n';
 const currentLanguage = localStorage.getItem('language') || 'en-US';
 const antdLocale = currentLanguage === 'en-US' ? enUS : zhCN;
 
-// Mock 模式提示
+// Mock mode notice
 if (import.meta.env.VITE_USE_MOCK === 'true') {
   console.log(
-    '%c🎭 Mock 模式已启用',
+    '%c🎭 Mock mode enabled',
     'background: #722ed1; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
   );
-  console.log('测试账号: user@biomni.com / user123');
+  console.log('Test account: user@biomni.com / user123');
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

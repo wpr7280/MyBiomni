@@ -57,12 +57,12 @@ public class ConversationExportService {
         // 验证对话存在
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new IllegalArgumentException("对话不存在");
+            throw new IllegalArgumentException("Conversation not found");
         }
         
         // 权限验证：管理员可以导出任何对话，普通用户只能导出自己的对话
         if (!isAdmin && !conversation.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("无权限访问此对话");
+            throw new IllegalArgumentException("Access denied for this conversation");
         }
 
         // 获取所有消息
@@ -72,7 +72,7 @@ public class ConversationExportService {
         List<MessageDO> messages = messageDAO.selectByExample(messageExample);
         
         if (messages == null || messages.isEmpty()) {
-            throw new IllegalArgumentException("对话没有消息内容");
+            throw new IllegalArgumentException("Conversation has no messages");
         }
 
         // 创建临时导出目录
@@ -416,7 +416,7 @@ public class ConversationExportService {
     public File getExportFile(String filepath) {
         File file = new File(filepath);
         if (!file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("文件不存在");
+            throw new IllegalArgumentException("File not found");
         }
         return file;
     }

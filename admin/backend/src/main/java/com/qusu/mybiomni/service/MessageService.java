@@ -99,11 +99,11 @@ public class MessageService {
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
         
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
         
         if (!conversation.getUserId().equals(userId)) {
-            throw new RuntimeException("无权访问此对话");
+            throw new RuntimeException("Access denied for this conversation");
         }
         
         return conversation;

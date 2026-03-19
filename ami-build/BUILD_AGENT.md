@@ -2,195 +2,184 @@
 
 ## 目标
 
-将 Python Agent 的 `.py` 源文件编译为 `.so` 二进制文件，AMI 中不暴露可读源码。
+用 PyInstaller 将整个 Agent 打包为二进制，AMI 中不暴露 `.py` 源码。
 
 ## 前提条件
 
-必须在与 AMI 相同的平台上编译：
-- Ubuntu 22.04 x86_64
-- Python 3.11
+- 已有 conda 环境 `biomni_e1`（包含所有 Agent 依赖）
+- 必须在与 AMI 相同的平台上打包（Ubuntu 22.04 x86_64）
 - 建议直接在 EC2 Golden Instance 上操作
 
 ## 步骤
 
-### 1. 在 EC2 上安装编译依赖
+### 1. 安装 PyInstaller
 
 ```bash
-sudo apt install -y python3.11-dev gcc
+conda activate biomni_e1
+pip install pyinstaller
 ```
 
-### 2. 创建编译用 venv
+### 2. 打包
 
 ```bash
-cd /opt/biomni/agent
-sudo -u biomni python3.11 -m venv venv
-sudo -u biomni venv/bin/pip install --upgrade pip
-sudo -u biomni venv/bin/pip install cython setuptools
-sudo -u biomni venv/bin/pip install -r requirements-api.txt
-# 安装 biomni 包的依赖（pydantic, langchain, python-dotenv 等）
-sudo -u biomni venv/bin/pip install -e .
+cd /path/to/agent
+
+pyinstaller --onedir \
+  --name biomni-agent \
+  --hidden-import=biomni \
+  --hidden-import=biomni.agent \
+  --hidden-import=biomni.agent.a1 \
+  --hidden-import=biomni.agent.react \
+  --hidden-import=biomni.agent.qa_llm \
+  --hidden-import=biomni.agent.function_generator \
+  --hidden-import=biomni.agent.env_collection \
+  --hidden-import=biomni.tool \
+  --hidden-import=biomni.tool.biochemistry \
+  --hidden-import=biomni.tool.bioengineering \
+  --hidden-import=biomni.tool.bioimaging \
+  --hidden-import=biomni.tool.biophysics \
+  --hidden-import=biomni.tool.cancer_biology \
+  --hidden-import=biomni.tool.cell_biology \
+  --hidden-import=biomni.tool.database \
+  --hidden-import=biomni.tool.genetics \
+  --hidden-import=biomni.tool.genomics \
+  --hidden-import=biomni.tool.glycoengineering \
+  --hidden-import=biomni.tool.immunology \
+  --hidden-import=biomni.tool.lab_automation \
+  --hidden-import=biomni.tool.literature \
+  --hidden-import=biomni.tool.microbiology \
+  --hidden-import=biomni.tool.molecular_biology \
+  --hidden-import=biomni.tool.pathology \
+  --hidden-import=biomni.tool.pharmacology \
+  --hidden-import=biomni.tool.physiology \
+  --hidden-import=biomni.tool.protocols \
+  --hidden-import=biomni.tool.support_tools \
+  --hidden-import=biomni.tool.synthetic_biology \
+  --hidden-import=biomni.tool.systems_biology \
+  --hidden-import=biomni.tool.tool_registry \
+  --hidden-import=biomni.know_how \
+  --hidden-import=biomni.know_how.loader \
+  --hidden-import=biomni.model \
+  --hidden-import=biomni.model.retriever \
+  --hidden-import=biomni.config \
+  --hidden-import=biomni.llm \
+  --hidden-import=biomni.utils \
+  --hidden-import=api \
+  --hidden-import=api.app \
+  --hidden-import=api.websocket \
+  --hidden-import=api.upload \
+  --hidden-import=core \
+  --hidden-import=core.config \
+  --hidden-import=core.database \
+  --hidden-import=core.security \
+  --hidden-import=models \
+  --hidden-import=models.models \
+  --hidden-import=services \
+  --hidden-import=services.agent_service \
+  --hidden-import=services.callback \
+  --hidden-import=services.config_service \
+  --hidden-import=services.mock_agent \
+  --hidden-import=uvicorn \
+  --hidden-import=uvicorn.logging \
+  --hidden-import=uvicorn.loops \
+  --hidden-import=uvicorn.loops.auto \
+  --hidden-import=uvicorn.protocols \
+  --hidden-import=uvicorn.protocols.http \
+  --hidden-import=uvicorn.protocols.http.auto \
+  --hidden-import=uvicorn.protocols.websockets \
+  --hidden-import=uvicorn.protocols.websockets.auto \
+  --hidden-import=uvicorn.lifespan \
+  --hidden-import=uvicorn.lifespan.on \
+  --hidden-import=pymysql \
+  --hidden-import=sqlalchemy.dialects.mysql.pymysql \
+  --add-data "biomni/know_how/resource:biomni/know_how/resource" \
+  --add-data "biomni/know_how/sgRNA_design_guide.md:biomni/know_how" \
+  --add-data "biomni/know_how/single_cell_annotation.md:biomni/know_how" \
+  --add-data "biomni/tool/schema_db:biomni/tool/schema_db" \
+  --add-data "biomni/tool/protocols:biomni/tool/protocols" \
+  --add-data "biomni/tool/tool_description:biomni/tool/tool_description" \
+  --add-data "biomni/tool/example_mcp_tools:biomni/tool/example_mcp_tools" \
+  main.py
 ```
 
-### 3. 创建编译脚本
+产物在 `dist/biomni-agent/` 目录下，入口是 `dist/biomni-agent/biomni-agent`。
+
+### 3. 验证
 
 ```bash
-cat > /opt/biomni/agent/setup_cython.py << 'PYEOF'
-from setuptools import setup
-from Cython.Build import cythonize
-import glob
-import os
-
-# 需要编译的目录
-COMPILE_DIRS = ['api', 'core', 'services', 'models', 'biomni']
-
-py_files = []
-for d in COMPILE_DIRS:
-    if os.path.isdir(d):
-        py_files.extend(glob.glob(f'{d}/**/*.py', recursive=True))
-
-# 保留 __init__.py（维持包结构）和 main.py（入口）
-py_files = [f for f in py_files
-            if '__init__' not in f
-            and f != 'main.py'
-            and '__pycache__' not in f]
-
-print(f"Will compile {len(py_files)} files:")
-for f in sorted(py_files):
-    print(f"  {f}")
-
-setup(
-    ext_modules=cythonize(
-        py_files,
-        compiler_directives={'language_level': "3"},
-        nthreads=4,
-    ),
-)
-PYEOF
+# 测试能否启动
+./dist/biomni-agent/biomni-agent
+# 应该看到 uvicorn 启动日志
+# Ctrl+C 退出
 ```
 
-### 4. 执行编译
+### 4. 部署到 /opt/biomni/agent
 
 ```bash
-cd /opt/biomni/agent
-sudo -u biomni venv/bin/python setup_cython.py build_ext --inplace
+# 清空旧的 agent 目录
+sudo rm -rf /opt/biomni/agent/*
+
+# 复制 PyInstaller 产物
+sudo cp -r dist/biomni-agent/* /opt/biomni/agent/
+
+# 设置权限
+sudo chown -R biomni:biomni /opt/biomni/agent
+sudo chmod -R 750 /opt/biomni/agent
+sudo chmod 550 /opt/biomni/agent/biomni-agent
 ```
 
-编译成功后，每个 `.py` 文件旁边会生成对应的 `.so` 文件，例如：
-```
-api/app.cpython-311-x86_64-linux-gnu.so
-biomni/agent/a1.cpython-311-x86_64-linux-gnu.so
-core/config.cpython-311-x86_64-linux-gnu.so
-```
-
-### 5. 删除源文件，只保留 .so
-
-```bash
-cd /opt/biomni/agent
-
-# 删除已编译的 .py 文件（保留 __init__.py 和 main.py）
-for dir in api core services models biomni; do
-    if [ -d "$dir" ]; then
-        find "$dir" -name "*.py" ! -name "__init__.py" -delete
-    fi
-done
-
-# 删除 Cython 中间文件
-find . -name "*.c" -delete
-rm -rf build/
-rm -f setup_cython.py
-
-# 删除不需要的文件
-rm -rf tutorials/ docs/ figs/ biomni_env/
-rm -f debug_agent_output.py diagnose_steps.py test_callback.py
-rm -f verify_fix.sh start.sh stop.sh
-rm -f .env .env.example .DS_Store
-rm -f CONTRIBUTION.md DETAILS.md LOGGING_GUIDE.md A1_CONFIGURATION_GUIDE.md
-rm -f README.md MANIFEST.in license_info.md
-
-# 删除所有 __pycache__
-find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-find . -name "*.pyc" -delete
-```
-
-### 6. 验证
-
-```bash
-cd /opt/biomni/agent
-
-# 检查残留的 .py 文件（应该只有 __init__.py 和 main.py）
-echo "=== Remaining .py files ==="
-find . -name "*.py" | sort
-
-# 应该输出类似：
-# ./main.py
-# ./api/__init__.py
-# ./biomni/__init__.py
-# ./biomni/agent/__init__.py
-# ./biomni/tool/__init__.py
-# ./core/__init__.py
-# ./models/__init__.py
-# ./services/__init__.py
-
-# 验证 import 正常
-sudo -u biomni venv/bin/python -c "from api.app import app; print('OK: api.app')"
-sudo -u biomni venv/bin/python -c "from core.config import settings; print('OK: core.config')"
-```
-
-### 7. 编译后的目录结构
-
-```
-/opt/biomni/agent/
-├── main.py                                         # 入口（保留）
-├── pyproject.toml                                   # 包定义（保留）
-├── requirements-api.txt                             # 依赖列表（保留）
-├── LICENSE                                          # 许可证（保留）
-├── venv/                                            # Python 虚拟环境
-├── api/
-│   ├── __init__.py
-│   ├── app.cpython-311-x86_64-linux-gnu.so
-│   ├── websocket.cpython-311-x86_64-linux-gnu.so
-│   └── upload.cpython-311-x86_64-linux-gnu.so
-├── biomni/
-│   ├── __init__.py
-│   ├── agent/
-│   │   ├── __init__.py
-│   │   ├── a1.cpython-311-x86_64-linux-gnu.so      # 核心算法
-│   │   └── react.cpython-311-x86_64-linux-gnu.so
-│   ├── tool/
-│   │   ├── __init__.py
-│   │   ├── *.so                                     # 所有工具
-│   │   ├── schema_db/*.pkl                          # 数据文件（保留）
-│   │   ├── protocols/                               # 协议文件（保留）
-│   │   └── tool_description/*.so
-│   ├── know_how/
-│   │   ├── __init__.py
-│   │   ├── *.so
-│   │   └── resource/                                # 资源文件（保留）
-│   └── model/
-│       ├── __init__.py
-│       └── *.so
-├── core/
-│   ├── __init__.py
-│   └── *.so
-├── models/
-│   ├── __init__.py
-│   └── *.so
-└── services/
-    ├── __init__.py
-    └── *.so
-```
-
-## 环境变量
-
-Agent 不再使用自己的 `.env` 文件。所有配置通过 systemd 的 `EnvironmentFile` 注入：
+### 5. 修改 systemd service
 
 ```ini
 # /etc/systemd/system/biomni-agent.service
+[Unit]
+Description=Biomni AI Agent
+After=network.target docker.service
+Requires=docker.service
+
 [Service]
+Type=simple
+User=biomni
+Group=biomni
+WorkingDirectory=/opt/biomni/agent
 EnvironmentFile=/opt/biomni/config/biomni.env
+ExecStart=/opt/biomni/agent/biomni-agent
+Restart=always
+RestartSec=10
+Environment="PYTHONUNBUFFERED=1"
+StandardOutput=append:/opt/biomni/logs/agent.log
+StandardError=append:/opt/biomni/logs/agent-error.log
+
+[Install]
+WantedBy=multi-user.target
 ```
 
-`biomni.env` 由 `first-boot.sh` 自动生成，包含 Agent 需要的所有变量：
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart biomni-agent
+```
+
+## 部署后的目录结构
+
+```
+/opt/biomni/agent/
+├── biomni-agent              # 入口二进制（唯一可执行文件）
+├── lib-dynload/              # Python C 扩展
+├── biomni/                   # 打包后的数据文件
+│   ├── know_how/resource/    # 资源文件
+│   ├── tool/schema_db/*.pkl  # 数据文件
+│   ├── tool/protocols/       # 协议文件
+│   └── tool/tool_description/
+└── ... (PyInstaller 运行时依赖)
+```
+
+没有任何 `.py` 文件，全部是编译后的二进制。
+
+## 环境变量
+
+Agent 不使用 `.env` 文件。所有配置通过 systemd `EnvironmentFile=/opt/biomni/config/biomni.env` 注入。
+
+`biomni.env` 由 `first-boot.sh` 自动生成，包含：
 - `JWT_SECRET_KEY` / `JWT_ALGORITHM`
 - `DATABASE_URL`
 - `USE_MOCK_AGENT`
@@ -198,45 +187,41 @@ EnvironmentFile=/opt/biomni/config/biomni.env
 - `CORS_ORIGINS`
 - `SPRING_BOOT_URL`
 
-Agent 的 `core/config.py`（Pydantic Settings）会自动从环境变量读取这些值。
+## 常见问题
 
-## 注意事项
+### hidden-import 不够导致运行时 ImportError
 
-1. **不要用 `pip install -e .`**：editable install 依赖 `.py` 源文件，删除后会 import 失败。
-   systemd 的 `WorkingDirectory=/opt/biomni/agent` 会让 Python 自动在 CWD 找到包。
+PyInstaller 静态分析可能漏掉动态 import 的模块。如果运行时报 `ModuleNotFoundError`，
+在打包命令中加对应的 `--hidden-import=xxx` 重新打包。
 
-2. **Python 版本必须一致**：`.so` 文件名包含 `cpython-311`，只能在 Python 3.11 上运行。
+### 数据文件找不到
 
-3. **某些模块可能编译失败**：如果遇到 Cython 不支持的语法（如某些动态 import），
-   可以跳过那些文件，保留 `.py`。在 `setup_cython.py` 中排除：
-   ```python
-   SKIP_FILES = ['biomni/some_module.py']
-   py_files = [f for f in py_files if f not in SKIP_FILES]
-   ```
+PyInstaller 打包后，数据文件的路径会变。如果代码中用 `__file__` 定位数据文件，
+需要改为用 `sys._MEIPASS`（PyInstaller 运行时解压目录）：
 
-4. **数据文件不受影响**：`.pkl`、`.csv`、`.txt`、`.md` 等数据文件保持原样。
+```python
+import sys, os
+if getattr(sys, 'frozen', False):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.dirname(__file__)
+```
 
-5. **如果 Cython 方案不可行**，回退到 PyInstaller：
-   ```bash
-   pip install pyinstaller
-   pyinstaller --onedir \
-     --hidden-import=biomni --hidden-import=biomni.agent \
-     --hidden-import=biomni.tool --hidden-import=biomni.know_how \
-     --add-data "biomni/know_how:biomni/know_how" \
-     --add-data "biomni/tool/schema_db:biomni/tool/schema_db" \
-     --add-data "biomni/tool/protocols:biomni/tool/protocols" \
-     --name biomni-agent main.py
-   ```
-   然后 systemd 改为：
-   ```ini
-   ExecStart=/opt/biomni/agent/dist/biomni-agent/biomni-agent
-   ```
+### 产物体积大
+
+PyInstaller `--onedir` 产物通常 200-500MB（包含 Python 解释器和所有依赖）。
+这是正常的，不影响运行性能。
+
+### 不需要在 AMI 上安装 Python
+
+PyInstaller 产物自带 Python 解释器，不依赖系统 Python。
+但如果你还需要 venv 做其他事情，可以保留系统 Python。
 
 ## 文件权限加固
 
 ```bash
 sudo chown -R biomni:biomni /opt/biomni/agent
 sudo chmod -R 750 /opt/biomni/agent
-find /opt/biomni/agent -name "*.so" -exec chmod 550 {} \;
+sudo chmod 550 /opt/biomni/agent/biomni-agent
 # ubuntu 用户无法读取 agent 目录
 ```

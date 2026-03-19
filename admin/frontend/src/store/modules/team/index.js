@@ -18,7 +18,7 @@ export const useTeamStore = defineStore('team', {
       return this.currentTeam?.id
     },
     currentTeamName() {
-      return this.currentTeam?.name || '未选择团队'
+      return this.currentTeam?.name || 'No team selected'
     },
     isTeamOwner() {
       if (!this.currentTeam || !this.teamMembers.length) return false
@@ -39,7 +39,7 @@ export const useTeamStore = defineStore('team', {
       this.error = null
       try {
         const res = await api.getTeamInfo()
-        console.log('API响应:', res)
+        console.log('API response:', res)
         if (res.code === 200 && Array.isArray(res.data)) {
           // 转换API数据格式为前端需要的格式
           this.teams = res.data.map((team) => ({
@@ -64,8 +64,8 @@ export const useTeamStore = defineStore('team', {
           }
         }
       } catch (error) {
-        this.error = error.message || '获取团队列表失败'
-        console.error('获取团队列表失败:', error)
+        this.error = error.message || 'Failed to load teams'
+        console.error('Failed to load teams:', error)
       } finally {
         this.loading = false
       }
@@ -92,12 +92,12 @@ export const useTeamStore = defineStore('team', {
       this.loading = true
       try {
         const res = await api.getTeamMembers({ teamId: targetTeamId })
-        console.log('团队成员API响应:', res)
+        console.log('Team members API response:', res)
         if (res.code === 200) {
           // 转换API数据格式为前端需要的格式
           this.teamMembers = (res.data || []).map((member) => ({
             userId: member.info?.id || member.relation?.userId,
-            name: member.info?.email?.split('@')[0] || '未知用户', // 从邮箱提取用户名
+            name: member.info?.email?.split('@')[0] || 'Unknown user', // 从邮箱提取用户名
             email: member.info?.email,
             avatar: member.info?.avatar || null,
             role: this.getMemberRole(member.relation),
@@ -115,8 +115,8 @@ export const useTeamStore = defineStore('team', {
           }
         }
       } catch (error) {
-        this.error = error.message || '获取团队成员失败'
-        console.error('获取团队成员失败:', error)
+        this.error = error.message || 'Failed to load team members'
+        console.error('Failed to load team members:', error)
       } finally {
         this.loading = false
       }
@@ -149,10 +149,10 @@ export const useTeamStore = defineStore('team', {
           await this.fetchTeams()
           return { success: true, data: res.data }
         }
-        return { success: false, message: res.msg || '创建团队失败' }
+        return { success: false, message: res.msg || 'Failed to create team' }
       } catch (error) {
-        console.error('创建团队失败:', error)
-        return { success: false, message: error.message || '创建团队失败' }
+        console.error('Failed to create team:', error)
+        return { success: false, message: error.message || 'Failed to create team' }
       } finally {
         this.loading = false
       }
@@ -174,10 +174,10 @@ export const useTeamStore = defineStore('team', {
           }
           return { success: true, data: res.data }
         }
-        return { success: false, message: res.msg || '更新团队失败' }
+        return { success: false, message: res.msg || 'Failed to update team' }
       } catch (error) {
-        console.error('更新团队失败:', error)
-        return { success: false, message: error.message || '更新团队失败' }
+        console.error('Failed to update team:', error)
+        return { success: false, message: error.message || 'Failed to update team' }
       } finally {
         this.loading = false
       }
@@ -193,10 +193,10 @@ export const useTeamStore = defineStore('team', {
           await this.fetchTeamMembers()
           return { success: true, data: res.data }
         }
-        return { success: false, message: res.msg || '邀请成员失败' }
+        return { success: false, message: res.msg || 'Failed to invite member' }
       } catch (error) {
-        console.error('邀请成员失败:', error)
-        return { success: false, message: error.message || '邀请成员失败' }
+        console.error('Failed to invite member:', error)
+        return { success: false, message: error.message || 'Failed to invite member' }
       } finally {
         this.loading = false
       }
@@ -212,10 +212,10 @@ export const useTeamStore = defineStore('team', {
           await this.fetchTeamMembers()
           return { success: true, data: res.data }
         }
-        return { success: false, message: res.msg || '移除成员失败' }
+        return { success: false, message: res.msg || 'Failed to remove member' }
       } catch (error) {
-        console.error('移除成员失败:', error)
-        return { success: false, message: error.message || '移除成员失败' }
+        console.error('Failed to remove member:', error)
+        return { success: false, message: error.message || 'Failed to remove member' }
       } finally {
         this.loading = false
       }
@@ -235,7 +235,7 @@ export const useTeamStore = defineStore('team', {
         try {
           this.currentTeam = JSON.parse(stored)
         } catch (error) {
-          console.error('解析存储的团队信息失败:', error)
+          console.error('Failed to parse stored team info:', error)
           localStorage.removeItem('currentTeam')
         }
       }

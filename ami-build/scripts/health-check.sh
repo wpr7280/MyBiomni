@@ -24,11 +24,11 @@ check() {
 echo "── Docker Containers ──"
 docker inspect -f '{{.State.Running}}' mysql57 2>/dev/null | grep -q true; check "MySQL (docker)" $?
 docker inspect -f '{{.State.Running}}' redis72 2>/dev/null | grep -q true; check "Redis (docker)" $?
+docker inspect -f '{{.State.Running}}' biomni-agent 2>/dev/null | grep -q true; check "Agent (docker)" $?
 
 echo ""
 echo "── Services ──"
 systemctl is-active --quiet biomni-admin;   check "Admin Backend" $?
-systemctl is-active --quiet biomni-agent;   check "Agent" $?
 systemctl is-active --quiet nginx;          check "Nginx" $?
 
 echo ""

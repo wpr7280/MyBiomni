@@ -8,8 +8,8 @@ const currentLocale = lStorage.get('locale')
 const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: currentLocale || 'cn',
-  fallbackLocale: 'cn',
+  locale: currentLocale || 'en',
+  fallbackLocale: 'en',
   messages: messages,
 })
 

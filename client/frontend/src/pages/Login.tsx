@@ -122,45 +122,45 @@ export default function Login() {
         <div style={{ width: '100%', maxWidth: 400 }}>
           <div style={{ marginBottom: 40, textAlign: 'center' }}>
             <Title level={2} style={{ marginBottom: 8 }}>
-              欢迎回来
+              {t('login.title')}
             </Title>
-            <Text type="secondary">登录您的 Biomni 账户</Text>
+            <Text type="secondary">{t('login.subtitle')}</Text>
           </div>
 
           <Form name="login" onFinish={onFinish} autoComplete="off" size="large">
             <Form.Item
               name="email"
               rules={[
-                { required: true, message: '请输入邮箱' },
-                { type: 'email', message: '请输入有效的邮箱地址' },
+                { required: true, message: t('login.emailRequired') },
+                { type: 'email', message: t('login.emailInvalid') },
               ]}
             >
-              <Input prefix={<MailOutlined />} placeholder="邮箱地址" />
+              <Input prefix={<MailOutlined />} placeholder={t('login.emailPlaceholder')} />
             </Form.Item>
 
             <Form.Item
               name="password"
-              rules={[{ required: true, message: '请输入密码' }]}
+              rules={[{ required: true, message: t('login.passwordRequired') }]}
             >
-              <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+              <Input.Password prefix={<LockOutlined />} placeholder={t('login.passwordPlaceholder')} />
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading} block size="large">
-                登录
+                {t('login.loginButton')}
               </Button>
             </Form.Item>
           </Form>
 
           <div style={{ textAlign: 'center', marginTop: 24 }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              登录即表示您同意我们的{' '}
+              {t('login.termsPrefix')}{' '}
               <a href="#" style={{ color: '#1890ff' }}>
-                服务条款
+                {t('login.termsLink')}
               </a>{' '}
-              和{' '}
+              {t('login.and')}{' '}
               <a href="#" style={{ color: '#1890ff' }}>
-                隐私政策
+                {t('login.privacyLink')}
               </a>
             </Text>
           </div>

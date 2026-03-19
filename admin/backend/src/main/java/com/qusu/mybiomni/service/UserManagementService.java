@@ -119,7 +119,7 @@ public class UserManagementService {
         // 检查邮箱是否已存在
         AdminDO existingUser = adminService.getAdminByEmail(request.getEmail());
         if (existingUser != null) {
-            throw new RuntimeException("邮箱已被使用");
+            throw new RuntimeException("Email already in use");
         }
 
         AdminDO admin = new AdminDO();
@@ -151,7 +151,7 @@ public class UserManagementService {
     public void updateUser(Integer userId, UpdateUserRequest request) {
         AdminDO existingUser = adminDAO.selectByPrimaryKey(userId);
         if (existingUser == null) {
-            throw new RuntimeException("用户不存在");
+            throw new RuntimeException("User not found");
         }
 
         // 如果要修改角色，检查是否会导致没有管理员
@@ -161,7 +161,7 @@ public class UserManagementService {
                 // 检查系统中还有多少个管理员
                 long adminCount = countAdmins();
                 if (adminCount <= 1) {
-                    throw new RuntimeException("系统至少需要保留一名管理员");
+                    throw new RuntimeException("At least one admin must remain");
                 }
             }
         }
@@ -173,7 +173,7 @@ public class UserManagementService {
                 // 检查系统中还有多少个启用的管理员
                 long activeAdminCount = countActiveAdmins();
                 if (activeAdminCount <= 1) {
-                    throw new RuntimeException("系统至少需要保留一名启用的管理员");
+                    throw new RuntimeException("At least one active admin must remain");
                 }
             }
         }
@@ -191,7 +191,7 @@ public class UserManagementService {
             // 检查邮箱是否被其他用户使用
             AdminDO emailUser = adminService.getAdminByEmail(request.getEmail());
             if (emailUser != null && !emailUser.getId().equals(userId)) {
-                throw new RuntimeException("邮箱已被使用");
+                throw new RuntimeException("Email already in use");
             }
             updateAdmin.setEmail(request.getEmail().trim());
         }
@@ -224,14 +224,14 @@ public class UserManagementService {
     public void deleteUser(Integer userId) {
         AdminDO admin = adminDAO.selectByPrimaryKey(userId);
         if (admin == null) {
-            throw new RuntimeException("用户不存在");
+            throw new RuntimeException("User not found");
         }
 
         // 如果要删除的是管理员，检查系统中还有多少个管理员
         if (UserRole.isAdmin(admin.getRole())) {
             long adminCount = countAdmins();
             if (adminCount <= 1) {
-                throw new RuntimeException("系统至少需要保留一名管理员，无法删除");
+                throw new RuntimeException("Cannot delete: at least one admin must remain");
             }
         }
 

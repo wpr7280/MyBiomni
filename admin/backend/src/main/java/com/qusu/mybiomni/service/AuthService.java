@@ -107,7 +107,7 @@ public class AuthService {
             // 检查邮箱是否已被其他管理员使用
             AdminDO existingAdmin = adminService.getAdminByEmail(email);
             if (existingAdmin != null && !existingAdmin.getId().equals(adminId)) {
-                throw new RuntimeException("邮箱已被使用");
+                throw new RuntimeException("Email already in use");
             }
             updateAdmin.setEmail(email.trim());
             needUpdate = true;

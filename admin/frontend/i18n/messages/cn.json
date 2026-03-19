@@ -26,7 +26,13 @@
       "text_welcome": "欢迎使用 Biomni 管理后台",
       "alert_force_password_change_title": "需要修改密码",
       "alert_force_password_change_message": "为了您的账号安全，首次登录需要修改密码。",
-      "button_go_to_change_password": "立即修改密码"
+      "button_go_to_change_password": "立即修改密码",
+      "alert_config_incomplete_title": "系统配置未完成",
+      "alert_config_default_message": "系统尚未配置 LLM 模型，无法使用对话功能",
+      "alert_config_instruction": "请前往「配置管理 → 模型配置」完成以下设置：",
+      "alert_config_init": "初始化系统配置",
+      "alert_config_api_key": "配置 {source} 的 API Key",
+      "button_go_to_config": "前往配置"
     },
     "profile": {
       "label_profile": "个人中心",

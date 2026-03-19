@@ -88,16 +88,16 @@ public class SystemConfigService {
             // 根据 key 设置类型和描述
             if (configKey.contains("temperature")) {
                 newConfig.setConfigType("float");
-                newConfig.setDescription("温度参数");
+                newConfig.setDescription("Temperature");
             } else if (configKey.contains("timeout")) {
                 newConfig.setConfigType("int");
-                newConfig.setDescription("超时时间");
+                newConfig.setDescription("Timeout");
             } else if (configKey.contains("use_") || configKey.contains("_mode")) {
                 newConfig.setConfigType("bool");
-                newConfig.setDescription("开关配置");
+                newConfig.setDescription("Toggle");
             } else {
                 newConfig.setConfigType("string");
-                newConfig.setDescription("配置项");
+                newConfig.setDescription("Config");
             }
             
             // API Key 标记为敏感
@@ -111,7 +111,7 @@ public class SystemConfigService {
             newConfig.setUpdatedAt(new Date());
             systemConfigDAO.insert(newConfig);
             
-            System.out.println("自动创建配置: " + configKey + " = " + configValue);
+            System.out.println("Auto-created config: " + configKey + " = " + configValue);
         } else {
             // 配置存在，更新
             SystemConfigDO config = configs.get(0);
@@ -163,7 +163,7 @@ public class SystemConfigService {
             status.setIsConfigured(false);
             status.setHasApiKey(false);
             status.setCurrentSource(null);
-            status.setMessage("系统尚未配置，请先初始化配置");
+            status.setMessage("System not configured. Please initialize configuration first.");
             return status;
         }
         
@@ -212,9 +212,9 @@ public class SystemConfigService {
         status.setHasApiKey(hasApiKey);
         
         if (!hasApiKey) {
-            status.setMessage("请配置 " + source + " 的 API Key 后才能使用");
+            status.setMessage("Please configure the API Key for " + source + " before use.");
         } else {
-            status.setMessage("配置正常");
+            status.setMessage("Configuration OK");
         }
         
         return status;
@@ -236,7 +236,7 @@ public class SystemConfigService {
             case "agent.source":
                 List<String> validSources = List.of("OpenAI", "AzureOpenAI", "Anthropic", "Ollama", "Gemini", "Groq", "Bedrock", "Custom");
                 if (!validSources.contains(configValue)) {
-                    throw new RuntimeException("无效的 LLM 提供商: " + configValue);
+                    throw new RuntimeException("Invalid LLM provider: " + configValue);
                 }
                 break;
             
@@ -244,10 +244,10 @@ public class SystemConfigService {
                 try {
                     float temp = Float.parseFloat(configValue);
                     if (temp < 0 || temp > 2) {
-                        throw new RuntimeException("温度参数必须在 0-2 之间");
+                        throw new RuntimeException("Temperature must be between 0 and 2");
                     }
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("温度参数必须是数字");
+                    throw new RuntimeException("Temperature must be a number");
                 }
                 break;
             
@@ -255,17 +255,17 @@ public class SystemConfigService {
                 try {
                     int timeout = Integer.parseInt(configValue);
                     if (timeout < 60 || timeout > 3600) {
-                        throw new RuntimeException("超时时间必须在 60-3600 秒之间");
+                        throw new RuntimeException("Timeout must be between 60 and 3600 seconds");
                     }
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("超时时间必须是整数");
+                    throw new RuntimeException("Timeout must be an integer");
                 }
                 break;
             
             case "agent.use_tool_retriever":
             case "agent.commercial_mode":
                 if (!configValue.equals("true") && !configValue.equals("false")) {
-                    throw new RuntimeException("布尔值必须是 true 或 false");
+                    throw new RuntimeException("Value must be true or false");
                 }
                 break;
         }

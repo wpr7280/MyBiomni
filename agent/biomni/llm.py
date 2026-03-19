@@ -244,12 +244,12 @@ def get_llm(
 
     elif source == "Bedrock":
         try:
-            from langchain_aws import ChatBedrock
+            from langchain_aws import ChatBedrockConverse
         except ImportError:
             raise ImportError(  # noqa: B904
                 "langchain-aws package is required for Bedrock models. Install with: pip install langchain-aws"
             )
-        return ChatBedrock(
+        return ChatBedrockConverse(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,

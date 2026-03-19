@@ -14,7 +14,7 @@ public enum ResponseEnum {
     ILLEGAL_USER_PHONE(10401, "用户手机号码是空的"),
     ILLEGAL_FILE_TYPE(10402, "不支持的文件类型"),
     INVALID_PERMISSION(10403,"无权操作"),
-    USER_NOT_EXIST(10404, "用户不存在"),
+    USER_NOT_EXIST(10404, "User not found"),
     USER_EMAIL_EXIST(10405, "用户邮箱已存在"),
     ILLEGAL_PASSWORD(19205, "密码修改有误，请重试"),
     NO_PRIVILEDGE(10400, "权限不足"),

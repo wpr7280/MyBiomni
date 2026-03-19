@@ -65,7 +65,7 @@ public class ConversationService {
         if (title == null || title.trim().isEmpty()) {
             LocalDateTime now = LocalDateTime.now();
             String timeStr = now.format(java.time.format.DateTimeFormatter.ofPattern("MM-dd HH:mm"));
-            title = "新对话 " + timeStr;
+            title = "New Chat " + timeStr;
         }
         
         conversation.setTitle(title);
@@ -87,11 +87,11 @@ public class ConversationService {
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(id);
 
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
 
         if (!conversation.getUserId().equals(userId)) {
-            throw new RuntimeException("无权访问此对话");
+            throw new RuntimeException("Access denied for this conversation");
         }
 
         return convertToVO(conversation);
@@ -105,11 +105,11 @@ public class ConversationService {
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(id);
 
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
 
         if (!conversation.getUserId().equals(userId)) {
-            throw new RuntimeException("无权访问此对话");
+            throw new RuntimeException("Access denied for this conversation");
         }
 
         conversation.setTitle(title);
@@ -126,11 +126,11 @@ public class ConversationService {
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(id);
 
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
 
         if (!conversation.getUserId().equals(userId)) {
-            throw new RuntimeException("无权访问此对话");
+            throw new RuntimeException("Access denied for this conversation");
         }
         conversation.setDeletedAt(new Date());
         conversationDAO.updateByPrimaryKey(conversation);

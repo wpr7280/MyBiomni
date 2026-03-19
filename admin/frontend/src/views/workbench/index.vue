@@ -1,11 +1,11 @@
 <template>
   <AppPage :show-footer="false">
     <div flex-1>
-      <!-- 配置未完成提示 -->
+      <!-- Configuration incomplete alert -->
       <n-alert 
         v-if="!configStatus.isConfigured || !configStatus.hasApiKey" 
         type="error" 
-        title="系统配置未完成"
+        :title="$t('views.workbench.alert_config_incomplete_title')"
         style="margin-bottom: 16px;"
       >
         <template #icon>
@@ -16,14 +16,14 @@
           </n-icon>
         </template>
         <div>
-          <p style="margin-bottom: 8px;">{{ configStatus.message || '系统尚未配置 LLM 模型，无法使用对话功能' }}</p>
+          <p style="margin-bottom: 8px;">{{ configStatus.message || $t('views.workbench.alert_config_default_message') }}</p>
           <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
-            请前往"配置管理 → 模型配置"完成以下设置：
+            {{ $t('views.workbench.alert_config_instruction') }}
           </p>
           <ul style="margin: 0 0 12px 20px; font-size: 13px; color: #666;">
-            <li v-if="!configStatus.isConfigured">初始化系统配置</li>
+            <li v-if="!configStatus.isConfigured">{{ $t('views.workbench.alert_config_init') }}</li>
             <li v-if="configStatus.isConfigured && !configStatus.hasApiKey">
-              配置 {{ configStatus.currentSource }} 的 API Key
+              {{ $t('views.workbench.alert_config_api_key', { source: configStatus.currentSource }) }}
             </li>
           </ul>
           <n-button 
@@ -31,7 +31,7 @@
             size="small" 
             @click="goToConfig"
           >
-            前往配置
+            {{ $t('views.workbench.button_go_to_config') }}
           </n-button>
         </div>
       </n-alert>
@@ -124,7 +124,7 @@ async function checkConfigStatus() {
       configStatus.value = res.data
     }
   } catch (error) {
-    console.error('检查配置状态失败:', error)
+    console.error('Failed to check config status:', error)
   }
 }
 

@@ -151,7 +151,7 @@ public class AdminConversationService {
     public void deleteConversation(Integer conversationId) {
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
         if (conversation == null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
         
         // 软删除
@@ -169,7 +169,7 @@ public class AdminConversationService {
         // 获取对话基本信息
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
         if (conversation == null || conversation.getDeletedAt() != null) {
-            throw new RuntimeException("对话不存在");
+            throw new RuntimeException("Conversation not found");
         }
         
         // 转换为详情 VO

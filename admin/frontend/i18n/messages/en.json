@@ -89,7 +89,13 @@
       "label_more": "More",
       "alert_force_password_change_title": "Password Change Required",
       "alert_force_password_change_message": "For your account security, you need to change your password on first login.",
-      "button_go_to_change_password": "Change Password Now"
+      "button_go_to_change_password": "Change Password Now",
+      "alert_config_incomplete_title": "System Configuration Incomplete",
+      "alert_config_default_message": "LLM model not configured. Chat functionality is unavailable.",
+      "alert_config_instruction": "Please go to \"Configuration → Model Configuration\" to complete the following:",
+      "alert_config_init": "Initialize system configuration",
+      "alert_config_api_key": "Configure API Key for {source}",
+      "button_go_to_config": "Go to Configuration"
     },
     "profile": {
       "label_profile": "Profile",

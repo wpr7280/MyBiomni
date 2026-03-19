@@ -1,9 +1,9 @@
 import { isNullOrWhitespace } from '@/utils'
 
 const ACTIONS = {
-  view: '查看',
-  edit: '编辑',
-  add: '新增',
+  view: 'View',
+  edit: 'Edit',
+  add: 'Create',
 }
 
 export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, refresh }) {
@@ -49,14 +49,14 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
           cb: () => {
             callbacks.forEach((callback) => callback && callback())
           },
-          msg: () => $message.success('新增成功'),
+          msg: () => $message.success('Created successfully'),
         },
         edit: {
           api: () => doUpdate(modalForm.value),
           cb: () => {
             callbacks.forEach((callback) => callback && callback())
           },
-          msg: () => $message.success('编辑成功'),
+          msg: () => $message.success('Updated successfully'),
         },
       }
       const action = actions[modalAction.value]
@@ -80,7 +80,7 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
     try {
       modalLoading.value = true
       const data = await doDelete(params)
-      $message.success('删除成功')
+      $message.success('Deleted successfully')
       modalLoading.value = false
       refresh(data)
     } catch (error) {

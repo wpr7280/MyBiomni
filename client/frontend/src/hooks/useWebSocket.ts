@@ -17,7 +17,7 @@ export function useWebSocket(conversationId: number | null) {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      console.log('未登录，跳过 WebSocket 连接');
+      console.log('Not logged in, skipping WebSocket connection');
       return;
     }
 
