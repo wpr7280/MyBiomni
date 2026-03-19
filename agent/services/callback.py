@@ -671,6 +671,14 @@ class WebSocketCallback:
         
         print(f"✓ 保存 assistant message: id={assistant_message.id}, tokens={assistant_message.tokens}", file=sys.stderr)
         
+        # 将所有执行步骤的 message_id 更新为 assistant message id
+        updated_count = self.db.query(ExecutionStep).filter(
+            ExecutionStep.conversation_id == self.conversation_id,
+            ExecutionStep.message_id == (self.current_message_id or 0)
+        ).update({ExecutionStep.message_id: assistant_message.id})
+        self.db.commit()
+        print(f"✓ 更新 {updated_count} 个执行步骤的 message_id → {assistant_message.id}", file=sys.stderr)
+        
         # 更新用户配额
         from models.models import UserQuota
         
