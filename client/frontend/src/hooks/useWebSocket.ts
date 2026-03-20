@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { message as antdMessage } from 'antd';
 import { MockWebSocket, shouldUseMockWebSocket } from '@/mock/websocket';
+import { agentApiClient } from '@/api/agentClient';
 import type { Message, ExecutionStep, WSMessage } from '@/types';
 
 export function useWebSocket(conversationId: number | null) {
@@ -9,8 +10,20 @@ export function useWebSocket(conversationId: number | null) {
   const [isExecuting, setIsExecuting] = useState(false);
   const wsRef = useRef<WebSocket | MockWebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const retryCountRef = useRef(0);  // 重试计数器
-  const maxRetries = 3;  // 最多重试3次
+  const retryCountRef = useRef(0);
+  const maxRetries = 5;
+  const isExecutingRef = useRef(false); // Track execution state across reconnects
+
+  // Check if conversation is currently executing (on connect/reconnect)
+  const checkExecutionStatus = useCallback(async () => {
+    if (!conversationId) return false;
+    try {
+      const response = await agentApiClient.get(`/agent-api/execution-status/${conversationId}`);
+      return response.data?.executing === true;
+    } catch {
+      return false;
+    }
+  }, [conversationId]);
 
   const connect = useCallback(() => {
     if (!conversationId) return;
@@ -21,7 +34,6 @@ export function useWebSocket(conversationId: number | null) {
       return;
     }
 
-    // WebSocket 地址同源推导
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}`;
     const url = `${wsUrl}/ws/chat/${conversationId}?token=${encodeURIComponent(token)}`;
@@ -29,25 +41,40 @@ export function useWebSocket(conversationId: number | null) {
     console.log('正在连接 WebSocket:', {
       url: url.replace(/token=[^&]+/, 'token=***'),
       conversationId,
-      wsUrl,
       retryCount: retryCountRef.current,
       timestamp: new Date().toISOString(),
     });
 
-    // 判断是否使用 Mock WebSocket
     const ws = shouldUseMockWebSocket() ? new MockWebSocket(url) : new WebSocket(url);
-    
-    // 标记连接是否成功过
     let hasConnected = false;
 
-    ws.addEventListener('open', () => {
+    ws.addEventListener('open', async () => {
       hasConnected = true;
-      retryCountRef.current = 0;  // 重置重试计数
-      console.log('✅ WebSocket 连接成功:', {
-        url: url.replace(/token=[^&]+/, 'token=***'),
-        readyState: ws.readyState,
-        timestamp: new Date().toISOString(),
-      });
+      retryCountRef.current = 0;
+      console.log('✅ WebSocket 连接成功');
+
+      // Check if there's an active execution we need to resume
+      const executing = await checkExecutionStatus();
+      if (executing) {
+        console.log('🔄 检测到正在执行的任务，恢复执行状态');
+        setIsExecuting(true);
+        isExecutingRef.current = true;
+        // Add temporary thinking message if not already present
+        setMessages((prev) => {
+          const hasThinking = prev.some((m) => (m as any).isTemporary);
+          if (!hasThinking) {
+            return [...prev, {
+              id: Date.now(),
+              conversationId: conversationId!,
+              role: 'assistant' as const,
+              content: '🔄 Reconnected — execution in progress...',
+              createdAt: new Date().toISOString(),
+              isTemporary: true,
+            }];
+          }
+          return prev;
+        });
+      }
     });
 
     ws.addEventListener('message', (event: any) => {
@@ -57,8 +84,8 @@ export function useWebSocket(conversationId: number | null) {
         switch (data.type) {
           case 'execution_start':
             setIsExecuting(true);
+            isExecutingRef.current = true;
             setExecutionSteps([]);
-            // 如果还没有临时消息，添加一个
             setMessages((prev) => {
               const hasThinking = prev.some((m) => (m as any).isTemporary);
               if (!hasThinking) {
@@ -73,6 +100,12 @@ export function useWebSocket(conversationId: number | null) {
               }
               return prev;
             });
+            break;
+
+          case 'execution_resumed':
+            // Server tells us execution is still running after reconnect
+            setIsExecuting(true);
+            isExecutingRef.current = true;
             break;
 
           case 'execution_step':
@@ -91,34 +124,30 @@ export function useWebSocket(conversationId: number | null) {
 
           case 'execution_complete':
             setIsExecuting(false);
+            isExecutingRef.current = false;
             if (data.message) {
-              // 移除临时的"正在思考"消息
               setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
-              // 添加真实的 AI 回复
               setMessages((prev) => [...prev, data.message!]);
             }
             break;
 
           case 'execution_error':
             setIsExecuting(false);
-            // 移除临时消息
+            isExecutingRef.current = false;
             setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
             
-            // 显示错误消息
             const errorMessage = data.error || '执行失败';
             const technicalDetails = data.technical_details;
             
-            // 在聊天窗口显示错误消息
             const errorBubble = {
               id: Date.now(),
               conversationId: conversationId!,
               role: 'assistant' as const,
-              content: `❌ **执行失败**\n\n${errorMessage}${technicalDetails ? `\n\n<details>\n<summary>技术详情</summary>\n\n\`\`\`\n${technicalDetails}\n\`\`\`\n</details>` : ''}`,
+              content: `❌ **Execution Failed**\n\n${errorMessage}${technicalDetails ? `\n\n<details>\n<summary>Technical Details</summary>\n\n\`\`\`\n${technicalDetails}\n\`\`\`\n</details>` : ''}`,
               createdAt: new Date().toISOString(),
             };
             setMessages((prev) => [...prev, errorBubble]);
             
-            // 同时显示通知
             antdMessage.error({
               content: errorMessage,
               duration: 8,
@@ -127,20 +156,20 @@ export function useWebSocket(conversationId: number | null) {
 
           case 'config_error':
             setIsExecuting(false);
-            // 移除临时消息
+            isExecutingRef.current = false;
             setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
             antdMessage.error({
-              content: data.error || '系统配置错误',
+              content: data.error || 'System configuration error',
               duration: 8,
             });
             break;
 
           case 'quota_exceeded':
             setIsExecuting(false);
-            // 移除临时消息
+            isExecutingRef.current = false;
             setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
             antdMessage.error({
-              content: data.error || 'Token 配额已用完',
+              content: data.error || 'Token quota exhausted',
               duration: 5,
             });
             break;
@@ -152,13 +181,10 @@ export function useWebSocket(conversationId: number | null) {
 
     ws.addEventListener('error', (error: any) => {
       console.error('WebSocket 连接错误:', {
-        url,
         error,
         readyState: ws.readyState,
         timestamp: new Date().toISOString(),
       });
-      
-      // 不立即显示错误，等待 close 事件判断
     });
 
     ws.addEventListener('close', (event: any) => {
@@ -167,44 +193,40 @@ export function useWebSocket(conversationId: number | null) {
         reason: event.reason,
         wasClean: event.wasClean,
         hasConnected,
+        isExecuting: isExecutingRef.current,
         retryCount: retryCountRef.current,
-        url,
         timestamp: new Date().toISOString(),
       });
       
-      // 只有在从未成功连接过，且是异常关闭（code 1006），且重试次数超过限制时才显示错误
       if (!hasConnected && event.code === 1006) {
         retryCountRef.current += 1;
-        
-        // 只在重试多次后才显示错误
         if (retryCountRef.current > maxRetries) {
-          console.error('WebSocket 连接失败（多次重试后）:', {
-            code: event.code,
-            reason: event.reason || '未知原因',
-            retryCount: retryCountRef.current,
-          });
-          
           antdMessage.error({
-            content: 'WebSocket 连接失败：无法连接到服务器',
+            content: 'WebSocket connection failed after multiple retries',
             duration: 5,
           });
-        } else {
-          console.log(`WebSocket 连接失败，将进行第 ${retryCountRef.current} 次重试...`);
         }
       }
       
-      // 自动重连（仅在非 Mock 模式下，且未超过重试次数）
-      if (!shouldUseMockWebSocket() && event.code === 1006 && retryCountRef.current <= maxRetries) {
-        const retryDelay = Math.min(1000 * Math.pow(2, retryCountRef.current - 1), 5000);  // 指数退避，最多5秒
+      // Auto-reconnect with exponential backoff
+      // Always reconnect if execution is in progress
+      const shouldReconnect = !shouldUseMockWebSocket() && (
+        (event.code === 1006 && retryCountRef.current <= maxRetries) ||
+        isExecutingRef.current
+      );
+      
+      if (shouldReconnect) {
+        const retryDelay = Math.min(1000 * Math.pow(2, retryCountRef.current - 1), 5000);
+        console.log(`🔄 Will reconnect in ${retryDelay}ms (executing: ${isExecutingRef.current})`);
         reconnectTimeoutRef.current = setTimeout(() => {
-          console.log(`尝试重新连接 WebSocket (第 ${retryCountRef.current} 次)...`);
+          retryCountRef.current += 1;
           connect();
         }, retryDelay);
       }
     });
 
     wsRef.current = ws;
-  }, [conversationId]);
+  }, [conversationId, checkExecutionStatus]);
 
   useEffect(() => {
     connect();
@@ -221,14 +243,13 @@ export function useWebSocket(conversationId: number | null) {
 
   const sendMessage = useCallback((content: string, fileIds: number[] = []) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      // 只发送消息，不添加到界面（等待 WebSocket 返回）
       wsRef.current.send(JSON.stringify({
         type: 'send_message',
         content,
         file_ids: fileIds,
       }));
     } else {
-      antdMessage.error('连接未建立，请稍后重试');
+      antdMessage.error('Connection not established, please try again');
     }
   }, [conversationId]);
 

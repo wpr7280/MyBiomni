@@ -16,7 +16,7 @@
   },
   "login": {
     "title": "欢迎回来",
-    "subtitle": "登录您的 Biomni 账户",
+    "subtitle": "登录您的 WarpHelix 账户",
     "email": "邮箱地址",
     "password": "密码",
     "loginButton": "登录",
@@ -32,7 +32,7 @@
     "termsLink": "服务条款",
     "and": "和",
     "privacyLink": "隐私政策",
-    "appTitle": "Biomni",
+    "appTitle": "WarpHelix",
     "appSubtitle": "AI-Powered Biomedical Assistant",
     "appDescription": "通用的生物医学 AI Agent，为科研工作者提供智能化的数据分析、文献检索和实验设计支持。",
     "feature1": "智能分析",
@@ -110,7 +110,7 @@
     "loadFailed": "加载失败",
     "emptyTitle": "开始新的对话",
     "emptySubtitle": "输入您的问题或选择示例问题",
-    "welcomeTitle": "欢迎使用 Biomni AI 助手",
+    "welcomeTitle": "欢迎使用 WarpHelix AI 助手",
     "welcomeSubtitle": "请选择或创建一个对话开始",
     "inputPlaceholder": "Ask something or upload a file...",
     "inputPlaceholderExecuting": "Agent is working...",
@@ -129,7 +129,7 @@
     "uploadHint": "点击或拖拽文件上传"
   },
   "execution": {
-    "title": "Biomni Executor",
+    "title": "WarpHelix Executor",
     "ready": "Agent 准备就绪",
     "waiting": "等待执行...",
     "stepsCompleted": "{{success}}/{{total}} 步骤完成",
@@ -143,14 +143,14 @@
   "header": {
     "profile": "个人中心",
     "logout": "退出登录",
-    "appTitle": "Biomni",
+    "appTitle": "WarpHelix",
     "appSubtitle": "AI-Powered Biomedical Assistant"
   },
   "footer": {
     "github": "GitHub",
     "contact": "Contact",
     "website": "Website",
-    "copyright": "© 2025 Biomni. All rights reserved. | Powered by AI",
+    "copyright": "© 2025 WarpHelix. All rights reserved. | Powered by AI",
     "description": "A universal biomedical AI agent for research and analysis"
   }
 }

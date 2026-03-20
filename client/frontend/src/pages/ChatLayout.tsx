@@ -44,7 +44,10 @@ export default function ChatLayout() {
   // 创建新对话
   async function handleCreateConversation() {
     try {
-      const newConversation = await conversationApi.createConversation();
+      // Auto-generate a numbered title
+      const existingCount = conversations.length;
+      const autoTitle = `Chat #${existingCount + 1}`;
+      const newConversation = await conversationApi.createConversation(autoTitle);
       console.log('创建的对话:', newConversation);
       
       if (newConversation && newConversation.id) {

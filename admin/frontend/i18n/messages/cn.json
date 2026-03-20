@@ -1,6 +1,6 @@
 {
   "lang": "中文",
-  "app_name": "Biomni 管理后台",
+  "app_name": "WarpHelix 管理后台",
   "header": {
     "label_profile": "个人信息",
     "label_logout": "退出登录",
@@ -23,7 +23,7 @@
     "workbench": {
       "label_workbench": "工作台",
       "text_hello": "你好, {username}",
-      "text_welcome": "欢迎使用 Biomni 管理后台",
+      "text_welcome": "欢迎使用 WarpHelix 管理后台",
       "alert_force_password_change_title": "需要修改密码",
       "alert_force_password_change_message": "为了您的账号安全，首次登录需要修改密码。",
       "button_go_to_change_password": "立即修改密码",
@@ -254,7 +254,7 @@
         "text_when_disabled_3": "功能完整，数据集最全",
         "text_when_disabled_4": "不适用于商业产品或服务",
         "text_legal_advice_title": "⚖️ 法律建议：",
-        "text_legal_advice_content": "在商业环境中使用 Biomni 前，请咨询法律顾问，审查所有相关数据集的许可协议，确保合规使用。",
+        "text_legal_advice_content": "在商业环境中使用 WarpHelix 前，请咨询法律顾问，审查所有相关数据集的许可协议，确保合规使用。",
         "table_column_dataset": "数据集",
         "table_column_license": "许可证",
         "table_column_commercial": "商业使用",
@@ -303,7 +303,7 @@
     "close": "关闭"
   },
   "footer": {
-    "copyright": "© 2025 Biomni · AI-Powered Biomedical Assistant",
+    "copyright": "© 2025 WarpHelix · AI-Powered Biomedical Assistant",
     "privacy_policy": "隐私政策",
     "user_agreement": "用户协议"
   }

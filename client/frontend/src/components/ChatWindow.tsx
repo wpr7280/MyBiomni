@@ -41,16 +41,15 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
       const data = await conversationApi.getMessages(conversationId);
       setMessages(data);
       
-      // 如果有消息，加载最后一对消息（user + assistant）的执行步骤
-      // 执行步骤关联到用户消息
+      // Load execution steps for the last assistant message
       const messages = data;
       for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].role === 'assistant' && i > 0 && messages[i - 1].role === 'user') {
-          // 找到最后一对消息，使用用户消息的 ID
-          const userMessageId = messages[i - 1].id;
+        if (messages[i].role === 'assistant') {
           try {
-            const steps = await conversationApi.getExecutionSteps(userMessageId);
-            setExecutionSteps(steps);
+            const steps = await conversationApi.getExecutionSteps(messages[i].id);
+            if (steps && steps.length > 0) {
+              setExecutionSteps(steps);
+            }
           } catch (error) {
             console.error('加载执行步骤失败:', error);
           }
@@ -246,9 +245,9 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           <div style={{ padding: '10px 32px 14px', borderTop: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center', gap: 16, fontSize: 12 }}>
             <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.github')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="mailto:contact@biomni.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
+            <a href="mailto:contact@warphelix.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="https://biomni.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
+            <a href="https://warphelix.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
           </div>
         </div>
       </div>

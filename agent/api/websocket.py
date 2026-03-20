@@ -14,16 +14,36 @@ router = APIRouter()
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
+        self.active_executions: Dict[str, bool] = {}  # Track which conversations are executing
     
     async def connect(self, conversation_id: str, websocket: WebSocket):
         await websocket.accept()
         self.active_connections[conversation_id] = websocket
         print(f"WebSocket connected: conversation_id={conversation_id}")
+        
+        # If this conversation was executing, notify the client to resume
+        if self.active_executions.get(conversation_id):
+            try:
+                await websocket.send_json({
+                    'type': 'execution_resumed',
+                    'message': 'Reconnected to an active execution. Steps will continue streaming.'
+                })
+            except Exception:
+                pass
     
     def disconnect(self, conversation_id: str):
         if conversation_id in self.active_connections:
             del self.active_connections[conversation_id]
             print(f"WebSocket disconnected: conversation_id={conversation_id}")
+    
+    def set_executing(self, conversation_id: str, executing: bool):
+        if executing:
+            self.active_executions[conversation_id] = True
+        else:
+            self.active_executions.pop(conversation_id, None)
+    
+    def is_executing(self, conversation_id: str) -> bool:
+        return self.active_executions.get(conversation_id, False)
     
     async def send_message(self, conversation_id: str, message: dict):
         if conversation_id in self.active_connections:
@@ -33,6 +53,16 @@ class ConnectionManager:
                 print(f"Failed to send message: {e}")
 
 manager = ConnectionManager()
+
+
+@router.get("/execution-status/{conversation_id}")
+async def get_execution_status(conversation_id: str):
+    """Check if a conversation is currently executing."""
+    return {
+        "conversationId": conversation_id,
+        "executing": manager.is_executing(conversation_id),
+    }
+
 
 @router.websocket("/chat/{conversation_id}")
 async def websocket_endpoint(
@@ -168,6 +198,15 @@ async def handle_agent_execution(
             conversation.message_count += 1
             conversation.last_message_at = datetime.now()
             conversation.updated_at = datetime.now()
+            
+            # Auto-generate title from first user message
+            if conversation.message_count == 1 and (not conversation.title or conversation.title.startswith('Chat #') or conversation.title == 'New Chat'):
+                # Truncate user query to make a title (max 50 chars)
+                title = content.strip().replace('\n', ' ')
+                if len(title) > 50:
+                    title = title[:47] + '...'
+                conversation.title = title
+            
             db.commit()
         
         # 2.1 Handle uploaded files (bind message_id, append to prompt)
@@ -213,6 +252,7 @@ async def handle_agent_execution(
                 db.commit()
 
         # 3. Notify execution start
+        manager.set_executing(str(conversation_id), True)
         await manager.send_message(str(conversation_id), {
             'type': 'execution_start'
         })
@@ -240,6 +280,7 @@ async def handle_agent_execution(
         print(f"✓ Agent execution complete, result: {result}")
         
         # 6. Notify completion
+        manager.set_executing(str(conversation_id), False)
         await manager.send_message(str(conversation_id), {
             'type': 'execution_complete',
             'message': result
@@ -250,6 +291,8 @@ async def handle_agent_execution(
         print(f"❌ Agent execution failed: {error_msg}")
         import traceback
         traceback.print_exc()
+        
+        manager.set_executing(str(conversation_id), False)
         
         # User-friendly error messages
         user_friendly_error = error_msg

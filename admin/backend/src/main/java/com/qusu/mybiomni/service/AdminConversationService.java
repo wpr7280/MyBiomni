@@ -45,8 +45,17 @@ public class AdminConversationService {
         ConversationDOExample example = new ConversationDOExample();
         ConversationDOExample.Criteria criteria = example.createCriteria();
         
-        // 软删除过滤
-        criteria.andDeletedAtIsNull();
+        // Admin can see all conversations including soft-deleted ones
+        // Only filter deleted if explicitly requested
+        if (request.getStatus() != null && "deleted".equals(request.getStatus().trim())) {
+            criteria.andDeletedAtIsNotNull();
+        } else if (request.getStatus() == null || request.getStatus().trim().isEmpty()) {
+            // Show all (no deleted_at filter)
+        } else {
+            // Other status filters: only show non-deleted
+            criteria.andDeletedAtIsNull();
+            criteria.andStatusEqualTo(request.getStatus());
+        }
         
         // 用户ID筛选
         if (request.getUserId() != null) {
@@ -56,11 +65,6 @@ public class AdminConversationService {
         // 关键词搜索（对话标题）
         if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
             criteria.andTitleLike("%" + request.getKeyword().trim() + "%");
-        }
-        
-        // 状态筛选
-        if (request.getStatus() != null && !request.getStatus().trim().isEmpty()) {
-            criteria.andStatusEqualTo(request.getStatus());
         }
         
         // 时间范围筛选
@@ -106,7 +110,13 @@ public class AdminConversationService {
         ConversationDOExample example = new ConversationDOExample();
         ConversationDOExample.Criteria criteria = example.createCriteria();
         
-        criteria.andDeletedAtIsNull();
+        // Match the same logic as getConversationList
+        if (request.getStatus() != null && "deleted".equals(request.getStatus().trim())) {
+            criteria.andDeletedAtIsNotNull();
+        } else if (request.getStatus() != null && !request.getStatus().trim().isEmpty()) {
+            criteria.andDeletedAtIsNull();
+            criteria.andStatusEqualTo(request.getStatus());
+        }
         
         if (request.getUserId() != null) {
             criteria.andUserIdEqualTo(request.getUserId());
@@ -114,10 +124,6 @@ public class AdminConversationService {
         
         if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
             criteria.andTitleLike("%" + request.getKeyword().trim() + "%");
-        }
-        
-        if (request.getStatus() != null && !request.getStatus().trim().isEmpty()) {
-            criteria.andStatusEqualTo(request.getStatus());
         }
         
         if (request.getStartDate() != null && !request.getStartDate().trim().isEmpty()) {
@@ -168,7 +174,7 @@ public class AdminConversationService {
     public ConversationDetailVO getConversationDetail(Integer conversationId) {
         // 获取对话基本信息
         ConversationDO conversation = conversationDAO.selectByPrimaryKey(conversationId);
-        if (conversation == null || conversation.getDeletedAt() != null) {
+        if (conversation == null) {
             throw new RuntimeException("Conversation not found");
         }
         
@@ -207,6 +213,7 @@ public class AdminConversationService {
     private AdminConversationVO convertToAdminVO(ConversationDO conversation) {
         AdminConversationVO vo = new AdminConversationVO();
         BeanUtils.copyProperties(conversation, vo);
+        vo.setDeleted(conversation.getDeletedAt() != null);
         
         // 获取用户信息
         AdminDO user = adminDAO.selectByPrimaryKey(conversation.getUserId());

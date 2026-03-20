@@ -21,4 +21,6 @@ public class AdminConversationVO {
     private Date lastMessageAt;
     private Date createdAt;
     private Date updatedAt;
+    private Date deletedAt;
+    private Boolean deleted;
 }

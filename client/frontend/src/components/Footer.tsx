@@ -23,10 +23,10 @@ export default function Footer() {
           <Link href="https://github.com/biomni" target="_blank">
             <GithubOutlined style={{ fontSize: 16 }} /> {t('footer.github')}
           </Link>
-          <Link href="mailto:contact@biomni.com">
+          <Link href="mailto:contact@warphelix.com">
             <MailOutlined style={{ fontSize: 16 }} /> {t('footer.contact')}
           </Link>
-          <Link href="https://biomni.com" target="_blank">
+          <Link href="https://warphelix.com" target="_blank">
             <GlobalOutlined style={{ fontSize: 16 }} /> {t('footer.website')}
           </Link>
         </Space>

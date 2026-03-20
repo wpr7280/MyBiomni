@@ -56,10 +56,11 @@ export interface ExecutionStep {
 
 // WebSocket 消息类型
 export interface WSMessage {
-  type: 'execution_start' | 'execution_step' | 'execution_complete' | 'execution_error';
+  type: 'execution_start' | 'execution_step' | 'execution_complete' | 'execution_error' | 'execution_resumed' | 'config_error' | 'quota_exceeded';
   step?: ExecutionStep;
   message?: Message;
   error?: string;
+  technical_details?: string;
 }
 
 // API 响应类型
