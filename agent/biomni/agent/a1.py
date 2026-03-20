@@ -1433,7 +1433,13 @@ Each library is listed with its description to help you understand its functiona
                     execute_match = code_block_match
 
             # Add the message to the state before checking for errors
-            state["messages"].append(AIMessage(content=msg.strip()))
+            # Preserve usage_metadata and response_metadata from the LLM response
+            new_message = AIMessage(content=msg.strip())
+            if hasattr(response, 'usage_metadata') and response.usage_metadata:
+                new_message.usage_metadata = response.usage_metadata
+            if hasattr(response, 'response_metadata') and response.response_metadata:
+                new_message.response_metadata = response.response_metadata
+            state["messages"].append(new_message)
 
             if answer_match:
                 state["next_step"] = "end"
