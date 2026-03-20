@@ -4,6 +4,8 @@ import SSOLogin from './pages/SSOLogin';
 import ChangePassword from './pages/ChangePassword';
 import Profile from './pages/Profile';
 import ChatLayout from './pages/ChatLayout';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import { useAuthStore } from './store/authStore';
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/auth/sso" element={<SSOLogin />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route
         path="/change-password"
         element={token ? <ChangePassword /> : <Navigate to="/login" replace />}

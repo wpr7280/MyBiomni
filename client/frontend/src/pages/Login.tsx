@@ -155,11 +155,11 @@ export default function Login() {
           <div style={{ textAlign: 'center', marginTop: 24 }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
               {t('login.termsPrefix')}{' '}
-              <a href="#" style={{ color: '#1890ff' }}>
+              <a href="/terms" target="_blank" style={{ color: '#1890ff' }}>
                 {t('login.termsLink')}
               </a>{' '}
               {t('login.and')}{' '}
-              <a href="#" style={{ color: '#1890ff' }}>
+              <a href="/privacy" target="_blank" style={{ color: '#1890ff' }}>
                 {t('login.privacyLink')}
               </a>
             </Text>

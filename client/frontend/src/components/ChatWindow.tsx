@@ -243,11 +243,9 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           </div>
 
           <div style={{ padding: '10px 32px 14px', borderTop: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center', gap: 16, fontSize: 12 }}>
-            <a href="https://github.com/biomni" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.github')}</a>
+            <a href="http://website.autoinfra.cn/about/contact.html" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="mailto:contact@warphelix.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
-            <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="https://warphelix.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
+            <a href="http://website.autoinfra.cn/" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
           </div>
         </div>
       </div>
