@@ -174,17 +174,43 @@ async def handle_agent_execution(
         content_with_files = content
         if file_ids:
             from models.models import Attachment
+            import os
 
             attachments = (
                 db.query(Attachment)
                 .filter(Attachment.id.in_(file_ids), Attachment.user_id == user_id)
                 .all()
             )
-            for attachment in attachments:
-                attachment.conversation_id = conversation_id
-                attachment.message_id = user_message.id
-                content_with_files += f"\n\nUser uploaded this file: {attachment.path}\nPlease use it if needed."
-            db.commit()
+            
+            if attachments:
+                file_info_lines = ["\n\n--- Uploaded Files ---"]
+                for attachment in attachments:
+                    attachment.conversation_id = conversation_id
+                    attachment.message_id = user_message.id
+                    
+                    file_size = attachment.size
+                    size_str = f"{file_size / 1024:.1f} KB" if file_size < 1024 * 1024 else f"{file_size / (1024*1024):.1f} MB"
+                    mime = attachment.mime_type or "unknown"
+                    
+                    file_info_lines.append(
+                        f"- File: `{attachment.filename}` ({size_str}, {mime})"
+                        f"\n  Path: `{attachment.path}`"
+                    )
+                    
+                    # For small text/csv files, include a preview
+                    if file_size < 50000 and mime in ('text/csv', 'text/plain', 'text/tab-separated-values',
+                                                       'application/json', 'text/markdown'):
+                        try:
+                            with open(attachment.path, 'r', encoding='utf-8', errors='replace') as f:
+                                preview = f.read(2000)
+                            file_info_lines.append(f"  Preview (first 2000 chars):\n```\n{preview}\n```")
+                        except Exception:
+                            pass
+                
+                file_info_lines.append("\nYou can read these files using their full path in your <execute> code. For example: `pd.read_csv('/path/to/file.csv')`")
+                file_info_lines.append("---")
+                content_with_files += "\n".join(file_info_lines)
+                db.commit()
 
         # 3. Notify execution start
         await manager.send_message(str(conversation_id), {
