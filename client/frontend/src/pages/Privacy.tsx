@@ -12,7 +12,7 @@ export default function Privacy() {
   const sections = [
     {
       title: '1. Introduction',
-      content: 'WarpHelix ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our AI-powered biomedical research platform.',
+      content: 'Biomni ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our AI-powered biomedical research platform.',
     },
     {
       title: '2. Information We Collect',
@@ -90,7 +90,7 @@ export default function Privacy() {
         </Button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 20 }}>🧬</span>
-          <Text strong style={{ fontSize: 16 }}>WarpHelix</Text>
+          <Text strong style={{ fontSize: 16 }}>Biomni</Text>
         </div>
         <div style={{ width: 80 }} />
       </div>
@@ -154,7 +154,7 @@ export default function Privacy() {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', padding: '24px 0', color: '#bfbfbf', fontSize: 12 }}>
-          © 2025 WarpHelix. All rights reserved.
+          © 2026 Biomni. All rights reserved.
         </div>
       </div>
     </div>

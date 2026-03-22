@@ -18,7 +18,7 @@ if (import.meta.env.VITE_USE_MOCK === 'true') {
     '%c🎭 Mock mode enabled',
     'background: #722ed1; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
   );
-  console.log('Test account: user@warphelix.com / user123');
+  console.log('Test account: user@biomni.com / user123');
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

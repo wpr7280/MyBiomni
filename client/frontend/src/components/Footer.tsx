@@ -26,7 +26,7 @@ export default function Footer() {
           <Link href="mailto:peirongw@foxmail.com">
             <MailOutlined style={{ fontSize: 16 }} /> {t('footer.contact')}
           </Link>
-          <Link href="https://warphelix.com" target="_blank">
+          <Link href="https://biomni.com" target="_blank">
             <GlobalOutlined style={{ fontSize: 16 }} /> {t('footer.website')}
           </Link>
         </Space>

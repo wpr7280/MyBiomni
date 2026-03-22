@@ -16,7 +16,7 @@
               </n-icon>
             </div>
           </template>
-          WarpHelix
+          Biomni
         </n-tooltip>
       </div>
     </div>

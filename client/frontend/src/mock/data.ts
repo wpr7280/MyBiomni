@@ -2,23 +2,23 @@ import type { User, Conversation, Message, ExecutionStep } from '@/types';
 
 // Mock 用户数据
 export const mockUsers: Record<string, { password: string; user: User }> = {
-  'admin@warphelix.com': {
+  'admin@biomni.com': {
     password: 'admin123',
     user: {
       id: 1,
       username: 'admin',
-      email: 'admin@warphelix.com',
+      email: 'admin@biomni.com',
       role: 'super_admin',
       realName: '管理员',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
     },
   },
-  'user@warphelix.com': {
+  'user@biomni.com': {
     password: 'user123',
     user: {
       id: 2,
       username: 'user',
-      email: 'user@warphelix.com',
+      email: 'user@biomni.com',
       role: 'user',
       realName: '普通用户',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',

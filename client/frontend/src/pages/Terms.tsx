@@ -12,11 +12,11 @@ export default function Terms() {
   const sections = [
     {
       title: '1. Acceptance of Terms',
-      content: 'By accessing or using the WarpHelix platform ("Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.',
+      content: 'By accessing or using the Biomni platform ("Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.',
     },
     {
       title: '2. Description of Service',
-      content: 'WarpHelix is an AI-powered biomedical research assistant that provides intelligent data analysis, literature search, experimental design support, and code execution capabilities for researchers and biomedical professionals.',
+      content: 'Biomni is an AI-powered biomedical research assistant that provides intelligent data analysis, literature search, experimental design support, and code execution capabilities for researchers and biomedical professionals.',
     },
     {
       title: '3. User Accounts',
@@ -35,7 +35,7 @@ export default function Terms() {
     },
     {
       title: '5. Intellectual Property',
-      content: 'Research results, analyses, and outputs generated through your use of the Service belong to you. However, the Service itself, including its algorithms, models, and infrastructure, remains the property of WarpHelix.',
+      content: 'Research results, analyses, and outputs generated through your use of the Service belong to you. However, the Service itself, including its algorithms, models, and infrastructure, remains the property of Biomni.',
     },
     {
       title: '6. Data and Privacy',
@@ -43,12 +43,12 @@ export default function Terms() {
     },
     {
       title: '7. AI-Generated Content Disclaimer',
-      content: 'The Service uses artificial intelligence to assist with biomedical research. AI-generated results should be independently verified before use in clinical, diagnostic, or therapeutic decisions. WarpHelix does not guarantee the accuracy, completeness, or reliability of AI-generated outputs.',
+      content: 'The Service uses artificial intelligence to assist with biomedical research. AI-generated results should be independently verified before use in clinical, diagnostic, or therapeutic decisions. Biomni does not guarantee the accuracy, completeness, or reliability of AI-generated outputs.',
       highlight: true,
     },
     {
       title: '8. Limitation of Liability',
-      content: 'THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WARPHELIX SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES ARISING FROM YOUR USE OF THE SERVICE.',
+      content: 'THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. BIOMNI SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES ARISING FROM YOUR USE OF THE SERVICE.',
     },
     {
       title: '9. Token Quotas and Billing',
@@ -73,7 +73,7 @@ export default function Terms() {
         </Button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 20 }}>🧬</span>
-          <Text strong style={{ fontSize: 16 }}>WarpHelix</Text>
+          <Text strong style={{ fontSize: 16 }}>Biomni</Text>
         </div>
         <div style={{ width: 80 }} />
       </div>
@@ -128,7 +128,7 @@ export default function Terms() {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', padding: '24px 0', color: '#bfbfbf', fontSize: 12 }}>
-          © 2025 WarpHelix. All rights reserved.
+          © 2026 Biomni. All rights reserved.
         </div>
       </div>
     </div>
