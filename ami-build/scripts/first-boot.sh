@@ -103,7 +103,7 @@ else
     if [ "$ADMIN_EXISTS" = "0" ]; then
         echo "  Inserting default admin user..."
         mysql -u biomni -p"${MYSQL_BIOMNI_PASSWORD}" biomni -e \
-          "INSERT INTO admin (id, username, password, email, real_name, role, status, created_at, updated_at) VALUES (1, 'admin', '\$2a\$10\$vENRNYeF7YQd8tHbO0iRpOC.7RH52v1agfvllZxeVn1GZgn5.rl7S', 'admin@biomni.com', 'System Admin', 'admin', 1, NOW(), NOW());"
+          "INSERT INTO admin (id, username, password, email, real_name, role, status, force_password_change, created_at, updated_at) VALUES (1, 'admin', '\$2a\$10\$vENRNYeF7YQd8tHbO0iRpOC.7RH52v1agfvllZxeVn1GZgn5.rl7S', 'admin@biomni.com', 'System Admin', 'admin', 1, 1, NOW(), NOW());"
         mysql -u biomni -p"${MYSQL_BIOMNI_PASSWORD}" biomni -e \
           "INSERT IGNORE INTO user_quotas (user_id, total_token_limit, total_token_used, created_at, updated_at) VALUES (1, 100000, 0, NOW(), NOW());"
         echo "  Default admin created."
