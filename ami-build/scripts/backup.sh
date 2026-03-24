@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Biomni Database Backup Script (via docker)
+# WarpHelix Database Backup Script (via docker)
 # ============================================================
 
 set -e

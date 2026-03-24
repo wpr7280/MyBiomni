@@ -652,9 +652,9 @@ function ChatWindow({ conversationId }: { conversationId: number }) {
 
 | 邮箱 | 密码 | 角色 | 说明 |
 |------|------|------|------|
-| admin@biomni.com | admin123 | super_admin | 超级管理员 |
-| user1@biomni.com | user123 | user | 普通用户 |
-| user2@biomni.com | user123 | user | 普通用户 |
+| admin@warphelix.com | admin123 | super_admin | 超级管理员 |
+| user1@warphelix.com | user123 | user | 普通用户 |
+| user2@warphelix.com | user123 | user | 普通用户 |
 
 ### 9.2 测试对话
 
@@ -727,4 +727,4 @@ allow_origins=["http://localhost:3001"]
 
 **文档版本**: v1.0  
 **创建日期**: 2025-01-20  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

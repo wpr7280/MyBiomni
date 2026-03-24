@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Biomni Client Frontend PM2 启动脚本
+# WarpHelix Client Frontend PM2 启动脚本
 set -e
 
 echo "=========================================="
-echo "Biomni Client Frontend PM2 启动"
+echo "WarpHelix Client Frontend PM2 启动"
 echo "=========================================="
 
 # 进入项目目录
@@ -54,7 +54,7 @@ fi
 
 # 停止旧进程（如果存在）
 echo -e "${YELLOW}停止旧进程...${NC}"
-pm2 delete biomni-client-frontend 2>/dev/null || true
+pm2 delete warphelix-client-frontend 2>/dev/null || true
 
 # 启动新进程
 echo -e "${YELLOW}启动服务...${NC}"
@@ -71,9 +71,9 @@ echo "访问地址: http://localhost:5173"
 echo ""
 echo "常用命令:"
 echo "  查看状态: pm2 list"
-echo "  查看日志: pm2 logs biomni-client-frontend"
-echo "  实时日志: pm2 logs biomni-client-frontend --lines 100"
-echo "  重启服务: pm2 restart biomni-client-frontend"
-echo "  停止服务: pm2 stop biomni-client-frontend"
-echo "  删除服务: pm2 delete biomni-client-frontend"
+echo "  查看日志: pm2 logs warphelix-client-frontend"
+echo "  实时日志: pm2 logs warphelix-client-frontend --lines 100"
+echo "  重启服务: pm2 restart warphelix-client-frontend"
+echo "  停止服务: pm2 stop warphelix-client-frontend"
+echo "  删除服务: pm2 delete warphelix-client-frontend"
 echo "=========================================="

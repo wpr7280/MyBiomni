@@ -1,8 +1,8 @@
-# Biomni SaaS 平台最终实现总结
+# WarpHelix SaaS 平台最终实现总结
 
 ## 🎉 项目完成情况
 
-本项目已成功将 Biomni Agent 封装为完整的 SaaS 应用，包含管理后台和用户客户端。
+本项目已成功将 WarpHelix Agent 封装为完整的 SaaS 应用，包含管理后台和用户客户端。
 
 ---
 
@@ -335,5 +335,5 @@ npm run dev:mock  # Mock 模式
 
 **项目版本**: v1.0  
 **完成时间**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **状态**: ✅ 核心功能已完成，可投入使用

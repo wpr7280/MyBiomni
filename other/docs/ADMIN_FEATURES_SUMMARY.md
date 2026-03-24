@@ -299,5 +299,5 @@ CREATE TABLE `user_quotas` (
 
 **文档版本**: v1.0  
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **状态**: ✅ 已完成并测试

@@ -114,7 +114,7 @@ class A1:
 
         # Display configuration in a nice, readable format
         print("\n" + "=" * 50)
-        print("🔧 BIOMNI CONFIGURATION")
+        print("🔧 WARPHELIX CONFIGURATION")
         print("=" * 50)
 
         # Get the actual LLM values that will be used by the agent
@@ -2210,7 +2210,7 @@ Each library is listed with its description to help you understand its functiona
         """
 
         # Initialize content and tracking variables
-        content = """# Biomni Agent Conversation History
+        content = """# WarpHelix Agent Conversation History
 
 """
         added_plots = set()

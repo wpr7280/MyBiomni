@@ -30,7 +30,7 @@ mysql -u debian-sys-maint -p"${DEBIAN_PW}" -e "FLUSH PRIVILEGES;" 2>/dev/null ||
 echo "  MySQL root reset to auth_socket."
 
 # 清空 biomni 数据库（保留结构，清除用户数据）
-echo "Cleaning biomni database user data..."
+echo "Cleaning database user data..."
 mysql -u debian-sys-maint -p"${DEBIAN_PW}" biomni -e "
 DELETE FROM execution_steps;
 DELETE FROM messages;

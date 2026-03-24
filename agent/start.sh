@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Biomni Agent 启动脚本
+# WarpHelix Agent 启动脚本
 # 用法: ./start.sh
 
 cd "$(dirname "$0")"
@@ -25,7 +25,7 @@ if [ -f agent.pid ]; then
 fi
 
 # 启动新进程
-echo "🚀 启动 Biomni Agent..."
+echo "🚀 启动 WarpHelix Agent..."
 echo "   stdout → $LOG_OUT"
 echo "   stderr → $LOG_ERR"
 

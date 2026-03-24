@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Biomni First Boot Initialization Script
+# WarpHelix First Boot Initialization Script
 # Native MySQL/Redis (apt-installed, not Docker)
 # ============================================================
 
@@ -13,14 +13,14 @@ SQL_DIR="/opt/biomni/sql"
 CRED_FILE="/home/ubuntu/biomni-credentials.txt"
 
 if [ -f "$LOCK_FILE" ]; then
-    echo "Biomni already initialized. Skipping."
+    echo "WarpHelix already initialized. Skipping."
     exit 0
 fi
 
 mkdir -p /opt/biomni/logs
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=========================================="
-echo "Biomni First Boot - $(date)"
+echo "WarpHelix First Boot - $(date)"
 echo "=========================================="
 
 # ------------------------------------------
@@ -103,7 +103,7 @@ else
     if [ "$ADMIN_EXISTS" = "0" ]; then
         echo "  Inserting default admin user..."
         mysql -u biomni -p"${MYSQL_BIOMNI_PASSWORD}" biomni -e \
-          "INSERT INTO admin (id, username, password, email, real_name, role, status, force_password_change, created_at, updated_at) VALUES (1, 'admin', '\$2a\$10\$vENRNYeF7YQd8tHbO0iRpOC.7RH52v1agfvllZxeVn1GZgn5.rl7S', 'admin@biomni.com', 'System Admin', 'admin', 1, 1, NOW(), NOW());"
+          "INSERT INTO admin (id, username, password, email, real_name, role, status, force_password_change, created_at, updated_at) VALUES (1, 'admin', '\$2a\$10\$vENRNYeF7YQd8tHbO0iRpOC.7RH52v1agfvllZxeVn1GZgn5.rl7S', 'admin@warphelix.com', 'WarpHelix Admin', 'admin', 1, 1, NOW(), NOW());"
         mysql -u biomni -p"${MYSQL_BIOMNI_PASSWORD}" biomni -e \
           "INSERT IGNORE INTO user_quotas (user_id, total_token_limit, total_token_used, created_at, updated_at) VALUES (1, 100000, 0, NOW(), NOW());"
         echo "  Default admin created."
@@ -207,7 +207,7 @@ echo "[6/6] Saving credentials..."
 
 cat > ${CRED_FILE} <<CREDEOF
 ============================================================
-  Biomni Installation Credentials
+  WarpHelix Installation Credentials
   Generated: $(date)
   Instance:  ${INSTANCE_ID}
 ============================================================
@@ -216,11 +216,11 @@ cat > ${CRED_FILE} <<CREDEOF
   Client Portal:  http://${PUBLIC_IP}/
 
   Admin Username: admin
-  Admin Email:    admin@biomni.com
-  Admin Password: biomni123
+  Admin Email:    admin@warphelix.com
+  Admin Password: warphelix123
 
   MySQL Root Password:   ${MYSQL_ROOT_PASSWORD}
-  MySQL Biomni Password: ${MYSQL_BIOMNI_PASSWORD}
+  MySQL DB Password: ${MYSQL_BIOMNI_PASSWORD}
   JWT Secret:            ${BIOMNI_JWT_SECRET}
 
   IMPORTANT:
@@ -239,6 +239,6 @@ touch ${LOCK_FILE}
 
 echo ""
 echo "=========================================="
-echo "  Biomni initialization completed!"
+echo "  WarpHelix initialization completed!"
 echo "  Credentials: ${CRED_FILE}"
 echo "=========================================="

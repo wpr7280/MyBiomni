@@ -1,8 +1,8 @@
-# Biomni 项目当前状态
+# WarpHelix 项目当前状态
 
 ## 🎉 项目完成度：90%
 
-经过大量的设计和开发工作，Biomni Agent 的 SaaS 化封装已基本完成。
+经过大量的设计和开发工作，WarpHelix Agent 的 SaaS 化封装已基本完成。
 
 ---
 

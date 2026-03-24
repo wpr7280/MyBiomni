@@ -36,8 +36,8 @@ npm run dev
 
 | 邮箱 | 密码 | 角色 | 说明 |
 |------|------|------|------|
-| user@biomni.com | user123 | user | 普通用户 |
-| admin@biomni.com | admin123 | super_admin | 超级管理员 |
+| user@warphelix.com | user123 | user | 普通用户 |
+| admin@warphelix.com | admin123 | super_admin | 超级管理员 |
 
 ### 3.2 预置对话
 
@@ -305,4 +305,4 @@ export const mockMessages: Record<number, Message[]> = {
 
 **文档版本**: v1.0  
 **创建日期**: 2025-01-20  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

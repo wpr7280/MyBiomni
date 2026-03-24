@@ -16,7 +16,7 @@
   },
   "login": {
     "title": "Welcome Back",
-    "subtitle": "Sign in to your Biomni account",
+    "subtitle": "Sign in to your WarpHelix account",
     "email": "Email Address",
     "password": "Password",
     "loginButton": "Sign In",
@@ -32,7 +32,7 @@
     "termsLink": "Terms of Service",
     "and": "and",
     "privacyLink": "Privacy Policy",
-    "appTitle": "Biomni",
+    "appTitle": "WarpHelix",
     "appSubtitle": "AI-Powered Biomedical Assistant",
     "appDescription": "A universal biomedical AI agent providing intelligent data analysis, literature search, and experimental design support for researchers.",
     "feature1": "Smart Analysis",
@@ -110,7 +110,7 @@
     "loadFailed": "Failed to load",
     "emptyTitle": "Start a New Conversation",
     "emptySubtitle": "Enter your question or select an example",
-    "welcomeTitle": "Welcome to Biomni AI Assistant",
+    "welcomeTitle": "Welcome to WarpHelix AI Assistant",
     "welcomeSubtitle": "Please select or create a conversation to start",
     "inputPlaceholder": "Ask something or upload a file...",
     "inputPlaceholderExecuting": "Agent is working...",
@@ -129,7 +129,7 @@
     "uploadHint": "Click or drag files to upload"
   },
   "execution": {
-    "title": "Biomni Executor",
+    "title": "WarpHelix Executor",
     "ready": "Agent Ready",
     "waiting": "Waiting for execution...",
     "stepsCompleted": "{{success}}/{{total}} steps completed",
@@ -143,14 +143,14 @@
   "header": {
     "profile": "Profile",
     "logout": "Sign Out",
-    "appTitle": "Biomni",
+    "appTitle": "WarpHelix",
     "appSubtitle": "AI-Powered Biomedical Assistant"
   },
   "footer": {
     "github": "GitHub",
     "contact": "Contact",
     "website": "Website",
-    "copyright": "© 2026 Biomni. All rights reserved. | Powered by AI",
+    "copyright": "© 2026 WarpHelix. All rights reserved. | Powered by AI",
     "description": "A universal biomedical AI agent for research and analysis"
   }
 }

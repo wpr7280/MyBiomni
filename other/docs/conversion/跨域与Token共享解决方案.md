@@ -186,7 +186,7 @@ function App() {
 # nginx.conf
 server {
     listen 80;
-    server_name biomni.example.com;
+    server_name warphelix.example.com;
 
     # Admin 前端
     location /admin {
@@ -224,10 +224,10 @@ server {
 
 **访问地址**：
 ```
-Admin 前端: http://biomni.example.com/admin
-Client 前端: http://biomni.example.com/
-API: http://biomni.example.com/api
-WebSocket: ws://biomni.example.com/ws
+Admin 前端: http://warphelix.example.com/admin
+Client 前端: http://warphelix.example.com/
+API: http://warphelix.example.com/api
+WebSocket: ws://warphelix.example.com/ws
 ```
 
 ---
@@ -343,7 +343,7 @@ public Result<String> generateSSOToken() {
 # 生产环境必须使用 HTTPS
 server {
     listen 443 ssl;
-    server_name biomni.example.com;
+    server_name warphelix.example.com;
     
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
@@ -393,10 +393,10 @@ server {
 ┌─────────────────────────────────────────────────────────────┐
 │ 所有服务在同一个域名下                                       │
 │                                                              │
-│ Admin 前端:  https://biomni.com/admin                       │
-│ Client 前端: https://biomni.com/                            │
-│ API:         https://biomni.com/api                         │
-│ WebSocket:   wss://biomni.com/ws                            │
+│ Admin 前端:  https://warphelix.com/admin                       │
+│ Client 前端: https://warphelix.com/                            │
+│ API:         https://warphelix.com/api                         │
+│ WebSocket:   wss://warphelix.com/ws                            │
 │                                                              │
 │ 优势：                                                       │
 │ ✅ 没有跨域问题                                              │
@@ -473,7 +473,7 @@ public class CorsConfig {
 ```nginx
 server {
     listen 80;
-    server_name biomni.example.com;
+    server_name warphelix.example.com;
 
     location /admin {
         alias /usr/share/nginx/html/admin;
@@ -530,4 +530,4 @@ server {
 
 **文档版本**: v1.0  
 **创建日期**: 2025-01-20  
-**作者**: Biomni Team
+**作者**: WarpHelix Team

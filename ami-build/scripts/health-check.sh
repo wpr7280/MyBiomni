@@ -1,8 +1,8 @@
 #!/bin/bash
-# Biomni Health Check Script
+# WarpHelix Health Check Script
 
 echo "╔══════════════════════════════════════╗"
-echo "║     Biomni Health Check Report       ║"
+echo "║     WarpHelix Health Check Report       ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
 

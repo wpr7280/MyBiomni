@@ -1,5 +1,5 @@
 [Unit]
-Description=Biomni AI Agent (FastAPI)
+Description=WarpHelix AI Agent (FastAPI)
 After=network.target mysql.service biomni-firstboot.service
 Requires=mysql.service
 After=biomni-firstboot.service

@@ -1,4 +1,4 @@
-# Biomni AMI 构建技术方案 — AWS Marketplace 上架
+# WarpHelix AMI 构建技术方案 — AWS Marketplace 上架
 
 ## 1. 项目现状分析
 
@@ -740,7 +740,7 @@ sudo chmod -R 750 /opt/biomni/agent
 ```sql
 -- 插入默认管理员 (密码由 first-boot.sh 生成 BCrypt hash 后替换)
 INSERT INTO `admin` (`username`, `password`, `email`, `real_name`, `role`, `status`)
-VALUES ('admin', '__ADMIN_PASSWORD_HASH__', 'admin@biomni.com', '系统管理员', 'admin', 1);
+VALUES ('admin', '__ADMIN_PASSWORD_HASH__', 'admin@warphelix.com', '系统管理员', 'admin', 1);
 
 -- 插入默认配额
 INSERT INTO `user_quotas` (`user_id`, `total_token_limit`, `total_token_used`)
@@ -909,7 +909,7 @@ sudo -u biomni /opt/biomni/agent/venv/bin/python -c "from biomni.agent import A1
 **`/etc/systemd/system/biomni-admin.service`**
 ```ini
 [Unit]
-Description=Biomni Admin Backend (Spring Boot)
+Description=WarpHelix Admin Backend (Spring Boot)
 After=network.target mysql.service redis-server.service
 Requires=mysql.service
 
@@ -934,7 +934,7 @@ WantedBy=multi-user.target
 **`/etc/systemd/system/biomni-agent.service`**
 ```ini
 [Unit]
-Description=Biomni AI Agent (FastAPI)
+Description=WarpHelix AI Agent (FastAPI)
 After=network.target mysql.service redis-server.service
 Requires=mysql.service
 
@@ -984,7 +984,7 @@ EOF
 ```bash
 #!/bin/bash
 # ============================================================
-# Biomni First Boot Initialization Script
+# WarpHelix First Boot Initialization Script
 # 仅在首次启动时执行，完成密码生成、配置替换、数据库初始化
 # ============================================================
 
@@ -998,13 +998,13 @@ CRED_FILE="/home/ubuntu/biomni-credentials.txt"
 
 # 如果已初始化，跳过
 if [ -f "$LOCK_FILE" ]; then
-    echo "Biomni already initialized. Skipping first-boot."
+    echo "WarpHelix already initialized. Skipping first-boot."
     exit 0
 fi
 
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=========================================="
-echo "Biomni First Boot - $(date)"
+echo "WarpHelix First Boot - $(date)"
 echo "=========================================="
 
 # ------------------------------------------
@@ -1160,18 +1160,18 @@ echo "[8/8] Saving credentials..."
 
 cat > ${CRED_FILE} <<EOF
 ============================================================
-  Biomni Installation Credentials
+  WarpHelix Installation Credentials
   Generated: $(date)
   Instance:  ${INSTANCE_ID}
 ============================================================
 
 MySQL Root Password:    ${MYSQL_ROOT_PASSWORD}
-MySQL Biomni User:      ${MYSQL_BIOMNI_USER}
-MySQL Biomni Password:  ${MYSQL_BIOMNI_PASSWORD}
+MySQL DB User:      ${MYSQL_BIOMNI_USER}
+MySQL DB Password:  ${MYSQL_BIOMNI_PASSWORD}
 
 Admin Portal:   http://${PUBLIC_IP}/admin
 Admin Username: admin
-Admin Email:    admin@biomni.com
+Admin Email:    admin@warphelix.com
 Admin Password: ${ADMIN_DEFAULT_PASSWORD}
 
 Client Portal:  http://${PUBLIC_IP}/
@@ -1195,7 +1195,7 @@ touch ${LOCK_FILE}
 
 echo ""
 echo "=========================================="
-echo "  Biomni initialization completed!"
+echo "  WarpHelix initialization completed!"
 echo "  Credentials saved to: ${CRED_FILE}"
 echo "=========================================="
 ```
@@ -1213,7 +1213,7 @@ runcmd:
 ```ini
 # /etc/systemd/system/biomni-first-boot.service
 [Unit]
-Description=Biomni First Boot Initialization
+Description=WarpHelix First Boot Initialization
 After=network-online.target mysql.service redis-server.service
 Wants=network-online.target
 ConditionPathExists=!/opt/biomni/.initialized
@@ -1314,7 +1314,7 @@ sudo -u ubuntu ls /opt/biomni/agent/biomni/ 2>&1 | grep -q "Permission denied" &
 sudo tee /etc/motd > /dev/null << 'EOF'
 
   ╔═══════════════════════════════════════════════════════╗
-  ║  🧬 Biomni - AI-Powered Biomedical Assistant         ║
+  ║  🧬 WarpHelix - AI-Powered Biomedical Assistant         ║
   ╠═══════════════════════════════════════════════════════╣
   ║                                                       ║
   ║  Quick Start:                                         ║
@@ -1327,7 +1327,7 @@ sudo tee /etc/motd > /dev/null << 'EOF'
   ║  View Logs:     journalctl -u biomni-admin -f         ║
   ║                 journalctl -u biomni-agent -f         ║
   ║                                                       ║
-  ║  Docs: https://docs.biomni.com                        ║
+  ║  Docs: https://docs.warphelix.com                        ║
   ╚═══════════════════════════════════════════════════════╝
 
 EOF
@@ -1394,7 +1394,7 @@ sudo /opt/biomni/scripts/pre-ami-cleanup.sh
 # 2. 在 AWS Console 或 CLI 创建 AMI
 aws ec2 create-image \
   --instance-id i-xxxxxxxxxxxxxxxxx \
-  --name "Biomni-v1.0.0-$(date +%Y%m%d)" \
+  --name "WarpHelix-v1.0.0-$(date +%Y%m%d)" \
   --description "Biomni AI-Powered Biomedical Assistant - All-in-One AMI" \
   --no-reboot \
   --tag-specifications \
@@ -1583,10 +1583,10 @@ AMI 模板中已修正为 `com.mysql.cj.jdbc.Driver`。
 
 ```bash
 #!/bin/bash
-# Biomni Health Check Script
+# WarpHelix Health Check Script
 
 echo "╔══════════════════════════════════════╗"
-echo "║     Biomni Health Check Report       ║"
+echo "║     WarpHelix Health Check Report       ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
 
@@ -1697,7 +1697,7 @@ set -e
 VERSION=$1
 S3_BUCKET="biomni-releases"
 
-echo "Upgrading Biomni to v${VERSION}..."
+echo "Upgrading WarpHelix to v${VERSION}..."
 
 # 1. 备份
 /opt/biomni/scripts/backup.sh
@@ -1840,4 +1840,4 @@ echo "Upgrade to v${VERSION} complete!"
 
 **文档版本**: 1.0
 **最后更新**: 2026-02-08
-**作者**: Biomni Team
+**作者**: WarpHelix Team

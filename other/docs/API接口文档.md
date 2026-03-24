@@ -1,9 +1,9 @@
-# Biomni Agent 应用 API 接口文档
+# WarpHelix Agent 应用 API 接口文档
 
 ## 1. 接口概述
 
 ### 1.1 基本信息
-- **Base URL**: `https://api.biomni.com`
+- **Base URL**: `https://api.warphelix.com`
 - **协议**: HTTPS
 - **数据格式**: JSON
 - **字符编码**: UTF-8
@@ -85,7 +85,7 @@ Authorization: Bearer <token>
     "admin": {
       "id": 1,
       "username": "admin",
-      "email": "admin@biomni.com",
+      "email": "admin@warphelix.com",
       "realName": "系统管理员",
       "role": "super_admin",
       "avatar": "https://..."
@@ -687,7 +687,7 @@ Authorization: Bearer <refreshToken>
 {
   "code": 200,
   "data": {
-    "downloadUrl": "https://files.biomni.com/exports/conversations_20250118.zip",
+    "downloadUrl": "https://files.warphelix.com/exports/conversations_20250118.zip",
     "expiresAt": "2025-01-19T00:00:00Z"
   }
 }
@@ -1179,7 +1179,7 @@ Authorization: Bearer <refreshToken>
 {
   "code": 200,
   "data": {
-    "downloadUrl": "https://files.biomni.com/exports/conversation_1.pdf",
+    "downloadUrl": "https://files.warphelix.com/exports/conversation_1.pdf",
     "expiresAt": "2025-01-19T00:00:00Z"
   }
 }
@@ -1244,11 +1244,11 @@ Authorization: Bearer <refreshToken>
 
 ### 4.1 对话实时通信
 
-**连接**: `wss://api.biomni.com/ws/conversations/{conversationId}`
+**连接**: `wss://api.warphelix.com/ws/conversations/{conversationId}`
 
 **认证**: 连接时携带 token
 ```
-wss://api.biomni.com/ws/conversations/1?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+wss://api.warphelix.com/ws/conversations/1?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### 4.2 消息类型
@@ -1414,7 +1414,7 @@ wss://api.biomni.com/ws/conversations/1?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC
     "fileId": "file_123456",
     "fileName": "data.csv",
     "fileSize": 1024000,
-    "fileUrl": "https://files.biomni.com/uploads/file_123456.csv",
+    "fileUrl": "https://files.warphelix.com/uploads/file_123456.csv",
     "uploadedAt": "2025-01-18T10:00:00Z"
   }
 }
@@ -1429,4 +1429,4 @@ wss://api.biomni.com/ws/conversations/1?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC
 
 **文档版本**: v1.0  
 **最后更新**: 2025-01-18  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

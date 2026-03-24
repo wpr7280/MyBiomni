@@ -1,4 +1,4 @@
-# Biomni Client Frontend
+# WarpHelix Client Frontend
 
 基于 React + TypeScript + Ant Design X 的 AI 对话客户端。
 
@@ -83,7 +83,7 @@ npm run dev:mock
 访问 http://localhost:3001
 
 测试账号：
-- 邮箱: `user@biomni.com`
+- 邮箱: `user@warphelix.com`
 - 密码: `user123`
 
 **方式 2：真实 API 模式**
@@ -120,8 +120,8 @@ VITE_WS_URL=ws://localhost:8000
 ### 生产环境 (.env.production)
 
 ```env
-VITE_API_URL=https://api.biomni.com
-VITE_WS_URL=wss://api.biomni.com
+VITE_API_URL=https://api.warphelix.com
+VITE_WS_URL=wss://api.warphelix.com
 ```
 
 ## 核心组件说明

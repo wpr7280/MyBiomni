@@ -552,5 +552,5 @@ class SystemConfig(Base):
 
 **文档版本**: v1.0  
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **状态**: ✅ 后端和前端已完成，待 Python 集成

@@ -1965,7 +1965,7 @@ def convert_markdown_to_pdf(markdown_path: str, pdf_path: str) -> None:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Biomni Conversation History</title>
+            <title>WarpHelix Conversation History</title>
             <style>{css_content}</style>
         </head>
         <body>

@@ -111,8 +111,8 @@ npm run dev
 
 | 邮箱 | 密码 | 角色 |
 |------|------|------|
-| user@biomni.com | user123 | user |
-| admin@biomni.com | admin123 | super_admin |
+| user@warphelix.com | user123 | user |
+| admin@warphelix.com | admin123 | super_admin |
 
 ## 🎯 下一步计划
 
@@ -128,4 +128,4 @@ npm run dev
 ---
 
 **更新时间**: 2025-01-20  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

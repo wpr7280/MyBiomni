@@ -641,4 +641,4 @@ export default {
 
 **文档版本**: v1.0  
 **创建日期**: 2025-01-19  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

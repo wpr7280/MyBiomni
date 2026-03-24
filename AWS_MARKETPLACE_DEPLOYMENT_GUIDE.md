@@ -1,4 +1,4 @@
-# Biomni AWS Marketplace AMI 部署指南
+# WarpHelix AWS Marketplace AMI 部署指南
 
 ## 目录
 1. [AMI 镜像准备](#1-ami-镜像准备)
@@ -100,7 +100,7 @@ sudo cp -r client-frontend/dist/* /opt/biomni/client-frontend/
 ```ini
 # /etc/systemd/system/biomni-agent.service
 [Unit]
-Description=Biomni AI Agent
+Description=WarpHelix AI Agent
 After=network.target mysql.service
 
 [Service]
@@ -120,7 +120,7 @@ WantedBy=multi-user.target
 ```ini
 # /etc/systemd/system/biomni-admin.service
 [Unit]
-Description=Biomni Admin Backend
+Description=WarpHelix Admin Backend
 After=network.target mysql.service
 
 [Service]
@@ -204,13 +204,13 @@ mysql -u biomni -p${MYSQL_ROOT_PASSWORD} biomni < /opt/biomni/sql/schema.sql
 # 创建默认管理员
 mysql -u biomni -p${MYSQL_ROOT_PASSWORD} biomni <<EOF
 INSERT INTO admin (username, email, password, role, status) 
-VALUES ('admin', 'admin@biomni.com', '${ADMIN_PASSWORD}', 'super_admin', 1);
+VALUES ('admin', 'admin@warphelix.com', '${ADMIN_PASSWORD}', 'super_admin', 1);
 EOF
 
 # 保存凭据到文件
 cat > /home/ubuntu/biomni-credentials.txt <<EOF
 ===========================================
-Biomni Installation Credentials
+WarpHelix Installation Credentials
 ===========================================
 
 MySQL Root Password: ${MYSQL_ROOT_PASSWORD}
@@ -230,7 +230,7 @@ chmod 600 /home/ubuntu/biomni-credentials.txt
 systemctl enable biomni-agent biomni-admin nginx
 systemctl start biomni-agent biomni-admin nginx
 
-echo "Biomni installation completed!"
+echo "WarpHelix installation completed!"
 ```
 
 #### Step 7: 清理和优化
@@ -262,8 +262,8 @@ sudo systemctl stop biomni-agent biomni-admin nginx mysql
 # 在 AWS Console 或使用 CLI
 aws ec2 create-image \
   --instance-id i-1234567890abcdef0 \
-  --name "Biomni-v1.0.0-$(date +%Y%m%d)" \
-  --description "Biomni AI-Powered Biomedical Assistant" \
+  --name "WarpHelix-v1.0.0-$(date +%Y%m%d)" \
+  --description "WarpHelix AI-Powered Biomedical Assistant" \
   --no-reboot
 ```
 
@@ -513,7 +513,7 @@ def verify_integrity():
    - 设置银行账户
 
 2. **准备产品信息**
-   - 产品名称：Biomni - AI-Powered Biomedical Assistant
+   - 产品名称：WarpHelix - AI-Powered Biomedical Assistant
    - 简短描述（160 字符）
    - 详细描述（Markdown 格式）
    - 产品 Logo（120x120 px）
@@ -540,13 +540,13 @@ AWS Marketplace Management Portal
 
 #### Step 2: 填写产品信息
 ```yaml
-Product Title: Biomni - AI-Powered Biomedical Assistant
+Product Title: WarpHelix - AI-Powered Biomedical Assistant
 Short Description: |
   Universal biomedical AI agent providing intelligent data analysis,
   literature search, and experimental design support for researchers.
 
 Long Description: |
-  Biomni is a comprehensive SaaS platform that combines cutting-edge AI
+  WarpHelix is a comprehensive SaaS platform that combines cutting-edge AI
   technology with biomedical domain expertise...
 
 Categories:
@@ -592,9 +592,9 @@ Free Trial: 14 days
 #### Step 5: 设置支持信息
 ```yaml
 Support Channels:
-  - Email: support@biomni.com
-  - Documentation: https://docs.biomni.com
-  - Community Forum: https://community.biomni.com
+  - Email: support@warphelix.com
+  - Documentation: https://docs.warphelix.com
+  - Community Forum: https://community.warphelix.com
 
 Support Tiers:
   - Community (Free): Email support, 48h response
@@ -759,15 +759,15 @@ Alarms:
 cat > /etc/motd <<'EOF'
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🧬 Welcome to Biomni - AI-Powered Biomedical Assistant ║
+║   🧬 Welcome to WarpHelix - AI-Powered Biomedical Assistant ║
 ║                                                           ║
 ║   Quick Start:                                            ║
 ║   1. View credentials: cat ~/biomni-credentials.txt       ║
 ║   2. Access Admin Portal: http://YOUR_IP/admin           ║
 ║   3. Access Client Portal: http://YOUR_IP                ║
 ║                                                           ║
-║   Documentation: https://docs.biomni.com                  ║
-║   Support: support@biomni.com                             ║
+║   Documentation: https://docs.warphelix.com                  ║
+║   Support: support@warphelix.com                             ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 EOF
@@ -779,7 +779,7 @@ EOF
 #!/bin/bash
 # /opt/biomni/scripts/health-check.sh
 
-echo "Biomni Health Check"
+echo "WarpHelix Health Check"
 echo "==================="
 
 # Check services
@@ -864,7 +864,7 @@ Technical Metrics:
 
 # /opt/biomni/scripts/upgrade.sh
 #!/bin/bash
-echo "Upgrading Biomni to version $NEW_VERSION"
+echo "Upgrading WarpHelix to version $NEW_VERSION"
 # 下载新版本
 # 备份当前版本
 # 停止服务
@@ -877,11 +877,11 @@ echo "Upgrading Biomni to version $NEW_VERSION"
 
 ```yaml
 Support Channels:
-  - Email: support@biomni.com
-  - Slack Community: biomni.slack.com
-  - GitHub Issues: github.com/biomni/issues
-  - Documentation: docs.biomni.com
-  - Video Tutorials: youtube.com/biomni
+  - Email: support@warphelix.com
+  - Slack Community: warphelix.slack.com
+  - GitHub Issues: github.com/warphelix/issues
+  - Documentation: docs.warphelix.com
+  - Video Tutorials: youtube.com/warphelix
 
 Response SLA:
   - Critical (P0): 1 hour
@@ -975,4 +975,4 @@ Scenario 3: Optimistic
 
 **最后更新**: 2025-01-21  
 **版本**: 1.0  
-**作者**: Biomni Team
+**作者**: WarpHelix Team

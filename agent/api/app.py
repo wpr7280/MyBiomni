@@ -5,8 +5,8 @@ from api.upload import router as upload_router
 from core.config import settings
 
 app = FastAPI(
-    title="Biomni Agent API",
-    description="Biomni Agent WebSocket 服务",
+    title="WarpHelix Agent API",
+    description="WarpHelix Agent WebSocket 服务",
     version="1.0.0"
 )
 
@@ -29,7 +29,7 @@ app.include_router(ws_router, prefix="/api", tags=["Execution"], include_in_sche
 
 @app.get("/")
 async def root():
-    return {"message": "Biomni Agent API", "version": "1.0.0"}
+    return {"message": "WarpHelix Agent API", "version": "1.0.0"}
 
 @app.get("/health")
 async def health_check():

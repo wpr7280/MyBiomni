@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Biomni Agent 停止脚本
+# WarpHelix Agent 停止脚本
 # 用法: ./stop.sh
 
 cd "$(dirname "$0")"
@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 if [ -f agent.pid ]; then
     PID=$(cat agent.pid)
     if ps -p $PID > /dev/null 2>&1; then
-        echo "🛑 停止 Biomni Agent (PID: $PID)..."
+        echo "🛑 停止 WarpHelix Agent (PID: $PID)..."
         kill $PID
         sleep 2
         

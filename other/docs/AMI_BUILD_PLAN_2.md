@@ -308,7 +308,7 @@ Admin 前端 axios baseURL 读取的是 `VITE_BASE_API`（见 `admin/frontend/sr
 VITE_PUBLIC_PATH=/admin/
 VITE_USE_PROXY=false
 VITE_BASE_API=/api
-VITE_TITLE=Biomni Admin
+VITE_TITLE=WarpHelix Admin
 VITE_USE_HASH=false
 VITE_INFRA_API_URL=
 ```
