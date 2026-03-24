@@ -42,6 +42,9 @@ class ConfigService:
         source = config.get('source', 'Anthropic')
         ConfigService._set_llm_env_vars(source, llm_credentials)
         
+        # Include credentials hash in config for change detection
+        config['_credentials'] = llm_credentials
+        
         return config
     
     @staticmethod
