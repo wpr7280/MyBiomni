@@ -1,7 +1,8 @@
 [Unit]
 Description=Biomni AI Agent (FastAPI)
-After=network.target docker.service
-Requires=docker.service
+After=network.target mysql.service biomni-firstboot.service
+Requires=mysql.service
+After=biomni-firstboot.service
 
 [Service]
 Type=simple
