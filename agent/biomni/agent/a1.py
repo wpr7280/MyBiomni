@@ -5,7 +5,7 @@ import re
 from collections.abc import Generator
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -13,6 +13,7 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, System
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
+from langgraph.graph.message import add_messages
 
 from biomni.config import default_config
 from biomni.know_how import KnowHowLoader
@@ -49,7 +50,7 @@ if os.path.exists(".env"):
 
 
 class AgentState(TypedDict):
-    messages: list[BaseMessage]
+    messages: Annotated[list[BaseMessage], add_messages]
     next_step: str | None
 
 
