@@ -1797,7 +1797,7 @@ Each library is listed with its description to help you understand its functiona
 
         return self.log, message.content
 
-    def go_stream(self, prompt, thread_id: int | None = None) -> Generator[dict, None, None]:
+    def go_stream(self, prompt, thread_id: int | None = None, chat_history: list | None = None) -> Generator[dict, None, None]:
         """Execute the agent with the given prompt and return a generator that yields each step.
 
         This function returns a generator that yields each step of the agent's execution,
@@ -1805,6 +1805,10 @@ Each library is listed with its description to help you understand its functiona
 
         Args:
             prompt: The user's query
+            thread_id: Conversation/thread identifier for checkpointing
+            chat_history: Optional list of (role, content) tuples for prior messages.
+                         Roles should be 'user' or 'assistant'. These are prepended
+                         to give the LLM conversational context.
 
         Yields:
             dict: Each step of the agent's execution containing the current message and state
@@ -1816,7 +1820,16 @@ Each library is listed with its description to help you understand its functiona
             selected_resources_names = self._prepare_resources_for_retrieval(prompt)
             self.update_system_prompt_with_selected_resources(selected_resources_names)
 
-        inputs = {"messages": [HumanMessage(content=prompt)], "next_step": None}
+        # Build message list: history + current prompt
+        history_messages = []
+        if chat_history:
+            for role, content in chat_history:
+                if role == 'user':
+                    history_messages.append(HumanMessage(content=content))
+                elif role == 'assistant':
+                    history_messages.append(AIMessage(content=content))
+
+        inputs = {"messages": history_messages + [HumanMessage(content=prompt)], "next_step": None}
         config = {"recursion_limit": 500, "configurable": {"thread_id": thread_id or 42}}
         self.log = []
 

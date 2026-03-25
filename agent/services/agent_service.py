@@ -111,9 +111,30 @@ class AgentService:
             queue: asyncio.Queue = asyncio.Queue()
             stop_sentinel = object()
 
+            # Load chat history from DB for context
+            from models.models import Message as DBMessage
+            history_rows = (
+                db.query(DBMessage)
+                .filter(
+                    DBMessage.conversation_id == conversation_id,
+                    DBMessage.role.in_(['user', 'assistant']),
+                )
+                .order_by(DBMessage.created_at.asc())
+                .all()
+            )
+            # Exclude the current message (last user message just inserted)
+            # and limit to last 20 messages to avoid token overflow
+            if history_rows:
+                # The last row is the message we just inserted, skip it
+                history_rows = history_rows[:-1]
+                # Keep only the last 20 messages for context
+                history_rows = history_rows[-20:]
+            
+            chat_history = [(row.role, row.content) for row in history_rows] if history_rows else None
+
             def run_agent_stream():
                 try:
-                    for step in agent.go_stream(query, thread_id=conversation_id):
+                    for step in agent.go_stream(query, thread_id=conversation_id, chat_history=chat_history):
                         loop.call_soon_threadsafe(queue.put_nowait, step)
                 except Exception as e:
                     loop.call_soon_threadsafe(queue.put_nowait, {"__error__": str(e)})
