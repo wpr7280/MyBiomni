@@ -133,7 +133,7 @@ sudo chmod 550 /opt/biomni/agent/biomni-agent
 ```ini
 # /etc/systemd/system/biomni-agent.service
 [Unit]
-Description=Biomni AI Agent
+Description=WarpHelix AI Agent
 After=network.target docker.service
 Requires=docker.service
 

@@ -161,5 +161,5 @@ INSERT INTO conversations (user_id, title, status, message_count, last_message_a
 
 **文档版本**: v2.0（最终精简版）  
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **说明**: 所有 ID 和数值字段使用 INT，移除了不必要的字段

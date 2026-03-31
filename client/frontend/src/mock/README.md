@@ -34,8 +34,8 @@ npm run dev
 
 | 邮箱 | 密码 | 角色 | 用户名 |
 |------|------|------|--------|
-| admin@biomni.com | admin123 | super_admin | admin |
-| user@biomni.com | user123 | user | user |
+| admin@warphelix.com | admin123 | super_admin | admin |
+| user@warphelix.com | user123 | user | user |
 
 ### 2.2 Mock 对话
 
@@ -93,7 +93,7 @@ Mock WebSocket 会模拟真实的 Agent 执行过程：
 
 ```typescript
 // 使用 Mock 账号登录
-邮箱: user@biomni.com
+邮箱: user@warphelix.com
 密码: user123
 ```
 
@@ -220,4 +220,4 @@ Mock WebSocket 不是真正的 WebSocket，只是模拟了基本行为：
 ---
 
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Biomni One-Click Deployment Script
+# WarpHelix One-Click Deployment Script
 # Run on a fresh Ubuntu 22.04/24.04 server (Alibaba Cloud / AWS / etc.)
 #
 # Prerequisites: 
@@ -16,7 +16,7 @@
 set -e
 
 echo "======================================"
-echo "  Biomni Deployment Script"
+echo "  WarpHelix Deployment Script"
 echo "======================================"
 
 # --- Config (edit these) ---
@@ -119,7 +119,7 @@ cp -r dist/* $DEPLOY_DIR/client-frontend/
 echo ">>> [6/8] Writing config files..."
 
 cat > $CONFIG_DIR/biomni.env <<EOF
-# Biomni Configuration
+# WarpHelix Configuration
 SPRING_PROFILES_ACTIVE=ami
 SERVER_PORT=$ADMIN_PORT
 SPRING_DATASOURCE_MYSQL_JDBC_URL=jdbc:mysql://127.0.0.1:3306/biomni?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
@@ -146,7 +146,7 @@ echo ">>> [7/8] Setting up systemd services..."
 
 cat > /etc/systemd/system/biomni-agent.service <<EOF
 [Unit]
-Description=Biomni AI Agent (FastAPI)
+Description=WarpHelix AI Agent (FastAPI)
 After=network.target mysql.service redis-server.service
 
 [Service]
@@ -168,7 +168,7 @@ EOF
 
 cat > /etc/systemd/system/biomni-admin.service <<EOF
 [Unit]
-Description=Biomni Admin Backend (Spring Boot)
+Description=WarpHelix Admin Backend (Spring Boot)
 After=network.target mysql.service redis-server.service
 
 [Service]
@@ -198,7 +198,7 @@ systemctl start biomni-agent biomni-admin
 echo ">>> [8/8] Configuring Nginx..."
 
 cat > /etc/nginx/sites-available/biomni <<'NGINX'
-# Biomni - Client (port 80)
+# WarpHelix - Client (port 80)
 server {
     listen 80;
     server_name _;
@@ -255,7 +255,7 @@ nginx -t && systemctl reload nginx
 # ==================== Done ====================
 echo ""
 echo "======================================"
-echo "  ✅ Biomni Deployed Successfully!"
+echo "  ✅ WarpHelix Deployed Successfully!"
 echo "======================================"
 echo ""
 echo "  Client UI:  http://$SERVER_IP/"

@@ -1,4 +1,4 @@
-# Biomni Client Frontend PM2 部署指南
+# WarpHelix Client Frontend PM2 部署指南
 
 ## 快速开始
 
@@ -19,8 +19,8 @@ VITE_API_URL=http://192.168.1.100:9999
 VITE_WS_URL=ws://192.168.1.100:8000
 
 # 或使用域名
-VITE_API_URL=https://api.biomni.com
-VITE_WS_URL=wss://api.biomni.com/ws
+VITE_API_URL=https://api.warphelix.com
+VITE_WS_URL=wss://api.warphelix.com/ws
 ```
 
 ### 2. 一键启动
@@ -68,7 +68,7 @@ VITE_WS_URL=ws://your-server-ip:8000
 pm2 start ecosystem.config.cjs
 
 # 或直接启动
-pm2 start "npm run dev" --name biomni-client-frontend
+pm2 start "npm run dev" --name warphelix-client-frontend
 ```
 
 ---
@@ -82,7 +82,7 @@ pm2 start "npm run dev" --name biomni-client-frontend
 pm2 list
 
 # 查看详细信息
-pm2 show biomni-client-frontend
+pm2 show warphelix-client-frontend
 
 # 实时监控
 pm2 monit
@@ -92,13 +92,13 @@ pm2 monit
 
 ```bash
 # 实时日志
-pm2 logs biomni-client-frontend
+pm2 logs warphelix-client-frontend
 
 # 查看最近 100 行
-pm2 logs biomni-client-frontend --lines 100
+pm2 logs warphelix-client-frontend --lines 100
 
 # 只看错误日志
-pm2 logs biomni-client-frontend --err
+pm2 logs warphelix-client-frontend --err
 
 # 清空日志
 pm2 flush
@@ -108,16 +108,16 @@ pm2 flush
 
 ```bash
 # 重启
-pm2 restart biomni-client-frontend
+pm2 restart warphelix-client-frontend
 
 # 停止
-pm2 stop biomni-client-frontend
+pm2 stop warphelix-client-frontend
 
 # 删除进程
-pm2 delete biomni-client-frontend
+pm2 delete warphelix-client-frontend
 
 # 重载（0 秒停机）
-pm2 reload biomni-client-frontend
+pm2 reload warphelix-client-frontend
 ```
 
 ### 开机自启
@@ -143,7 +143,7 @@ pm2 unstartup
 module.exports = {
   apps: [
     {
-      name: 'biomni-client-frontend',        // 进程名称
+      name: 'warphelix-client-frontend',        // 进程名称
       script: 'npx',                         // 执行命令
       args: 'vite --mode development --port 5173 --host 0.0.0.0',
       instances: 1,                          // 实例数量
@@ -180,7 +180,7 @@ env: {
 
 ```bash
 # 查看详细日志
-pm2 logs biomni-client-frontend --lines 200
+pm2 logs warphelix-client-frontend --lines 200
 
 # 检查端口占用
 lsof -i :5173
@@ -231,7 +231,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 pm2 monit
 
 # 重启服务释放内存
-pm2 restart biomni-client-frontend
+pm2 restart warphelix-client-frontend
 
 # 调整内存限制
 # 编辑 ecosystem.config.js
@@ -255,7 +255,7 @@ npm run build
 ```nginx
 server {
     listen 80;
-    server_name client.biomni.com;
+    server_name client.warphelix.com;
     
     root /path/to/client/frontend/dist;
     index index.html;
@@ -360,7 +360,7 @@ VITE_WS_URL=ws://test-server:8000
 启动：
 
 ```bash
-pm2 start "npx vite --mode test" --name biomni-client-test
+pm2 start "npx vite --mode test" --name warphelix-client-test
 ```
 
 ---

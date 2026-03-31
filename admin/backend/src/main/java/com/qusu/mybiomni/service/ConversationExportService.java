@@ -162,7 +162,7 @@ public class ConversationExportService {
 
         // 页脚
         md.append("\n---\n\n");
-        md.append("*Exported from Biomni - ").append(DATE_FORMATTER.format(new java.util.Date())).append("*\n");
+        md.append("*Exported from WarpHelix - ").append(DATE_FORMATTER.format(new java.util.Date())).append("*\n");
 
         return md.toString();
     }

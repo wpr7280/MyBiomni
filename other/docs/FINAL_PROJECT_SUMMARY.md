@@ -1,8 +1,8 @@
-# Biomni 项目最终总结
+# WarpHelix 项目最终总结
 
 ## 🎉 项目完成情况
 
-经过详细的设计和开发，Biomni Agent 的 SaaS 化封装已基本完成。
+经过详细的设计和开发，WarpHelix Agent 的 SaaS 化封装已基本完成。
 
 ---
 
@@ -134,7 +134,7 @@ npm run dev:mock
 ```
 
 访问 http://localhost:3001  
-账号: `user@biomni.com` / `user123`
+账号: `user@warphelix.com` / `user123`
 
 ### Spring Boot 后端
 
@@ -275,5 +275,5 @@ python main.py
 
 **项目状态**: 90% 完成  
 **最后更新**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **建议**: 可以开始测试和优化了！

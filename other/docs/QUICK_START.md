@@ -24,11 +24,11 @@ npm run dev:mock
 使用以下账号登录：
 
 **普通用户**
-- 邮箱: `user@biomni.com`
+- 邮箱: `user@warphelix.com`
 - 密码: `user123`
 
 **管理员**
-- 邮箱: `admin@biomni.com`
+- 邮箱: `admin@warphelix.com`
 - 密码: `admin123`
 
 ### 5. 体验功能
@@ -147,4 +147,4 @@ npm run dev
 ---
 
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team
+**维护者**: WarpHelix Team

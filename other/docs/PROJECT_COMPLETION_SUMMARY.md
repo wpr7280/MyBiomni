@@ -1,8 +1,8 @@
-# Biomni 项目完成总结
+# WarpHelix 项目完成总结
 
 ## 🎉 项目概述
 
-已完成 Biomni Agent 的 SaaS 化封装，包括：
+已完成 WarpHelix Agent 的 SaaS 化封装，包括：
 - ✅ React 前端（完整的对话界面）
 - ✅ Spring Boot 后端（用户管理、对话管理、消息管理）
 - ✅ Python Agent 服务（基础结构，待完善）
@@ -124,7 +124,7 @@ npm run dev:mock
 访问 http://localhost:3001
 
 **测试账号**：
-- 邮箱: `user@biomni.com`
+- 邮箱: `user@warphelix.com`
 - 密码: `user123`
 
 ### Spring Boot 后端
@@ -155,7 +155,7 @@ python main.py
 1. **完成 Python Agent 服务**
    - 创建 FastAPI 主应用
    - 实现 WebSocket 路由
-   - 集成 Biomni Agent
+   - 集成 WarpHelix Agent
    - 实现回调处理器
 
 2. **数据库初始化**
@@ -228,7 +228,7 @@ python main.py
 - ✅ FastAPI
 - ✅ SQLAlchemy
 - ✅ WebSocket
-- ✅ Biomni Agent 集成
+- ✅ WarpHelix Agent 集成
 
 ---
 
@@ -306,5 +306,5 @@ agent/
 
 **项目状态**: 80% 完成  
 **最后更新**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **下一步**: 完成 Python Agent 服务并进行联调测试

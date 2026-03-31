@@ -17,7 +17,7 @@ USE_MOCK_AGENT = os.getenv('USE_MOCK_AGENT', 'false').lower() == 'true'
 if USE_MOCK_AGENT:
     print("🎭 使用 Mock Agent 模式")
 else:
-    print("🤖 使用真实 Biomni Agent 模式")
+    print("🤖 使用真实 WarpHelix Agent 模式")
 
 class AgentService:
     

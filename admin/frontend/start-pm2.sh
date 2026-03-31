@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Biomni Admin Frontend PM2 启动脚本
+# WarpHelix Admin Frontend PM2 启动脚本
 set -e
 
 echo "=========================================="
-echo "Biomni Admin Frontend PM2 启动"
+echo "WarpHelix Admin Frontend PM2 启动"
 echo "=========================================="
 
 # 进入项目目录
@@ -37,7 +37,7 @@ pnpm run build
 
 # 停止旧进程（如果存在）
 echo "停止旧进程..."
-pm2 delete biomni-admin-frontend 2>/dev/null || true
+pm2 delete warphelix-admin-frontend 2>/dev/null || true
 
 # 启动新进程
 echo "启动服务..."
@@ -54,7 +54,7 @@ echo "访问地址: http://localhost:3000"
 echo ""
 echo "常用命令:"
 echo "  查看状态: pm2 list"
-echo "  查看日志: pm2 logs biomni-admin-frontend"
-echo "  重启服务: pm2 restart biomni-admin-frontend"
-echo "  停止服务: pm2 stop biomni-admin-frontend"
+echo "  查看日志: pm2 logs warphelix-admin-frontend"
+echo "  重启服务: pm2 restart warphelix-admin-frontend"
+echo "  停止服务: pm2 stop warphelix-admin-frontend"
 echo "=========================================="

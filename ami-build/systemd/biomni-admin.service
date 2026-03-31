@@ -1,5 +1,5 @@
 [Unit]
-Description=Biomni Admin Backend (Spring Boot)
+Description=WarpHelix Admin Backend (Spring Boot)
 After=network.target mysql.service biomni-firstboot.service
 Requires=mysql.service
 After=biomni-firstboot.service

@@ -1,6 +1,6 @@
 {
   "lang": "English",
-  "app_name": "Biomni",
+  "app_name": "WarpHelix",
   "header": {
     "label_profile": "Profile",
     "label_logout": "Logout",
@@ -327,7 +327,7 @@
         "text_when_disabled_3": "Full functionality, most complete datasets",
         "text_when_disabled_4": "Not suitable for commercial products or services",
         "text_legal_advice_title": "⚖️ Legal Advice:",
-        "text_legal_advice_content": "Before using Biomni in a commercial environment, please consult a legal advisor to review all relevant dataset license agreements to ensure compliant use.",
+        "text_legal_advice_content": "Before using WarpHelix in a commercial environment, please consult a legal advisor to review all relevant dataset license agreements to ensure compliant use.",
         "table_column_dataset": "Dataset",
         "table_column_license": "License",
         "table_column_commercial": "Commercial Use",
@@ -686,7 +686,7 @@
     "agreement": "User Agreement"
   },
   "footer": {
-    "copyright": "© 2026 Biomni · AI-Powered Biomedical Assistant",
+    "copyright": "© 2026 WarpHelix · AI-Powered Biomedical Assistant",
     "privacy_policy": "Privacy Policy",
     "user_agreement": "User Agreement"
   }

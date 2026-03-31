@@ -2,7 +2,7 @@
 module.exports = {
   apps: [
     {
-      name: 'biomni-admin-frontend',
+      name: 'warphelix-admin-frontend',
       script: 'npx',
       args: 'vite preview --port 3000 --host 0.0.0.0',
       cwd: './',

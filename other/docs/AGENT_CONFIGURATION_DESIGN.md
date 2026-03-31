@@ -1,4 +1,4 @@
-# Biomni Agent 配置管理方案
+# WarpHelix Agent 配置管理方案
 
 ## 📋 目录
 1. [A1 Agent 可配置参数](#1-a1-agent-可配置参数)
@@ -1043,5 +1043,5 @@ curl -X POST http://localhost:8083/api/config/update \
 
 **文档版本**: v1.0  
 **创建时间**: 2025-01-20  
-**维护者**: Biomni Team  
+**维护者**: WarpHelix Team  
 **状态**: 方案设计，待评审

@@ -1,4 +1,4 @@
-# Biomni AMI 构建文件
+# WarpHelix AMI 构建文件
 
 本目录包含构建 AWS Marketplace AMI 所需的所有脚本和配置文件。
 
@@ -140,8 +140,8 @@ sudo /opt/biomni/scripts/pre-ami-cleanup.sh
 # 2. 停止实例并创建 AMI
 aws ec2 create-image \
   --instance-id i-xxxxxxxxx \
-  --name "Biomni-v1.0.0-$(date +%Y%m%d)" \
-  --description "Biomni AI-Powered Biomedical Assistant"
+  --name "WarpHelix-v1.0.0-$(date +%Y%m%d)" \
+  --description "WarpHelix AI-Powered Biomedical Assistant"
 
 # 3. 测试新 AMI
 # 启动新实例，验证 first-boot 自动执行

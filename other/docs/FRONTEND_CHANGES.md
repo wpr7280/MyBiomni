@@ -349,5 +349,5 @@ public void updateEmail(Integer adminId, String email) {
 ---
 
 **修改日期**: 2025-01-19  
-**修改人**: Biomni Team  
+**修改人**: WarpHelix Team  
 **版本**: v1.2
