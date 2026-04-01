@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, BigInteger, String, Text, DateTime
 from datetime import datetime
 from core.database import Base
 
@@ -71,6 +71,20 @@ class SystemConfig(Base):
     is_sensitive = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+
+class GeneratedFile(Base):
+    __tablename__ = 'generated_files'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    user_id = Column(BigInteger, nullable=False)
+    conversation_id = Column(BigInteger, nullable=False)
+    message_id = Column(BigInteger, nullable=False)
+    filename = Column(String(255), nullable=False)
+    path = Column(String(1024), nullable=False)
+    size = Column(BigInteger, nullable=False, default=0)
+    mime_type = Column(String(128))
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
 
 
 class Attachment(Base):

@@ -122,7 +122,7 @@ cat > $CONFIG_DIR/biomni.env <<EOF
 # WarpHelix Configuration
 SPRING_PROFILES_ACTIVE=ami
 SERVER_PORT=$ADMIN_PORT
-SPRING_DATASOURCE_MYSQL_JDBC_URL=jdbc:mysql://127.0.0.1:3306/biomni?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+SPRING_DATASOURCE_MYSQL_JDBC_URL=jdbc:mysql://127.0.0.1:3306/biomni?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
 SPRING_DATASOURCE_MYSQL_USERNAME=root
 SPRING_DATASOURCE_MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
 SPRING_DATASOURCE_MYSQL_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver

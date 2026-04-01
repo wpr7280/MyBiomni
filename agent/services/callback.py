@@ -22,6 +22,7 @@ class WebSocketCallback:
         self.plan_items = []  # 规划步骤列表
         self.plan_step = None  # 规划步骤的 ExecutionStep（用于更新）
         self.current_plan_index = None  # 当前进行中的 plan 序号
+        self.output_dir = None  # Output directory for generated files
 
     def _normalize_output(self, output: str) -> str:
         """清理 pretty_print 头部与 ANSI，并过滤 Human Message。"""
@@ -277,6 +278,53 @@ class WebSocketCallback:
         注意：一个输出可能包含多个部分（thinking + execute + observe）
         需要全部处理，不能只处理一个就返回
         """
+        import sys
+        
+        try:
+            await self._process_step_inner(output, usage)
+        except Exception as e:
+            print(f"❌ process_step error: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc(file=sys.stderr)
+            # 通知前端出错，但不中断整个流程
+            try:
+                self.step_order += 1
+                step = ExecutionStep(
+                    conversation_id=self.conversation_id,
+                    message_id=self.current_message_id or 0,
+                    step_order=self.step_order,
+                    step_type='reasoning',
+                    step_name='⚠️ Processing Warning',
+                    status='success',
+                    tool_output=f"A step encountered a processing issue: {str(e)[:200]}. Execution continues.",
+                    started_at=datetime.now(),
+                    completed_at=datetime.now(),
+                    duration_ms=0
+                )
+                self.db.add(step)
+                self.db.commit()
+                self.db.refresh(step)
+                await self.manager.send_message(str(self.conversation_id), {
+                    'type': 'execution_step',
+                    'step': {
+                        'id': step.id,
+                        'conversationId': self.conversation_id,
+                        'messageId': self.current_message_id or 0,
+                        'stepOrder': self.step_order,
+                        'stepType': 'reasoning',
+                        'stepName': '⚠️ Processing Warning',
+                        'toolOutput': f"A step encountered a processing issue: {str(e)[:200]}. Execution continues.",
+                        'status': 'success',
+                        'startedAt': step.started_at.isoformat(),
+                        'completedAt': step.completed_at.isoformat(),
+                        'durationMs': 0
+                    }
+                })
+            except Exception:
+                pass
+
+    async def _process_step_inner(self, output: str, usage: dict = None):
+        """process_step 的实际逻辑，被 process_step 包裹以捕获异常"""
         import sys
         
         # 累计 Token 使用量
@@ -654,6 +702,64 @@ class WebSocketCallback:
         
         print(f"📊 get_result() 开始: conversation_id={self.conversation_id}", file=sys.stderr)
         
+        # 清理未完成的 tool_call 步骤（超时或出错导致 on_tool_result 未被调用）
+        for pending_step in self.pending_tool_call_steps:
+            pending_step.status = 'timeout'
+            pending_step.completed_at = datetime.now()
+            pending_step.duration_ms = int(
+                (pending_step.completed_at - pending_step.started_at).total_seconds() * 1000
+            )
+            print(f"⚠️ 清理未完成的 tool_call step {pending_step.step_order} → timeout", file=sys.stderr)
+        if self.pending_tool_call_steps:
+            self.db.commit()
+            self.pending_tool_call_steps.clear()
+        
+        # Fallback: 如果模型从未输出 <solution> 标签，从最后的步骤中提取内容
+        if not self.final_content:
+            print("⚠️ final_content 为空，尝试从执行步骤中提取 fallback 内容", file=sys.stderr)
+            
+            # 首先尝试从 result 类型步骤获取（最可靠）
+            result_steps = self.db.query(ExecutionStep).filter(
+                ExecutionStep.conversation_id == self.conversation_id,
+                ExecutionStep.step_type == 'result',
+                ExecutionStep.status == 'success'
+            ).order_by(ExecutionStep.step_order.desc()).limit(3).all()
+            
+            for step in result_steps:
+                if step.tool_output and len(step.tool_output) > 50:
+                    self.final_content = step.tool_output
+                    print(f"   ✓ 使用 result step {step.step_order} 作为 fallback", file=sys.stderr)
+                    break
+            
+            # 如果没有 result，尝试 reasoning（但过滤掉模型纠错/元对话内容）
+            if not self.final_content:
+                _meta_patterns = [
+                    "I need to provide my thinking",
+                    "You're absolutely right",
+                    "Let me fix this",
+                    "I should follow the instruction",
+                    "There are no tags",
+                    "must include thinking process",
+                ]
+                last_steps = self.db.query(ExecutionStep).filter(
+                    ExecutionStep.conversation_id == self.conversation_id,
+                    ExecutionStep.step_type == 'reasoning',
+                    ExecutionStep.status == 'success'
+                ).order_by(ExecutionStep.step_order.desc()).limit(5).all()
+                
+                for step in last_steps:
+                    if step.tool_output and len(step.tool_output) > 50:
+                        # 跳过模型纠错/元对话内容
+                        if any(pat.lower() in step.tool_output.lower() for pat in _meta_patterns):
+                            print(f"   ⚠️ 跳过 meta-dialogue reasoning step {step.step_order}", file=sys.stderr)
+                            continue
+                        self.final_content = step.tool_output
+                        print(f"   ✓ 使用 reasoning step {step.step_order} 作为 fallback", file=sys.stderr)
+                        break
+            
+            if not self.final_content:
+                self.final_content = "Analysis complete. Please review the execution steps above for detailed results."
+        
         # 保存 AI 消息
         assistant_message = Message(
             conversation_id=self.conversation_id,
@@ -711,7 +817,10 @@ class WebSocketCallback:
         else:
             print(f"⚠️ Warning: Conversation {self.conversation_id} not found!", file=sys.stderr)
         
-        return {
+        # --- Scan for generated files ---
+        generated_files_list = self._scan_and_register_files(assistant_message.id)
+        
+        result = {
             'id': assistant_message.id,
             'conversationId': self.conversation_id,
             'role': 'assistant',
@@ -722,3 +831,115 @@ class WebSocketCallback:
             'outputTokens': assistant_message.output_tokens,
             'createdAt': assistant_message.created_at.isoformat()
         }
+        
+        if generated_files_list:
+            result['generatedFiles'] = generated_files_list
+        
+        return result
+
+    def _scan_and_register_files(self, message_id: int) -> list:
+        """Scan for new files created during execution, copy to output dir, register in DB."""
+        import sys
+        import os
+        import shutil
+        import mimetypes
+        from core.config import settings
+        from models.models import GeneratedFile
+
+        data_path = os.path.abspath(settings.AGENT_DATA_PATH)
+        
+        # Directories to exclude from scanning
+        EXCLUDE_DIRS = {
+            'outputs', 'user_uploads', 'biomni_data', '__pycache__', '.git',
+            'data_lake', '.ipynb_checkpoints', 'node_modules', '.cache',
+            'upload', '.venv', 'env', 'venv',
+        }
+
+        start_ts = self.start_time.timestamp()
+        found_files = []
+
+        # 1. Scan data_path for NEW files (mtime > start_time)
+        try:
+            for root, dirs, files in os.walk(data_path):
+                # Prune excluded directories
+                dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+                
+                for fname in files:
+                    fpath = os.path.join(root, fname)
+                    try:
+                        st = os.stat(fpath)
+                        if st.st_mtime > start_ts and st.st_size > 0:
+                            found_files.append(fpath)
+                    except OSError:
+                        continue
+        except Exception as e:
+            print(f"⚠️ Error scanning data dir: {e}", file=sys.stderr)
+
+        if not found_files and not self.output_dir:
+            return []
+
+        # 2. Ensure output dir exists, copy found files there
+        if self.output_dir:
+            os.makedirs(self.output_dir, exist_ok=True)
+            
+            copied = []
+            for fpath in found_files:
+                # Don't copy if already inside output_dir
+                if os.path.abspath(fpath).startswith(os.path.abspath(self.output_dir)):
+                    continue
+                dest = os.path.join(self.output_dir, os.path.basename(fpath))
+                # Handle name collisions
+                if os.path.exists(dest):
+                    base, ext = os.path.splitext(os.path.basename(fpath))
+                    dest = os.path.join(self.output_dir, f"{base}_{id(fpath) % 10000}{ext}")
+                try:
+                    shutil.copy2(fpath, dest)
+                    copied.append(dest)
+                except Exception as e:
+                    print(f"⚠️ Failed to copy {fpath} → {dest}: {e}", file=sys.stderr)
+
+            # 3. Now scan output_dir for all files (includes agent-written + copied)
+            all_output_files = []
+            if os.path.isdir(self.output_dir):
+                for fname in os.listdir(self.output_dir):
+                    fpath = os.path.join(self.output_dir, fname)
+                    if os.path.isfile(fpath) and os.path.getsize(fpath) > 0:
+                        all_output_files.append(fpath)
+        else:
+            all_output_files = found_files
+
+        if not all_output_files:
+            return []
+
+        # 4. Register in DB
+        result = []
+        for fpath in all_output_files:
+            try:
+                st = os.stat(fpath)
+                mime, _ = mimetypes.guess_type(fpath)
+                gf = GeneratedFile(
+                    user_id=self.user_id,
+                    conversation_id=self.conversation_id,
+                    message_id=message_id,
+                    filename=os.path.basename(fpath),
+                    path=fpath,
+                    size=st.st_size,
+                    mime_type=mime,
+                )
+                self.db.add(gf)
+                self.db.commit()
+                self.db.refresh(gf)
+
+                result.append({
+                    'id': gf.id,
+                    'filename': gf.filename,
+                    'size': gf.size,
+                    'mimeType': gf.mime_type,
+                    'createdAt': gf.created_at.isoformat() if gf.created_at else None,
+                })
+                print(f"✓ Registered generated file: {gf.filename} ({gf.size} bytes)", file=sys.stderr)
+            except Exception as e:
+                print(f"⚠️ Failed to register file {fpath}: {e}", file=sys.stderr)
+
+        print(f"📁 Total generated files: {len(result)}", file=sys.stderr)
+        return result

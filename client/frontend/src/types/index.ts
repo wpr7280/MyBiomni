@@ -54,13 +54,26 @@ export interface ExecutionStep {
   completedAt?: string;
 }
 
+// 生成的文件类型
+export interface GeneratedFile {
+  id: number;
+  filename: string;
+  size: number;
+  mimeType?: string;
+  createdAt?: string;
+}
+
 // WebSocket 消息类型
 export interface WSMessage {
-  type: 'execution_start' | 'execution_step' | 'execution_complete' | 'execution_error' | 'execution_resumed' | 'config_error' | 'quota_exceeded';
+  type: 'execution_start' | 'execution_step' | 'execution_complete' | 'execution_error' | 'execution_resumed' | 'config_error' | 'quota_exceeded' | 'generated_files';
   step?: ExecutionStep;
-  message?: Message;
+  message?: Message & { generatedFiles?: GeneratedFile[] };
+  files?: GeneratedFile[];
   error?: string;
   technical_details?: string;
+  files?: GeneratedFile[];
+  messageId?: number;
+  generatedFiles?: GeneratedFile[];
 }
 
 // API 响应类型

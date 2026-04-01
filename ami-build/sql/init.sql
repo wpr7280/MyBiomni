@@ -133,3 +133,18 @@ CREATE TABLE `attachments` (
                                KEY `idx_attachments_conversation` (`conversation_id`),
                                KEY `idx_attachments_message` (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附件表';
+
+CREATE TABLE `generated_files` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `user_id` BIGINT NOT NULL,
+    `conversation_id` BIGINT NOT NULL,
+    `message_id` BIGINT NOT NULL,
+    `filename` VARCHAR(255) NOT NULL,
+    `path` VARCHAR(1024) NOT NULL,
+    `size` BIGINT NOT NULL DEFAULT 0,
+    `mime_type` VARCHAR(128) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_generated_files_message` (`message_id`),
+    KEY `idx_generated_files_conversation` (`conversation_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Agent生成文件表';

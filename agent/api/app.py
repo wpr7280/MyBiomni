@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.websocket import router as websocket_router
 from api.upload import router as upload_router
+from api.download import router as download_router
 from core.config import settings
 
 app = FastAPI(
@@ -22,6 +23,7 @@ app.add_middleware(
 # 注册路由
 app.include_router(websocket_router, prefix="/ws", tags=["WebSocket"])
 app.include_router(upload_router, prefix="/api", tags=["Upload"])
+app.include_router(download_router, prefix="/api", tags=["Download"])
 
 # Also expose execution-status under /api for REST access
 from api.websocket import router as ws_router

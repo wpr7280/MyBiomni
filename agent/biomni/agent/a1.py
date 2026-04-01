@@ -1287,6 +1287,37 @@ Each library is listed with its description to help you understand its functiona
 
         return formatted_prompt
 
+    @staticmethod
+    def _is_likely_code(content: str) -> bool:
+        """Quick heuristic to check if content looks like executable code vs prose/summary."""
+        content = content.strip()
+        if not content:
+            return False
+        # R/Bash markers are always code
+        if content.startswith(("#!R", "#!BASH", "#!CLI", "# R code", "# R script", "# Bash script")):
+            return True
+        # Count code-like indicators
+        code_indicators = [
+            'import ', 'from ', 'def ', 'class ', 'print(', 'for ', 'if ', 'while ',
+            ' = ', '()', 'return ', 'try:', 'except', 'with ', 'open(', 'pd.', 'np.',
+            'result', '.read', '.write', 'subprocess', 'os.', 'json.', 'plt.',
+        ]
+        # Count prose/document indicators
+        doc_indicators = [
+            '## ', '### ', '####', '**', 'SUMMARY', 'COMPLETE', 'WORKFLOW', 'PROTOCOL',
+            'MATERIALS', 'METHODS', 'RESULTS', 'CONCLUSION', 'IMPORTANT:',
+            'Step 1:', 'Step 2:', 'Note:', 'WARNING:', 'CAUTION:',
+        ]
+        code_score = sum(1 for i in code_indicators if i in content)
+        doc_score = sum(1 for i in doc_indicators if i.lower() in content.lower())
+        # If more document indicators than code indicators, it's probably not code
+        if doc_score > code_score and doc_score >= 3:
+            return False
+        # If no code indicators at all and content is long, it's probably prose
+        if code_score == 0 and len(content) > 200:
+            return False
+        return True
+
     def configure(self, self_critic=False, test_time_scale_round=0):
         """Configure the agent with the initial system prompt and workflow.
 
@@ -1426,12 +1457,8 @@ Each library is listed with its description to help you understand its functiona
             answer_match = re.search(r"<solution>(.*?)</solution>", msg, re.DOTALL | re.IGNORECASE)
 
             # Alternative patterns for OpenAI models that might use different formatting
-            if not execute_match:
-                # Try to find code blocks that might be intended as execute blocks
-                code_block_match = re.search(r"```(?:python|bash|r)?\s*(.*?)```", msg, re.DOTALL)
-                if code_block_match and not answer_match:
-                    # If we found a code block and no solution, treat it as execute
-                    execute_match = code_block_match
+            # NOTE: Removed risky code block fallback that could accidentally execute
+            # explanatory code blocks. Only explicit <execute> tags trigger execution.
 
             # Add the message to the state before checking for errors
             # Preserve usage_metadata and response_metadata from the LLM response
@@ -1442,7 +1469,15 @@ Each library is listed with its description to help you understand its functiona
                 new_message.response_metadata = response.response_metadata
             state["messages"].append(new_message)
 
-            if answer_match:
+            # Handle tag conflicts: if both <solution> and <execute> exist, pick the later one
+            if answer_match and execute_match:
+                if answer_match.start() > execute_match.start():
+                    # <solution> comes after <execute>, treat as final answer
+                    state["next_step"] = "end"
+                else:
+                    # <execute> comes after <solution>, treat as code execution
+                    state["next_step"] = "execute"
+            elif answer_match:
                 state["next_step"] = "end"
             elif execute_match:
                 state["next_step"] = "execute"
@@ -1492,6 +1527,15 @@ Each library is listed with its description to help you understand its functiona
                 observations = []
 
                 for code in execute_matches:
+                    # Validate that content looks like actual code, not prose
+                    if not self._is_likely_code(code):
+                        print(f"WARNING: Content inside <execute> does not appear to be valid code, skipping execution")
+                        observations.append(
+                            f"<observation>Warning: The content inside <execute> does not appear to be valid code. "
+                            f"Please use <solution> tag for text/summary content, and <execute> tag only for code.\n"
+                            f"Content preview: {code[:300]}...</observation>"
+                        )
+                        continue
                     # Check if the code is R code
                     if (
                         code.strip().startswith("#!R")

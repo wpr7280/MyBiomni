@@ -211,6 +211,26 @@ async def handle_agent_execution(
         
         # 2.1 Handle uploaded files (bind message_id, append to prompt)
         content_with_files = content
+        
+        # 2.2 Create output directory and inject hint
+        import os
+        from core.config import settings
+        output_dir = os.path.join(
+            os.path.abspath(settings.AGENT_DATA_PATH),
+            'outputs',
+            f'user_{user_id}',
+            f'conv_{conversation_id}',
+            f'msg_{user_message.id}',
+        )
+        os.makedirs(output_dir, exist_ok=True)
+        
+        content_with_files += (
+            f"\n\n--- Output Directory ---\n"
+            f"When generating output files (CSV, FASTA, images, etc.), "
+            f"please save them to this directory: `{output_dir}`\n"
+            f"Example: `df.to_csv('{output_dir}/results.csv', index=False)`\n---"
+        )
+        
         if file_ids:
             from models.models import Attachment
             import os
@@ -266,6 +286,7 @@ async def handle_agent_execution(
         )
         # Note: don't set current_message_id, keep it at 0
         callback.current_message_id = user_message.id
+        callback.output_dir = output_dir
         # Execution steps will be batch-updated to assistant_message.id in get_result()
         
         # 5. Execute Agent (streaming)
@@ -281,6 +302,15 @@ async def handle_agent_execution(
         
         # 6. Notify completion
         manager.set_executing(str(conversation_id), False)
+        
+        # Send generated_files message if any
+        if result.get('generatedFiles'):
+            await manager.send_message(str(conversation_id), {
+                'type': 'generated_files',
+                'files': result['generatedFiles'],
+                'messageId': result['id'],
+            })
+        
         await manager.send_message(str(conversation_id), {
             'type': 'execution_complete',
             'message': result

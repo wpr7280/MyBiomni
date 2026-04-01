@@ -2,12 +2,13 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { message as antdMessage } from 'antd';
 import { MockWebSocket, shouldUseMockWebSocket } from '@/mock/websocket';
 import { agentApiClient } from '@/api/agentClient';
-import type { Message, ExecutionStep, WSMessage } from '@/types';
+import type { Message, ExecutionStep, WSMessage, GeneratedFile } from '@/types';
 
 export function useWebSocket(conversationId: number | null) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [executionSteps, setExecutionSteps] = useState<ExecutionStep[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [generatedFiles, setGeneratedFiles] = useState<GeneratedFile[]>([]);
   const wsRef = useRef<WebSocket | MockWebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const retryCountRef = useRef(0);
@@ -86,6 +87,7 @@ export function useWebSocket(conversationId: number | null) {
             setIsExecuting(true);
             isExecutingRef.current = true;
             setExecutionSteps([]);
+            setGeneratedFiles([]);
             setMessages((prev) => {
               const hasThinking = prev.some((m) => (m as any).isTemporary);
               if (!hasThinking) {
@@ -122,12 +124,22 @@ export function useWebSocket(conversationId: number | null) {
             }
             break;
 
+          case 'generated_files':
+            if (data.files && data.files.length > 0) {
+              setGeneratedFiles(data.files);
+            }
+            break;
+
           case 'execution_complete':
             setIsExecuting(false);
             isExecutingRef.current = false;
             if (data.message) {
               setMessages((prev) => prev.filter((m) => !(m as any).isTemporary));
               setMessages((prev) => [...prev, data.message!]);
+              // Also pick up generatedFiles from the message itself
+              if (data.message.generatedFiles && data.message.generatedFiles.length > 0) {
+                setGeneratedFiles(data.message.generatedFiles);
+              }
             }
             break;
 
@@ -260,5 +272,7 @@ export function useWebSocket(conversationId: number | null) {
     setExecutionSteps,
     isExecuting,
     sendMessage,
+    generatedFiles,
+    setGeneratedFiles,
   };
 }

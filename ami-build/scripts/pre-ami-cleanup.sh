@@ -33,6 +33,7 @@ echo "  MySQL root reset to auth_socket."
 echo "Cleaning database user data..."
 mysql -u debian-sys-maint -p"${DEBIAN_PW}" biomni -e "
 DELETE FROM execution_steps;
+DELETE FROM generated_files;
 DELETE FROM messages;
 DELETE FROM attachments;
 DELETE FROM conversations;
@@ -50,10 +51,11 @@ sudo cp /opt/biomni/systemd/biomni-agent.service /etc/systemd/system/ 2>/dev/nul
 sudo systemctl daemon-reload
 sudo systemctl enable biomni-firstboot biomni-admin biomni-agent
 
-# 清理上传文件
-echo "Cleaning upload data..."
+# 清理上传文件和生成文件
+echo "Cleaning upload and output data..."
 sudo rm -rf /opt/biomni/upload/* 2>/dev/null || true
 sudo rm -rf /opt/biomni/data/user_uploads/* 2>/dev/null || true
+sudo rm -rf /opt/biomni/data/outputs/* 2>/dev/null || true
 
 # 清理日志
 echo "Cleaning logs..."

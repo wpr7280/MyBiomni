@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Button, Dropdown, Tag, Upload, message as antdMessage, Collapse } from 'antd';
+import { Button, Dropdown, Upload, message as antdMessage, Collapse } from 'antd';
 import { DownloadOutlined, ExportOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Bubble, Sender, Prompts, Attachments } from '@ant-design/x';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ const exampleQuestions = [
 
 export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const { t } = useTranslation();
-  const { messages, setMessages, executionSteps, setExecutionSteps, isExecuting, sendMessage } = useWebSocket(conversationId);
+  const { messages, setMessages, executionSteps, setExecutionSteps, isExecuting, sendMessage, generatedFiles, setGeneratedFiles } = useWebSocket(conversationId);
   const [rightPanelWidth, setRightPanelWidth] = useState(750);  // Executor 默认更宽
   const [isDragging, setIsDragging] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
@@ -49,6 +49,21 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
             const steps = await conversationApi.getExecutionSteps(messages[i].id);
             if (steps && steps.length > 0) {
               setExecutionSteps(steps);
+            }
+            // Load generated files for this message
+            try {
+              const token = localStorage.getItem('token');
+              if (token) {
+                const resp = await fetch(`/agent-api/generated-files/${messages[i].id}?token=${encodeURIComponent(token)}`);
+                if (resp.ok) {
+                  const files = await resp.json();
+                  if (files && files.length > 0) {
+                    setGeneratedFiles(files);
+                  }
+                }
+              }
+            } catch (e) {
+              console.error('加载生成文件失败:', e);
             }
           } catch (error) {
             console.error('加载执行步骤失败:', error);
@@ -190,7 +205,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
 
         {/* 右侧 Executor 面板 */}
         <div style={{ width: rightPanelWidth, background: '#fff', overflow: 'hidden' }}>
-          <ExecutionPanel steps={executionSteps} />
+          <ExecutionPanel steps={executionSteps} generatedFiles={generatedFiles} />
         </div>
       </div>
 
@@ -236,16 +251,12 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
             <Dropdown menu={{ items: exportMenuItems }}>
               <Button type="text" size="small" icon={<DownloadOutlined />} style={{ fontWeight: 500 }}>{t('chat.exportDownload')}</Button>
             </Dropdown>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <Tag color="processing" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>{t('chat.weeklyQuota', { used: 45, total: 50 })}</Tag>
-              <Tag color="success" style={{ margin: 0, padding: '4px 12px', fontSize: 12 }}>{t('chat.tokensExpiry', { date: '2025-06-02' })}</Tag>
-            </div>
           </div>
 
           <div style={{ padding: '10px 32px 14px', borderTop: '1px solid #e8e8e8', display: 'flex', justifyContent: 'center', gap: 16, fontSize: 12 }}>
-            <a href="https://warphelix.com/contact" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
+            <a href="mailto:peirongw@foxmail.com" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.contact')}</a>
             <span style={{ color: '#d9d9d9' }}>•</span>
-            <a href="https://warphelix.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
+            <a href="http://website.autoinfra.cn/case/warphelix.html" target="_blank" rel="noopener noreferrer" style={{ color: '#8c8c8c', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'} onMouseLeave={(e) => e.currentTarget.style.color = '#8c8c8c'}>{t('footer.website')}</a>
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import threading
 
 # Agent 实例池（每个用户一个实例）
 agent_pool: Dict[int, tuple] = {}  # {user_id: (config_hash, agent)}
+_agent_pool_lock = threading.Lock()  # 线程安全锁
 
 # 是否使用 Mock Agent（通过环境变量控制）
 USE_MOCK_AGENT = os.getenv('USE_MOCK_AGENT', 'false').lower() == 'true'
@@ -23,15 +24,15 @@ class AgentService:
     
     @staticmethod
     def get_or_create_agent(user_id: int, db):
-        """获取或创建 Agent 实例"""
+        """获取或创建 Agent 实例（线程安全）"""
         if USE_MOCK_AGENT:
-            # Mock Agent 不需要配置
-            if user_id not in agent_pool:
-                agent_pool[user_id] = (None, MockAgentAsync(
-                    path='./data',
-                    llm='claude-sonnet-4-5',
-                ))
-            return agent_pool[user_id][1]
+            with _agent_pool_lock:
+                if user_id not in agent_pool:
+                    agent_pool[user_id] = (None, MockAgentAsync(
+                        path='./data',
+                        llm='claude-sonnet-4-5',
+                    ))
+                return agent_pool[user_id][1]
         
         # 从数据库加载配置
         config = ConfigService.get_agent_config(db)
@@ -42,14 +43,15 @@ class AgentService:
         config_str = json.dumps(config, sort_keys=True)
         config_hash = hashlib.md5(config_str.encode()).hexdigest()
         
-        # 检查是否已有实例且配置未变更
-        if user_id in agent_pool:
-            cached_hash, cached_agent = agent_pool[user_id]
-            if cached_hash == config_hash:
-                print(f"✓ 使用缓存的 Agent 实例（用户 {user_id}）")
-                return cached_agent
-            else:
-                print(f"⚠ 配置已变更，创建新的 Agent 实例（用户 {user_id}）")
+        with _agent_pool_lock:
+            # 检查是否已有实例且配置未变更
+            if user_id in agent_pool:
+                cached_hash, cached_agent = agent_pool[user_id]
+                if cached_hash == config_hash:
+                    print(f"✓ 使用缓存的 Agent 实例（用户 {user_id}）")
+                    return cached_agent
+                else:
+                    print(f"⚠ 配置已变更，创建新的 Agent 实例（用户 {user_id}）")
         
         # 在创建 A1 之前，修改 default_config 来设置 temperature 和 max_tokens
         from biomni.config import default_config
@@ -84,7 +86,8 @@ class AgentService:
         )
         
         # 缓存实例
-        agent_pool[user_id] = (config_hash, agent)
+        with _agent_pool_lock:
+            agent_pool[user_id] = (config_hash, agent)
         
         return agent
     

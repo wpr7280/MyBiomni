@@ -1,4 +1,4 @@
-import { Typography, Badge, Collapse } from 'antd';
+import { Typography, Badge, Collapse, Button, Space } from 'antd';
 import {
   LoadingOutlined,
   CheckCircleOutlined,
@@ -6,20 +6,24 @@ import {
   ThunderboltOutlined,
   BulbOutlined,
   CodeOutlined,
+  DownloadOutlined,
+  FileOutlined,
+  FolderOpenOutlined,
 } from '@ant-design/icons';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
-import type { ExecutionStep } from '@/types';
+import type { ExecutionStep, GeneratedFile } from '@/types';
 
 const { Text } = Typography;
 
 interface ExecutionPanelProps {
   steps: ExecutionStep[];
+  generatedFiles?: GeneratedFile[];
 }
 
-export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
+export default function ExecutionPanel({ steps, generatedFiles }: ExecutionPanelProps) {
   const { t } = useTranslation();
   
   const getStatusIcon = (status: string) => {
@@ -78,6 +82,32 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
       default:
         return step.stepType;
     }
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const handleDownload = (fileId: number, filename: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const url = `/agent-api/download/${fileId}?token=${encodeURIComponent(token)}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const getFileIcon = (mimeType?: string) => {
+    if (!mimeType) return <FileOutlined />;
+    if (mimeType.startsWith('image/')) return <FileOutlined style={{ color: '#722ed1' }} />;
+    if (mimeType.includes('csv') || mimeType.includes('spreadsheet')) return <FileOutlined style={{ color: '#52c41a' }} />;
+    if (mimeType.includes('pdf')) return <FileOutlined style={{ color: '#f5222d' }} />;
+    return <FileOutlined style={{ color: '#1890ff' }} />;
   };
 
   const successCount = steps.filter((s) => s.status === 'success').length;
@@ -397,6 +427,62 @@ export default function ExecutionPanel({ steps }: ExecutionPanelProps) {
                 />
               );
             })}
+          </div>
+        )}
+
+        {/* Generated Files Section */}
+        {generatedFiles && generatedFiles.length > 0 && (
+          <div
+            style={{
+              marginTop: 16,
+              padding: 16,
+              background: '#fff',
+              borderRadius: 8,
+              border: '1px solid #f0f0f0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <FolderOpenOutlined style={{ color: '#1890ff', fontSize: 16 }} />
+              <Text strong style={{ fontSize: 14 }}>
+                📁 Generated Files ({generatedFiles.length})
+              </Text>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {generatedFiles.map((file) => (
+                <div
+                  key={file.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    background: '#fafafa',
+                    borderRadius: 6,
+                    border: '1px solid #f0f0f0',
+                  }}
+                >
+                  <Space size={8}>
+                    {getFileIcon(file.mimeType)}
+                    <div>
+                      <Text style={{ fontSize: 13, display: 'block' }}>{file.filename}</Text>
+                      <Text type="secondary" style={{ fontSize: 11 }}>
+                        {formatFileSize(file.size)}
+                        {file.mimeType ? ` · ${file.mimeType}` : ''}
+                      </Text>
+                    </div>
+                  </Space>
+                  <Button
+                    type="primary"
+                    size="small"
+                    icon={<DownloadOutlined />}
+                    onClick={() => handleDownload(file.id, file.filename)}
+                  >
+                    Download
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
