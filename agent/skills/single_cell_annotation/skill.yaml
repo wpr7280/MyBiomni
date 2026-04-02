@@ -1,0 +1,43 @@
+# Skill: Single Cell RNA-seq Cell Type Annotation
+name: single_cell_annotation
+display_name: 单细胞 RNA-seq 细胞类型注释
+version: "1.0.0"
+category: single_cell
+description: >
+  对单细胞 RNA-seq 数据进行细胞类型注释，支持多种注释方法
+  （LLM marker-based、Panhuman Azimuth、popV label transfer 等），
+  可处理人类和小鼠数据。涵盖从数据检查、方法选择到结果验证的完整流程。
+
+authors:
+  - name: "Biomni Team"
+    role: "maintainer"
+
+license: "CC BY 4.0"
+commercial_use: true
+
+dependencies:
+  python_packages:
+    - scanpy>=1.9
+    - anndata>=0.8
+    - popv>=0.8
+    - celltypist>=1.3
+    - panhumanpy>=0.1
+    - scvi-tools>=1.0
+
+tools:
+  - annotate_celltype_scRNA
+  - annotate_celltype_with_panhumanpy
+  - unsupervised_celltype_transfer
+
+triggers:
+  - 细胞类型注释
+  - cell type annotation
+  - 单细胞聚类后注释
+  - scRNA-seq cell type
+  - 细胞类型鉴定
+  - cluster annotation
+  - cell type labeling
+  - label transfer
+  - 细胞类型转移
+
+enabled: true

@@ -1,0 +1,31 @@
+name: analyze_crispr_genome_editing
+display_name: CRISPR 基因编辑结果分析
+description: >
+  通过比较原始序列和编辑后序列来分析 CRISPR-Cas9 基因编辑结果。
+  识别编辑类型、位置和效率，支持 HDR 模板比对。
+
+parameters:
+  required:
+    - name: original_sequence
+      type: str
+      description: CRISPR-Cas9 编辑前的原始 DNA 序列
+    - name: edited_sequence
+      type: str
+      description: CRISPR-Cas9 编辑后的 DNA 序列
+    - name: guide_rna
+      type: str
+      description: 用于靶向的 CRISPR guide RNA (crRNA) 序列
+  optional:
+    - name: repair_template
+      type: str
+      default: null
+      description: 同源定向修复（HDR）模板序列（如果使用）
+
+returns:
+  type: str
+  description: 编辑分析结果，包括编辑类型、位置和效率评估
+
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: analyze_crispr_genome_editing

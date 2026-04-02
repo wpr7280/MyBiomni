@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Definition",
+  "description": "Schema for tools/<tool_name>.yaml — a single tool declared within a skill.",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique tool identifier (matches the YAML filename without extension).",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable tool name."
+    },
+    "description": {
+      "type": "string",
+      "description": "What this tool does."
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/parameter" }
+        },
+        "optional": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/parameter" }
+        }
+      }
+    },
+    "returns": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "default": "str" },
+        "description": { "type": "string" }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["module_ref", "template", "guidance_only"],
+          "default": "module_ref"
+        },
+        "module": {
+          "type": "string",
+          "description": "Dotted Python module path (for module_ref)."
+        },
+        "function": {
+          "type": "string",
+          "description": "Function name within the module (for module_ref)."
+        },
+        "file": {
+          "type": "string",
+          "description": "Relative path to template file (for template type)."
+        },
+        "sandbox": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Back-reference to the parent skill (set automatically by loader)."
+    }
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "default": "str" },
+        "description": { "type": "string" },
+        "default": {}
+      }
+    }
+  }
+}

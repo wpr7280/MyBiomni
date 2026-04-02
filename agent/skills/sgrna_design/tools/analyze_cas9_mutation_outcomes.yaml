@@ -1,0 +1,32 @@
+name: analyze_cas9_mutation_outcomes
+display_name: Cas9 突变结果分析
+description: >
+  分析并分类 Cas9 在靶位点诱导的突变。比较参考序列和编辑后序列，
+  识别插入、缺失、替换等突变类型及其分布。
+
+parameters:
+  required:
+    - name: reference_sequences
+      type: dict
+      description: "序列 ID 到参考 DNA 序列的映射字典（如 {seq_id: sequence_str}）"
+    - name: edited_sequences
+      type: dict
+      description: "嵌套字典：{sequence_id: {read_id: sequence}}，包含每个参考序列对应的编辑/突变序列"
+  optional:
+    - name: cell_line_info
+      type: dict
+      default: null
+      description: "序列 ID 到细胞系信息的映射字典（如野生型、敲除基因等）"
+    - name: output_prefix
+      type: str
+      default: "cas9_mutation_analysis"
+      description: 输出文件前缀
+
+returns:
+  type: str
+  description: 突变分析结果摘要和输出文件路径
+
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: analyze_cas9_mutation_outcomes

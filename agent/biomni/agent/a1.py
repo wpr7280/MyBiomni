@@ -19,6 +19,7 @@ from biomni.config import default_config
 from biomni.know_how import KnowHowLoader
 from biomni.llm import SourceType, get_llm
 from biomni.model.retriever import ToolRetriever
+from biomni.skill import SkillManager
 from biomni.tool.support_tools import run_python_repl
 from biomni.tool.tool_registry import ToolRegistry
 from biomni.utils import (
@@ -218,6 +219,15 @@ class A1:
             self._filter_know_how_for_commercial_mode()
 
         print(f"📚 Loaded {len(self.know_how_loader.documents)} know-how documents")
+
+        # Initialize skill system
+        skills_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "skills")
+        if os.path.isdir(skills_dir):
+            self.skill_manager = SkillManager(skills_dir=skills_dir)
+            print(f"🎯 Loaded {len(self.skill_manager.get_enabled_skills())} skills")
+        else:
+            self.skill_manager = None
+            print("⚠️ No skills/ directory found, skill system disabled")
 
         # Add timeout parameter
         self.timeout_seconds = timeout_seconds  # 10 minutes default timeout
@@ -1396,6 +1406,21 @@ Each library is listed with its description to help you understand its functiona
                     }
                 )
             print(f"📚 Loading {len(know_how_docs)} know-how documents into system prompt")
+
+        # Also load skill how-to documents (skill system)
+        if hasattr(self, "skill_manager") and self.skill_manager:
+            for skill in self.skill_manager.get_enabled_skills():
+                if skill.howto:
+                    know_how_docs.append(
+                        {
+                            "id": skill.id,
+                            "name": skill.metadata.display_name,
+                            "description": skill.metadata.description,
+                            "content": skill.howto,
+                            "metadata": {"version": skill.metadata.version, "category": skill.metadata.category},
+                        }
+                    )
+            print(f"🎯 Total know-how + skill docs: {len(know_how_docs)}")
 
         self.system_prompt = self._generate_system_prompt(
             tool_desc=tool_desc,

@@ -1,0 +1,39 @@
+name: sgrna_design
+display_name: sgRNA 设计与 CRISPR 分析
+version: "1.0.0"
+category: genetics
+description: >
+  sgRNA 设计与 CRISPR 基因编辑分析工具集。提供三层 sgRNA 设计策略
+  （验证序列查找 → CRISPick 预计算 → 从头设计），以及 Cas9 编辑结果分析工具。
+  支持 SpCas9、SaCas9、AsCas12a、enAsCas12a 等多种 Cas 酶。
+
+authors:
+  - name: "Biomni Team"
+    role: "maintainer"
+
+license: "CC BY 4.0"
+commercial_use: true
+
+dependencies:
+  python_packages:
+    - pandas>=1.5
+    - biopython>=1.80
+    - numpy>=1.22
+
+tools:
+  - analyze_cas9_mutation_outcomes
+  - analyze_crispr_genome_editing
+
+triggers:
+  - sgRNA 设计
+  - sgRNA design
+  - guide RNA
+  - CRISPR knockout
+  - CRISPR 编辑
+  - gRNA 序列
+  - Cas9 突变分析
+  - 基因编辑结果分析
+  - CRISPR genome editing
+  - 基因敲除
+
+enabled: true

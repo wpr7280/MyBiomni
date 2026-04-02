@@ -1,0 +1,38 @@
+name: annotate_celltype_with_panhumanpy
+display_name: Panhuman Azimuth 细胞类型注释
+description: >
+  使用 Panhuman Azimuth 神经网络对单细胞 RNA-seq 数据进行细胞类型注释。
+  基于 panhumanpy 包实现，提供覆盖全身组织的层次化细胞类型标签。
+  仅支持人类数据。
+
+parameters:
+  required:
+    - name: adata_path
+      type: str
+      description: AnnData 文件路径（.h5ad 格式）
+  optional:
+    - name: feature_names_col
+      type: str
+      default: null
+      description: adata.var 中包含基因符号的列名（默认使用 index）
+    - name: refine
+      type: bool
+      default: true
+      description: 是否进行额外的标签细化以保持一致的粒度
+    - name: umap
+      type: bool
+      default: true
+      description: 是否生成 ANN 嵌入和 UMAP 可视化
+    - name: output_dir
+      type: str
+      default: "./output"
+      description: 结果保存目录
+
+returns:
+  type: AnnData
+  description: 添加了细胞类型注释的 AnnData 对象
+
+implementation:
+  type: module_ref
+  module: biomni.tool.genomics
+  function: annotate_celltype_with_panhumanpy

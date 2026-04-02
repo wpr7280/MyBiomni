@@ -1,0 +1,42 @@
+name: annotate_celltype_scRNA
+display_name: LLM 驱动的细胞类型注释
+description: >
+  基于 leiden 聚类的差异表达基因，使用 LLM 推断细胞类型。
+  支持结合参考数据集的转移标签进行综合判断。
+
+parameters:
+  required:
+    - name: adata_filename
+      type: str
+      description: AnnData 文件名（.h5ad 格式）
+    - name: data_dir
+      type: str
+      description: 数据文件所在目录
+    - name: data_info
+      type: str
+      description: "数据基本信息（如 'homo sapiens, brain tissue, normal'）"
+    - name: data_lake_path
+      type: str
+      description: Data lake 路径
+  optional:
+    - name: cluster
+      type: str
+      default: "leiden"
+      description: 聚类方法名（如 leiden, louvain）
+    - name: llm
+      type: str
+      default: "claude-3-5-sonnet-20241022"
+      description: 使用的 LLM 模型
+    - name: composition
+      type: pd.DataFrame
+      default: null
+      description: 每个 cluster 的转移标签细胞类型组成（来自 popV 等工具的结果）
+
+returns:
+  type: str
+  description: 注释结果摘要和输出文件路径
+
+implementation:
+  type: module_ref
+  module: biomni.tool.genomics
+  function: annotate_celltype_scRNA

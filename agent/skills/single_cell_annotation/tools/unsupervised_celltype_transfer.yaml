@@ -1,0 +1,84 @@
+name: unsupervised_celltype_transfer
+display_name: popV 无监督细胞类型标签转移
+description: >
+  使用 popV 将已标注参考数据集的细胞类型标签转移到未标注的查询数据集。
+  支持多种注释方法（scANVI、CellTypist、KNN 变体、随机森林、SVM、XGBoost 等），
+  默认使用 SCANVI_POPV。可根据任务需求启用多种方法进行集成判断。
+
+parameters:
+  required:
+    - name: path_to_annotated_h5ad
+      type: str
+      description: 已标注参考 AnnData 文件路径（.h5ad）
+    - name: path_to_not_annotated_h5ad
+      type: str
+      description: 未标注查询 AnnData 文件路径（.h5ad）
+    - name: ref_labels_key
+      type: str
+      description: 参考数据 adata.obs 中的细胞类型标签列名
+  optional:
+    - name: query_batch_key
+      type: str
+      default: null
+      description: 查询数据 adata.obs 中的批次信息列名
+    - name: ref_batch_key
+      type: str
+      default: null
+      description: 参考数据 adata.obs 中的批次信息列名
+    - name: CELLTYPIST
+      type: bool
+      default: false
+      description: 启用 CellTypist 分类器
+    - name: KNN_BBKNN
+      type: bool
+      default: false
+      description: 启用 BBKNN 集成的 KNN 方法
+    - name: KNN_HARMONY
+      type: bool
+      default: false
+      description: 启用 Harmony 集成的 KNN 方法
+    - name: KNN_SCANORAMA
+      type: bool
+      default: false
+      description: 启用 Scanorama 集成的 KNN 方法
+    - name: KNN_SCVI
+      type: bool
+      default: false
+      description: 启用 scVI 潜在空间的 KNN 方法
+    - name: ONCLASS
+      type: bool
+      default: false
+      description: 启用 OnClass 本体感知分类器
+    - name: Random_Forest
+      type: bool
+      default: false
+      description: 启用随机森林分类器
+    - name: SCANVI_POPV
+      type: bool
+      default: true
+      description: 启用 scANVI 半监督方法（默认）
+    - name: Support_Vector
+      type: bool
+      default: false
+      description: 启用支持向量机分类器
+    - name: XGboost
+      type: bool
+      default: false
+      description: 启用 XGBoost 分类器
+    - name: n_jobs
+      type: int
+      default: 1
+      description: 并行任务数
+    - name: output_folder
+      type: str
+      default: "./tmp/"
+      description: 模型和预测结果保存目录
+
+returns:
+  type: str
+  description: 预测结果文件路径（output_folder/popv_output/predictions.csv）
+
+implementation:
+  type: module_ref
+  module: biomni.tool.genomics
+  function: unsupervised_celltype_transfer_between_scRNA_datasets
