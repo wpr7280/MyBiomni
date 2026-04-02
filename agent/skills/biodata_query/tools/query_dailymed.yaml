@@ -1,0 +1,28 @@
+name: query_dailymed
+display_name: Query Dailymed
+description: Query the DailyMed RESTful API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about drug labeling
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct DailyMed endpoint or full URL
+    default: null
+  - name: format
+    type: str
+    description: '''json'' or ''xml'''
+    default: json
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_dailymed
+returns:
+  type: str
+  description: 工具执行结果

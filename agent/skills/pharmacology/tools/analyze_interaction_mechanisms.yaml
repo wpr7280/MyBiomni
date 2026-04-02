@@ -1,0 +1,25 @@
+name: analyze_interaction_mechanisms
+display_name: Analyze Interaction Mechanisms
+description: Analyze interaction mechanisms between two specific drugs providing detailed
+  mechanistic insights and clinical significance assessment.
+parameters:
+  required:
+  - name: drug_pair
+    type: Tuple[str, str]
+    description: Pair of drug names to analyze (drug1, drug2)
+  optional:
+  - name: detailed_analysis
+    type: bool
+    description: Include detailed mechanistic information in analysis
+    default: true
+  - name: data_lake_path
+    type: str
+    description: Path to data lake directory containing DDInter data
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_interaction_mechanisms
+returns:
+  type: str
+  description: 工具执行结果

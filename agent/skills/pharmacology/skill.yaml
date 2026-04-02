@@ -1,0 +1,57 @@
+name: pharmacology
+display_name: Pharmacology
+version: 1.0.0
+category: pharmacology
+description: 药理学工具集。提供 run_diffdock_with_smiles, docking_autodock_vina, run_autosite,
+  retrieve_topk_repurposing_drugs_from_disease_txgnn, predict_admet_properties 等 25
+  个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- run_diffdock_with_smiles
+- docking_autodock_vina
+- run_autosite
+- retrieve_topk_repurposing_drugs_from_disease_txgnn
+- predict_admet_properties
+- predict_binding_affinity_protein_1d_sequence
+- analyze_accelerated_stability_of_pharmaceutical_formulations
+- run_3d_chondrogenic_aggregate_assay
+- grade_adverse_events_using_vcog_ctcae
+- analyze_radiolabeled_antibody_biodistribution
+- estimate_alpha_particle_radiotherapy_dosimetry
+- perform_mwas_cyp2c19_metabolizer_status
+- calculate_physicochemical_properties
+- analyze_xenograft_tumor_growth_inhibition
+- analyze_pixel_distribution
+- find_roi_from_image
+- analyze_western_blot
+- query_drug_interactions
+- check_drug_combination_safety
+- analyze_interaction_mechanisms
+- find_alternative_drugs_ddinter
+- query_fda_adverse_events
+- get_fda_drug_label_info
+- check_fda_drug_recalls
+- analyze_fda_safety_signals
+triggers:
+- 药理学
+- pharmacology
+- 药物筛选
+- drug screening
+- 分子对接
+- molecular docking
+- ADMET
+- 药物发现
+- drug discovery
+- 药代动力学
+- pharmacokinetics
+- 毒性预测
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology

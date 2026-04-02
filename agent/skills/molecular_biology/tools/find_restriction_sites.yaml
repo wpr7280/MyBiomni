@@ -1,0 +1,24 @@
+name: find_restriction_sites
+display_name: Find Restriction Sites
+description: Identifies restriction enzyme sites in a given DNA sequence for specified
+  enzymes.
+parameters:
+  required:
+  - name: dna_sequence
+    type: str
+    description: Complete input DNA sequence
+  - name: enzymes
+    type: List[str]
+    description: List of restriction enzyme names to check
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the DNA sequence is circular (True) or linear (False)
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: find_restriction_sites
+returns:
+  type: str
+  description: 工具执行结果

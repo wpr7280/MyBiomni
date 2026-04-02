@@ -1,0 +1,21 @@
+name: fetch_supplementary_info_from_doi
+display_name: Fetch Supplementary Info From Doi
+description: Fetches supplementary information for a paper given its DOI and saves
+  it to a specified directory.
+parameters:
+  required:
+  - name: doi
+    type: str
+    description: The paper DOI
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save supplementary files
+    default: supplementary_info
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: fetch_supplementary_info_from_doi
+returns:
+  type: str
+  description: 工具执行结果

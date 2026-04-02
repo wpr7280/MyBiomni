@@ -1,0 +1,11 @@
+name: get_oligo_annealing_protocol
+display_name: Get Oligo Annealing Protocol
+description: Return a standard protocol for annealing oligonucleotides without phosphorylation.
+parameters: {}
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: get_oligo_annealing_protocol
+returns:
+  type: str
+  description: 工具执行结果

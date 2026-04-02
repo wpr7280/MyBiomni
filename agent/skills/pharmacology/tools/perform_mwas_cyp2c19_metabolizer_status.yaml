@@ -1,0 +1,35 @@
+name: perform_mwas_cyp2c19_metabolizer_status
+display_name: Perform Mwas Cyp2C19 Metabolizer Status
+description: Perform a Methylome-wide Association Study (MWAS) to identify CpG sites
+  significantly associated with CYP2C19 metabolizer status.
+parameters:
+  required:
+  - name: methylation_data_path
+    type: str
+    description: Path to CSV or TSV file containing DNA methylation beta values. Rows
+      should be samples, columns should be CpG sites.
+  - name: metabolizer_status_path
+    type: str
+    description: Path to CSV or TSV file containing CYP2C19 metabolizer status for
+      each sample. Should have a sample ID column and a status column.
+  optional:
+  - name: covariates_path
+    type: str
+    description: Path to CSV or TSV file containing covariates to adjust for in the
+      regression model (e.g., age, sex, smoking status).
+    default: null
+  - name: pvalue_threshold
+    type: float
+    description: P-value threshold for significance after multiple testing correction.
+    default: 0.05
+  - name: output_file
+    type: str
+    description: Filename to save significant CpG sites.
+    default: significant_cpg_sites.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: perform_mwas_cyp2c19_metabolizer_status
+returns:
+  type: str
+  description: 工具执行结果

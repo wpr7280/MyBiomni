@@ -1,0 +1,23 @@
+name: get_plasmid_sequence
+display_name: Get Plasmid Sequence
+description: Unified function to retrieve plasmid sequences from either Addgene or
+  NCBI. If is_addgene is True or identifier is numeric, uses Addgene. Otherwise searches
+  NCBI using the plasmid name.
+parameters:
+  required:
+  - name: identifier
+    type: str
+    description: Either an Addgene ID or plasmid name
+  optional:
+  - name: is_addgene
+    type: bool
+    description: Force Addgene lookup if True, force NCBI if False. If None, attempts
+      to auto-detect based on identifier format.
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: get_plasmid_sequence
+returns:
+  type: str
+  description: 工具执行结果

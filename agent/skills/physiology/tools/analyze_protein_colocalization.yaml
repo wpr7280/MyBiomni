@@ -1,0 +1,28 @@
+name: analyze_protein_colocalization
+display_name: Analyze Protein Colocalization
+description: Analyze colocalization between two fluorescently labeled proteins in
+  microscopy images.
+parameters:
+  required:
+  - name: channel1_path
+    type: str
+    description: Path to the first channel image file (fluorescent protein 1)
+  - name: channel2_path
+    type: str
+    description: Path to the second channel image file (fluorescent protein 2)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+  - name: threshold_method
+    type: str
+    description: Method for thresholding images ('otsu', 'li', or 'yen')
+    default: otsu
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_protein_colocalization
+returns:
+  type: str
+  description: 工具执行结果

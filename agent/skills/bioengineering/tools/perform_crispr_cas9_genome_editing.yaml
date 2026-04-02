@@ -1,0 +1,25 @@
+name: perform_crispr_cas9_genome_editing
+display_name: Perform Crispr Cas9 Genome Editing
+description: Simulates CRISPR-Cas9 genome editing process including guide RNA design,
+  delivery, and analysis.
+parameters:
+  required:
+  - name: guide_rna_sequences
+    type: List[str]
+    description: List of guide RNA sequences (20 nucleotides each) targeting the genomic
+      region of interest
+  - name: target_genomic_loci
+    type: str
+    description: Target genomic sequence to be edited (should be longer than guide
+      RNA and contain the target sites)
+  - name: cell_tissue_type
+    type: str
+    description: Type of cell or tissue being edited (affects delivery efficiency
+      and editing outcomes)
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: perform_crispr_cas9_genome_editing
+returns:
+  type: str
+  description: 工具执行结果

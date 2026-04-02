@@ -1,0 +1,28 @@
+name: identify_transcription_factor_binding_sites
+display_name: Identify Transcription Factor Binding Sites
+description: Identifies binding sites for a specific transcription factor in a genomic
+  sequence.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: The genomic DNA sequence to analyze
+  - name: tf_name
+    type: str
+    description: Name of the transcription factor to search for (e.g., 'Hsf1', 'GATA1')
+  optional:
+  - name: threshold
+    type: float
+    description: Minimum score threshold for reporting binding sites (0.0-1.0)
+    default: 0.8
+  - name: output_file
+    type: str
+    description: Path to save the results
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: identify_transcription_factor_binding_sites
+returns:
+  type: str
+  description: 工具执行结果

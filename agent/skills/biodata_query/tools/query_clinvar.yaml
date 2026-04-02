@@ -1,0 +1,25 @@
+name: query_clinvar
+display_name: Query Clinvar
+description: Convert a natural language prompt into a structured ClinVar search query
+  and run it.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about genetic variants
+  optional:
+  - name: search_term
+    type: str
+    description: Direct ClinVar search term
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum number of results
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_clinvar
+returns:
+  type: str
+  description: 工具执行结果

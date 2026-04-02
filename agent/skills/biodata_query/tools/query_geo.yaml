@@ -1,0 +1,25 @@
+name: query_geo
+display_name: Query Geo
+description: Query the NCBI GEO database (GDS/GEOPROFILES) using natural language
+  or direct search term.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about expression data
+  optional:
+  - name: search_term
+    type: str
+    description: Direct GEO search term
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum number of results
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_geo
+returns:
+  type: str
+  description: 工具执行结果

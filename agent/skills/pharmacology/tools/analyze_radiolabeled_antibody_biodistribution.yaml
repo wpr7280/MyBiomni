@@ -1,0 +1,20 @@
+name: analyze_radiolabeled_antibody_biodistribution
+display_name: Analyze Radiolabeled Antibody Biodistribution
+description: Analyze biodistribution and pharmacokinetic profile of radiolabeled antibodies.
+parameters:
+  required:
+  - name: time_points
+    type: List[float] or numpy.ndarray
+    description: Time points (hours) at which measurements were taken
+  - name: tissue_data
+    type: dict
+    description: Dictionary where keys are tissue names and values are lists/arrays
+      of %IA/g measurements corresponding to time_points. Must include 'tumor' as
+      one of the keys
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_radiolabeled_antibody_biodistribution
+returns:
+  type: str
+  description: 工具执行结果

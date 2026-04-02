@@ -1,0 +1,33 @@
+name: analyze_western_blot
+display_name: Analyze Western Blot
+description: Performs densitometric analysis of Western blot images to quantify relative
+  protein expression.
+parameters:
+  required:
+  - name: blot_image_path
+    type: str
+    description: Path to the Western blot image file
+  - name: target_bands
+    type: list of dict
+    description: List of dictionaries containing information about target protein
+      bands, each with 'name' and 'roi' (region of interest as [x, y, width, height])
+  - name: loading_control_band
+    type: dict
+    description: Dictionary with 'name' and 'roi' for the loading control protein
+      (e.g., β-actin, GAPDH)
+  - name: antibody_info
+    type: dict
+    description: Dictionary containing information about antibodies used with 'primary'
+      and 'secondary' keys
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_western_blot
+returns:
+  type: str
+  description: 工具执行结果

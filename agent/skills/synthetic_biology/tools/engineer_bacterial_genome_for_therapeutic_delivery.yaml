@@ -1,0 +1,21 @@
+name: engineer_bacterial_genome_for_therapeutic_delivery
+display_name: Engineer Bacterial Genome For Therapeutic Delivery
+description: Engineer a bacterial genome by integrating therapeutic genetic parts
+  for therapeutic delivery.
+parameters:
+  required:
+  - name: bacterial_genome_file
+    type: str
+    description: Path to the file containing the bacterial genome sequence in FASTA
+      format
+  - name: genetic_parts
+    type: dict
+    description: Dictionary containing genetic parts to be integrated (promoters,
+      genes, terminators, cargo)
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: engineer_bacterial_genome_for_therapeutic_delivery
+returns:
+  type: str
+  description: 工具执行结果

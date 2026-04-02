@@ -1,0 +1,37 @@
+name: analyze_endolysosomal_calcium_dynamics
+display_name: Analyze Endolysosomal Calcium Dynamics
+description: Analyze calcium dynamics in endo-lysosomal compartments using ELGA/ELGA1
+  probe data.
+parameters:
+  required:
+  - name: time_points
+    type: numpy.ndarray or list
+    description: Time points of the measurements in seconds
+  - name: luminescence_values
+    type: numpy.ndarray or list
+    description: Luminescence intensity values from ELGA/ELGA1 probes corresponding
+      to Ca2+ levels
+  optional:
+  - name: treatment_time
+    type: float
+    description: Time point (in seconds) when treatment/stimulus was applied
+    default: null
+  - name: cell_type
+    type: str
+    description: Type of cells used in the experiment
+    default: ''
+  - name: treatment_name
+    type: str
+    description: Name of the treatment or stimulus applied
+    default: ''
+  - name: output_file
+    type: str
+    description: Name of the file to save detailed analysis results
+    default: calcium_analysis_results.txt
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_endolysosomal_calcium_dynamics
+returns:
+  type: str
+  description: 工具执行结果

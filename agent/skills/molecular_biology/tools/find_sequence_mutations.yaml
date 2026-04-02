@@ -1,0 +1,23 @@
+name: find_sequence_mutations
+display_name: Find Sequence Mutations
+description: Compare query sequence against reference sequence to identify mutations.
+parameters:
+  required:
+  - name: query_sequence
+    type: str
+    description: The sequence being analyzed
+  - name: reference_sequence
+    type: str
+    description: The reference sequence to compare against
+  optional:
+  - name: query_start
+    type: int
+    description: The start position of the query sequence
+    default: 1
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: find_sequence_mutations
+returns:
+  type: str
+  description: 工具执行结果

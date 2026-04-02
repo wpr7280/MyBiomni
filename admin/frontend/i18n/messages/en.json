@@ -339,6 +339,10 @@
         "message_save_failed": "Save failed",
         "message_load_failed": "Failed to load configuration"
       }
+    },
+    "skills": {
+      "label_skills": "Skill Management",
+      "label_skill_detail": "Skill Detail"
     }
   },
   "menu": {
@@ -351,7 +355,8 @@
     "commercial_mode": "Commercial Mode",
     "system_settings": "System Settings",
     "my_conversations": "My Conversations",
-    "knowledge_base": "Knowledge Base"
+    "knowledge_base": "Knowledge Base",
+    "skill_management": "Skill Management"
   },
   "teams": {
     "label_team_management": "Team Management",
@@ -505,13 +510,13 @@
     "text_no_logs": "No logs available",
     "text_loading_metrics": "Loading metrics",
     "text_no_metrics": "No metrics available",
-          "text_timeout_description": "Set sandbox timeout in seconds, will be deleted by default",
+    "text_timeout_description": "Set sandbox timeout in seconds, will be deleted by default",
     "text_resume_description": "Please set the parameters for resuming the sandbox",
     "text_sandbox_info": "Sandbox Info:",
     "text_pause_confirm": "Are you sure you want to pause sandbox {sandboxId}?",
     "text_resume_config": "Resume Configuration",
     "text_delete_confirm": "Are you sure you want to delete sandbox {sandboxId}? This action cannot be undone.",
-          "text_resume_timeout_description": "The sandbox will automatically timeout after the specified time and be deleted by default",
+    "text_resume_timeout_description": "The sandbox will automatically timeout after the specified time and be deleted by default",
     "tab_info": "Information",
     "tab_info_logs": "Info & Logs",
     "tab_logs": "Logs",
@@ -533,7 +538,6 @@
     "modal_title_resume": "Resume Sandbox",
     "modal_title_pause_confirm": "Pause Sandbox",
     "modal_title_delete_confirm": "Delete Sandbox",
-    "label_sandbox_name": "Sandbox Name",
     "label_environment_template": "Environment Template",
     "label_description": "Description",
     "label_timeout": "Timeout (seconds)",

@@ -1,0 +1,30 @@
+name: create_registration_visualization
+display_name: Create Registration Visualization
+description: Create visualization plots for registration results. Generates comparison
+  plots, difference images, overlays, and metric charts.
+parameters:
+  required:
+  - name: fixed_image_path
+    type: str
+    description: Path to the reference (fixed) image file
+  - name: moving_image_path
+    type: str
+    description: Path to the original moving image file
+  - name: registered_image_path
+    type: str
+    description: Path to the registered image file
+  - name: output_dir
+    type: str
+    description: Directory to save visualization files
+  optional:
+  - name: prefix
+    type: str
+    description: Prefix for output files
+    default: registration
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: create_registration_visualization
+returns:
+  type: str
+  description: 工具执行结果

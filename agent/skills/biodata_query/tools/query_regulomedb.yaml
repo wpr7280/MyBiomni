@@ -1,0 +1,24 @@
+name: query_regulomedb
+display_name: Query Regulomedb
+description: Query the RegulomeDB database using natural language or direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about regulatory elements
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct RegulomeDB endpoint URL
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_regulomedb
+returns:
+  type: str
+  description: 工具执行结果

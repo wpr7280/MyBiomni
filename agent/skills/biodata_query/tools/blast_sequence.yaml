@@ -1,0 +1,21 @@
+name: blast_sequence
+display_name: Blast Sequence
+description: Identify a DNA or protein sequence using NCBI BLAST.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: Query sequence
+  - name: database
+    type: str
+    description: BLAST database (e.g., core_nt or nr)
+  - name: program
+    type: str
+    description: BLAST program (blastn or blastp)
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: blast_sequence
+returns:
+  type: str
+  description: 工具执行结果

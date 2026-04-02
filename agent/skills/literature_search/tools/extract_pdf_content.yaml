@@ -1,0 +1,15 @@
+name: extract_pdf_content
+display_name: Extract Pdf Content
+description: Extract text content from a PDF file.
+parameters:
+  required:
+  - name: url
+    type: str
+    description: URL of the PDF file
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: extract_pdf_content
+returns:
+  type: str
+  description: 工具执行结果

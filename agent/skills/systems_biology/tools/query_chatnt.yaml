@@ -1,0 +1,23 @@
+name: query_chatnt
+display_name: Query Chatnt
+description: 'Answer functions and properties questions for DNA sequences '
+parameters:
+  required:
+  - name: question
+    type: str
+    description: Questions about the DNA sequence
+  - name: sequence
+    type: str
+    description: DNA sequence with potential functions
+  optional:
+  - name: device
+    type: int
+    description: Device to use for the ChatNT model. Default is -1 (CPU).
+    default: -1
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology
+  function: query_chatnt
+returns:
+  type: str
+  description: 工具执行结果

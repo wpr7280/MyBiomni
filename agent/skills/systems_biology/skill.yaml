@@ -1,0 +1,34 @@
+name: systems_biology
+display_name: Systems Biology
+version: 1.0.0
+category: systems_biology
+description: 系统生物学工具集。提供 perform_flux_balance_analysis, model_protein_dimerization_network,
+  simulate_metabolic_network_perturbation, simulate_protein_signaling_network, compare_protein_structures
+  等 7 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- perform_flux_balance_analysis
+- model_protein_dimerization_network
+- simulate_metabolic_network_perturbation
+- simulate_protein_signaling_network
+- compare_protein_structures
+- simulate_renin_angiotensin_system_dynamics
+- query_chatnt
+triggers:
+- 系统生物学
+- systems biology
+- 网络分析
+- network analysis
+- 通路分析
+- pathway analysis
+- 组学
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology

@@ -1,0 +1,33 @@
+name: biochemistry
+display_name: Biochemistry
+version: 1.0.0
+category: biochemistry
+description: 生物化学工具集。提供 analyze_circular_dichroism_spectra, analyze_rna_secondary_structure_features,
+  analyze_protease_kinetics, analyze_enzyme_kinetics_assay, analyze_itc_binding_thermodynamics
+  等 6 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- analyze_circular_dichroism_spectra
+- analyze_rna_secondary_structure_features
+- analyze_protease_kinetics
+- analyze_enzyme_kinetics_assay
+- analyze_itc_binding_thermodynamics
+- analyze_protein_conservation
+triggers:
+- 生物化学
+- biochemistry
+- 酶动力学
+- enzyme kinetics
+- 代谢
+- metabolism
+- 蛋白质分析
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.biochemistry

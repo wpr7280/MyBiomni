@@ -1,0 +1,32 @@
+name: track_immune_cells_under_flow
+display_name: Track Immune Cells Under Flow
+description: Track immune cells under flow conditions and classify their behaviors.
+parameters:
+  required:
+  - name: image_sequence_path
+    type: str
+    description: Path to image sequence directory or video file
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+  - name: pixel_size_um
+    type: float
+    description: Pixel size in micrometers
+    default: 1.0
+  - name: time_interval_sec
+    type: float
+    description: Time interval between frames in seconds
+    default: 1.0
+  - name: flow_direction
+    type: str
+    description: Direction of flow ('right', 'left', 'up', 'down')
+    default: right
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: track_immune_cells_under_flow
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,26 @@
+name: analyze_ddr_network_in_cancer
+display_name: Analyze Ddr Network In Cancer
+description: Analyze DNA Damage Response (DDR) network alterations and dependencies
+  in cancer samples.
+parameters:
+  required:
+  - name: expression_data_path
+    type: str
+    description: Path to gene expression data file (CSV format with genes as rows,
+      samples as columns)
+  - name: mutation_data_path
+    type: str
+    description: Path to mutation data file (CSV format with genes as rows, samples
+      as columns, values indicating mutation status)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: analyze_ddr_network_in_cancer
+returns:
+  type: str
+  description: 工具执行结果

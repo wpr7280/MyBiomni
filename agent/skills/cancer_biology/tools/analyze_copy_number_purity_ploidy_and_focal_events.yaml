@@ -1,0 +1,53 @@
+name: analyze_copy_number_purity_ploidy_and_focal_events
+display_name: Analyze Copy Number Purity Ploidy And Focal Events
+description: CNVkit-based copy number workflow performing CNV segmentation, purity
+  & ploidy approximation, simplified HRD-style metrics, and focal amplification/deletion
+  detection in selected genes.
+parameters:
+  required:
+  - name: tumor_bam
+    type: str
+    description: Path to tumor BAM (indexed)
+  - name: reference_genome
+    type: str
+    description: Path to reference genome FASTA
+  optional:
+  - name: normal_bam
+    type: str
+    description: Path to matched normal BAM (recommended for CNVkit)
+    default: null
+  - name: output_dir
+    type: str
+    description: Directory to store CNVkit workflow outputs
+    default: cn_analysis_results
+  - name: targets_bed
+    type: str
+    description: BED file of target regions for CNVkit (panel/exome)
+    default: null
+  - name: antitargets_bed
+    type: str
+    description: BED file of antitarget regions for CNVkit
+    default: null
+  - name: gene_bed
+    type: str
+    description: Gene BED (chrom, start, end, gene) for focal event annotation
+    default: null
+  - name: focal_genes
+    type: list[str]
+    description: 'Genes to highlight for focal events (defaults: MYC, ERBB2, CDKN2A)'
+    default: null
+  - name: log2_amp_threshold
+    type: float
+    description: Log2 ratio threshold for focal amplification calls
+    default: 1.0
+  - name: log2_del_threshold
+    type: float
+    description: Log2 ratio threshold for focal deep deletion calls
+    default: -1.0
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: analyze_copy_number_purity_ploidy_and_focal_events
+returns:
+  type: str
+  description: 工具执行结果

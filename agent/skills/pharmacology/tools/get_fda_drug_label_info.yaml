@@ -1,0 +1,22 @@
+name: get_fda_drug_label_info
+display_name: Get Fda Drug Label Info
+description: Retrieve FDA drug label information including indications, contraindications,
+  warnings, and dosage information from the OpenFDA database.
+parameters:
+  required:
+  - name: drug_name
+    type: str
+    description: Name of the drug to query for label information
+  optional:
+  - name: sections
+    type: List[str]
+    description: Optional list of specific sections to retrieve ['indications_and_usage',
+      'contraindications', 'warnings', 'dosage_and_administration']
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: get_fda_drug_label_info
+returns:
+  type: str
+  description: 工具执行结果

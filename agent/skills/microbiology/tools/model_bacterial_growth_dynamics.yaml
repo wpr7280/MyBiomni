@@ -1,0 +1,34 @@
+name: model_bacterial_growth_dynamics
+display_name: Model Bacterial Growth Dynamics
+description: Model bacterial population dynamics over time using ordinary differential
+  equations.
+parameters:
+  required:
+  - name: initial_population
+    type: float
+    description: Initial bacterial population size (CFU/ml or cells)
+  - name: growth_rate
+    type: float
+    description: Bacterial growth rate (per hour)
+  - name: clearance_rate
+    type: float
+    description: Rate at which bacteria are cleared from the system (per hour)
+  - name: niche_size
+    type: float
+    description: Maximum carrying capacity of the environment (CFU/ml or cells)
+  optional:
+  - name: simulation_time
+    type: float
+    description: Total simulation time in hours
+    default: 24
+  - name: time_step
+    type: float
+    description: Time step for simulation output
+    default: 0.1
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: model_bacterial_growth_dynamics
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,70 @@
+name: biodata_query
+display_name: Biodata Query
+version: 1.0.0
+category: database
+description: 生物数据库查询工具集。提供 query_uniprot, query_alphafold, query_interpro, query_pdb,
+  query_pdb_identifiers 等 40 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- query_uniprot
+- query_alphafold
+- query_interpro
+- query_pdb
+- query_pdb_identifiers
+- query_kegg
+- query_stringdb
+- query_iucn
+- query_paleobiology
+- query_jaspar
+- query_worms
+- query_cbioportal
+- query_clinvar
+- query_geo
+- query_dbsnp
+- query_ucsc
+- query_ensembl
+- query_opentarget
+- query_monarch
+- query_openfda
+- query_gwas_catalog
+- query_gnomad
+- blast_sequence
+- query_reactome
+- query_regulomedb
+- query_pride
+- query_gtopdb
+- query_remap
+- query_mpd
+- query_emdb
+- query_synapse
+- query_pubchem
+- query_chembl
+- query_unichem
+- query_clinicaltrials
+- query_dailymed
+- query_quickgo
+- query_encode
+- region_to_ccre_screen
+- get_genes_near_ccre
+triggers:
+- 数据库查询
+- database query
+- 生物数据
+- biodata
+- UniProt
+- PDB
+- NCBI
+- Ensembl
+- 蛋白质数据库
+- 基因数据库
+- 序列检索
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.database

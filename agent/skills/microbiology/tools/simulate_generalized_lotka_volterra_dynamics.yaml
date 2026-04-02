@@ -1,0 +1,31 @@
+name: simulate_generalized_lotka_volterra_dynamics
+display_name: Simulate Generalized Lotka Volterra Dynamics
+description: Simulate microbial community dynamics using the Generalized Lotka-Volterra
+  (gLV) model.
+parameters:
+  required:
+  - name: initial_abundances
+    type: numpy.ndarray
+    description: Initial abundances of each microbial species (1D array)
+  - name: growth_rates
+    type: numpy.ndarray
+    description: Intrinsic growth rates for each microbial species (1D array)
+  - name: interaction_matrix
+    type: numpy.ndarray
+    description: Matrix of interaction coefficients where A[i,j] represents the effect
+      of species j on species i (2D array)
+  - name: time_points
+    type: numpy.ndarray
+    description: Time points at which to evaluate the model
+  optional:
+  - name: output_file
+    type: str
+    description: Filename to save the simulation results
+    default: glv_simulation_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: simulate_generalized_lotka_volterra_dynamics
+returns:
+  type: str
+  description: 工具执行结果

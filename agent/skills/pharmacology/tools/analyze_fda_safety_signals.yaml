@@ -1,0 +1,25 @@
+name: analyze_fda_safety_signals
+display_name: Analyze Fda Safety Signals
+description: Analyze safety signals across multiple drugs using OpenFDA adverse event
+  data to identify patterns and comparative risk profiles.
+parameters:
+  required:
+  - name: drug_list
+    type: List[str]
+    description: List of drug names to analyze for safety signals
+  optional:
+  - name: comparison_period
+    type: Tuple[str, str]
+    description: Optional comparison time period as (start_date, end_date)
+    default: null
+  - name: signal_threshold
+    type: float
+    description: Threshold for signal detection
+    default: 2.0
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_fda_safety_signals
+returns:
+  type: str
+  description: 工具执行结果

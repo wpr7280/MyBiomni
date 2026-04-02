@@ -1,0 +1,15 @@
+name: extract_url_content
+display_name: Extract Url Content
+description: Extract the text content of a webpage using requests and BeautifulSoup.
+parameters:
+  required:
+  - name: url
+    type: str
+    description: Webpage URL to extract content from
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: extract_url_content
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,38 @@
+name: physiology
+display_name: Physiology
+version: 1.0.0
+category: physiology
+description: 生理学工具集。提供 reconstruct_3d_face_from_mri, analyze_abr_waveform_p1_metrics,
+  analyze_ciliary_beat_frequency, analyze_protein_colocalization, perform_cosinor_analysis
+  等 11 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- reconstruct_3d_face_from_mri
+- analyze_abr_waveform_p1_metrics
+- analyze_ciliary_beat_frequency
+- analyze_protein_colocalization
+- perform_cosinor_analysis
+- calculate_brain_adc_map
+- analyze_endolysosomal_calcium_dynamics
+- analyze_fatty_acid_composition_by_gc
+- analyze_hemodynamic_data
+- simulate_thyroid_hormone_pharmacokinetics
+- quantify_amyloid_beta_plaques
+triggers:
+- 生理学
+- physiology
+- 器官功能
+- 生理参数
+- 心血管
+- 呼吸
+- 神经生理
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology

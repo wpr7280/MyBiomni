@@ -1,0 +1,32 @@
+name: compare_protein_structures
+display_name: Compare Protein Structures
+description: Compares two protein structures to identify structural differences and
+  conformational changes.
+parameters:
+  required:
+  - name: pdb_file1
+    type: str
+    description: Path to the first PDB file
+  - name: pdb_file2
+    type: str
+    description: Path to the second PDB file
+  optional:
+  - name: chain_id1
+    type: str
+    description: Chain ID to analyze in the first structure
+    default: A
+  - name: chain_id2
+    type: str
+    description: Chain ID to analyze in the second structure
+    default: A
+  - name: output_prefix
+    type: str
+    description: Prefix for output files
+    default: protein_comparison
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology
+  function: compare_protein_structures
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,43 @@
+name: design_primer
+display_name: Design Primer
+description: Design a single primer within the given sequence window.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: Target DNA sequence
+  - name: start_pos
+    type: int
+    description: Starting position for primer search
+  optional:
+  - name: primer_length
+    type: int
+    description: Length of the primer to design
+    default: 20
+  - name: min_gc
+    type: float
+    description: Minimum GC content
+    default: 0.4
+  - name: max_gc
+    type: float
+    description: Maximum GC content
+    default: 0.6
+  - name: min_tm
+    type: float
+    description: Minimum melting temperature in °C
+    default: 55.0
+  - name: max_tm
+    type: float
+    description: Maximum melting temperature in °C
+    default: 65.0
+  - name: search_window
+    type: int
+    description: Size of window to search for primers
+    default: 100
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: design_primer
+returns:
+  type: str
+  description: 工具执行结果

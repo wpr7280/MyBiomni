@@ -1,0 +1,45 @@
+name: query_alphafold
+display_name: Query Alphafold
+description: Query the AlphaFold Database API for protein structure predictions or
+  metadata; optionally download structures.
+parameters:
+  required:
+  - name: uniprot_id
+    type: str
+    description: UniProt accession ID (e.g., 'P12345')
+  optional:
+  - name: endpoint
+    type: str
+    description: 'Endpoint: ''prediction'', ''summary'', or ''annotations'''
+    default: prediction
+  - name: residue_range
+    type: str
+    description: Residue range as 'start-end'
+    default: null
+  - name: download
+    type: bool
+    description: Whether to download structure file
+    default: false
+  - name: output_dir
+    type: str
+    description: Directory to save downloaded files
+    default: null
+  - name: file_format
+    type: str
+    description: Download format 'pdb' or 'cif'
+    default: pdb
+  - name: model_version
+    type: str
+    description: AlphaFold model version (e.g., v4)
+    default: v4
+  - name: model_number
+    type: int
+    description: Model number (1-5)
+    default: 1
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_alphafold
+returns:
+  type: str
+  description: 工具执行结果

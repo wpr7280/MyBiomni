@@ -1,0 +1,29 @@
+name: query_opentarget
+display_name: Query Opentarget
+description: Query the OpenTargets Platform API using natural language or a direct
+  GraphQL query.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about targets/diseases
+  optional:
+  - name: query
+    type: str
+    description: Direct GraphQL query string
+    default: null
+  - name: variables
+    type: dict
+    description: Variables for GraphQL
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_opentarget
+returns:
+  type: str
+  description: 工具执行结果

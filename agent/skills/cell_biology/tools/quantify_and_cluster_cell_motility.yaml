@@ -1,0 +1,26 @@
+name: quantify_and_cluster_cell_motility
+display_name: Quantify And Cluster Cell Motility
+description: Quantify cell motility features from time-lapse microscopy images and
+  cluster cells based on motility patterns.
+parameters:
+  required:
+  - name: image_sequence_path
+    type: str
+    description: Path to directory containing time-lapse microscopy images in sequential
+      order
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+  - name: num_clusters
+    type: int
+    description: Number of motility pattern clusters to identify
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.cell_biology
+  function: quantify_and_cluster_cell_motility
+returns:
+  type: str
+  description: 工具执行结果

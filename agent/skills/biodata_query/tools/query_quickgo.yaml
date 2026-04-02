@@ -1,0 +1,28 @@
+name: query_quickgo
+display_name: Query Quickgo
+description: Query the QuickGO API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about GO terms/annotations
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct QuickGO endpoint or full URL
+    default: null
+  - name: max_results
+    type: int
+    description: Max results (limit, up to 100)
+    default: 25
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_quickgo
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,29 @@
+name: query_clinicaltrials
+display_name: Query Clinicaltrials
+description: Query the ClinicalTrials.gov API v2 using natural language or a direct
+  endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about clinical trials
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct ClinicalTrials.gov endpoint or full URL
+    default: null
+  - name: max_results
+    type: int
+    description: Page size for results (pageSize)
+    default: 10
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_clinicaltrials
+returns:
+  type: str
+  description: 工具执行结果

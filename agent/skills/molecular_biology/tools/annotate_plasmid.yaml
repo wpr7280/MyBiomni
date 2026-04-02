@@ -1,0 +1,20 @@
+name: annotate_plasmid
+display_name: Annotate Plasmid
+description: Annotate a DNA sequence using pLannotate's command-line interface.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: The DNA sequence to annotate
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the sequence is circular
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: annotate_plasmid
+returns:
+  type: str
+  description: 工具执行结果

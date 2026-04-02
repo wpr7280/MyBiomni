@@ -1,0 +1,30 @@
+name: perform_flux_balance_analysis
+display_name: Perform Flux Balance Analysis
+description: Perform Flux Balance Analysis (FBA) on a genome-scale metabolic network
+  model and return a research log of the process and results.
+parameters:
+  required:
+  - name: model_file
+    type: str
+    description: Path to the metabolic model file (SBML or JSON format)
+  optional:
+  - name: constraints
+    type: dict
+    description: Dictionary of reaction constraints where keys are reaction IDs and
+      values are tuples of (lower_bound, upper_bound)
+    default: null
+  - name: objective_reaction
+    type: str
+    description: Reaction ID to use as the objective function (e.g., biomass reaction)
+    default: null
+  - name: output_file
+    type: str
+    description: File name to save the flux distribution results
+    default: fba_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology
+  function: perform_flux_balance_analysis
+returns:
+  type: str
+  description: 工具执行结果

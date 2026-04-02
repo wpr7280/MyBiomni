@@ -1,0 +1,29 @@
+name: analyze_flow_cytometry_immunophenotyping
+display_name: Analyze Flow Cytometry Immunophenotyping
+description: Analyze flow cytometry data to identify and quantify specific cell populations
+  based on surface markers.
+parameters:
+  required:
+  - name: fcs_file_path
+    type: str
+    description: Path to the FCS file containing flow cytometry data
+  - name: gating_strategy
+    type: dict
+    description: Dictionary defining the gating strategy. Each key is a population
+      name, and each value is a list of tuples (marker, operator, threshold)
+  optional:
+  - name: compensation_matrix
+    type: numpy.ndarray
+    description: Spillover/compensation matrix to correct for fluorescence overlap
+    default: null
+  - name: output_dir
+    type: str
+    description: Directory to save the results
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.cell_biology
+  function: analyze_flow_cytometry_immunophenotyping
+returns:
+  type: str
+  description: 工具执行结果

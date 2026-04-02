@@ -1,0 +1,28 @@
+name: liftover_coordinates
+display_name: Liftover Coordinates
+description: Perform liftover of genomic coordinates between hg19 and hg38 formats
+  with detailed intermediate steps.
+parameters:
+  required:
+  - name: chromosome
+    type: str
+    description: Chromosome number (e.g., '1', 'X')
+  - name: position
+    type: int
+    description: Genomic position
+  - name: input_format
+    type: str
+    description: Input genome build ('hg19' or 'hg38')
+  - name: output_format
+    type: str
+    description: Output genome build ('hg19' or 'hg38')
+  - name: data_path
+    type: str
+    description: Path to liftover chain files
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: liftover_coordinates
+returns:
+  type: str
+  description: 工具执行结果

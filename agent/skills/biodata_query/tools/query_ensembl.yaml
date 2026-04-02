@@ -1,0 +1,24 @@
+name: query_ensembl
+display_name: Query Ensembl
+description: Query the Ensembl REST API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about genomic data
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct Ensembl endpoint or full URL
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_ensembl
+returns:
+  type: str
+  description: 工具执行结果

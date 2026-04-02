@@ -1,0 +1,25 @@
+name: analyze_tissue_deformation_flow
+display_name: Analyze Tissue Deformation Flow
+description: Quantify tissue deformation and flow dynamics from microscopy image sequence.
+parameters:
+  required:
+  - name: image_sequence
+    type: list or numpy.ndarray
+    description: Sequence of microscopy images (either a list of file paths or a 3D
+      numpy array [time, height, width])
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save results
+    default: results
+  - name: pixel_scale
+    type: float
+    description: Physical scale of pixels (e.g., μm/pixel) for proper scaling of metrics
+    default: 1.0
+implementation:
+  type: module_ref
+  module: biomni.tool.biophysics
+  function: analyze_tissue_deformation_flow
+returns:
+  type: str
+  description: 工具执行结果

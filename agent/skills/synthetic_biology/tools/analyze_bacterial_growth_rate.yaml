@@ -1,0 +1,28 @@
+name: analyze_bacterial_growth_rate
+display_name: Analyze Bacterial Growth Rate
+description: Analyze bacterial growth data and extract growth parameters from OD600
+  measurements.
+parameters:
+  required:
+  - name: time_points
+    type: List or numpy.ndarray
+    description: Time points at which OD600 measurements were taken (in hours)
+  - name: od_measurements
+    type: List or numpy.ndarray
+    description: Optical density (OD600) measurements corresponding to each time point
+  optional:
+  - name: strain_name
+    type: str
+    description: Name of the bacterial strain being analyzed
+    default: Unknown strain
+  - name: output_dir
+    type: str
+    description: Directory where to save the output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: analyze_bacterial_growth_rate
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,27 @@
+name: analyze_intracellular_calcium_with_rhod2
+display_name: Analyze Intracellular Calcium With Rhod2
+description: Analyzes intracellular calcium concentration using Rhod-2 fluorescent
+  indicator from microscopy images.
+parameters:
+  required:
+  - name: background_image_path
+    type: str
+    description: Path to the background image (no cells, just media)
+  - name: control_image_path
+    type: str
+    description: Path to the control image (cells without calcium stimulus)
+  - name: sample_image_path
+    type: str
+    description: Path to the sample image (cells with calcium stimulus)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: analyze_intracellular_calcium_with_rhod2
+returns:
+  type: str
+  description: 工具执行结果

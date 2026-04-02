@@ -1,0 +1,33 @@
+name: test_pylabrobot_script
+display_name: Test Pylabrobot Script
+description: Test a PyLabRobot script based on the script content.
+parameters:
+  required:
+  - name: script_input
+    type: str
+    description: Script content to test
+  optional:
+  - name: enable_tracking
+    type: bool
+    description: If True, enable tracking of the script execution
+    default: false
+  - name: timeout_seconds
+    type: int
+    description: Timeout in seconds for the script execution
+    default: 60
+  - name: save_test_report
+    type: bool
+    description: If True, save the test results as a .json file
+    default: false
+  - name: test_report_dir
+    type: str
+    description: Directory to save the test results. If provided, the test results
+      will be saved as a .json file in this directory
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.lab_automation
+  function: test_pylabrobot_script
+returns:
+  type: str
+  description: 工具执行结果

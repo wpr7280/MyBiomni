@@ -1,0 +1,33 @@
+name: query_stringdb
+display_name: Query Stringdb
+description: Query the STRING protein interaction database using natural language
+  or direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about protein interactions
+  optional:
+  - name: endpoint
+    type: str
+    description: Full URL to query directly
+    default: null
+  - name: download_image
+    type: bool
+    description: Download image results if endpoint is image
+    default: false
+  - name: output_dir
+    type: str
+    description: Directory to save downloaded files
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_stringdb
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,28 @@
+name: quantify_corneal_nerve_fibers
+display_name: Quantify Corneal Nerve Fibers
+description: Quantify the volume/density of immunofluorescence-labeled corneal nerve
+  fibers.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the immunofluorescence microscopy image file
+  - name: marker_type
+    type: str
+    description: Type of nerve fiber marker (e.g., 'βIII-tubulin', 'SP', 'L1CAM')
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+  - name: threshold_method
+    type: str
+    description: Method for thresholding ('otsu', 'adaptive', 'manual')
+    default: otsu
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: quantify_corneal_nerve_fibers
+returns:
+  type: str
+  description: 工具执行结果

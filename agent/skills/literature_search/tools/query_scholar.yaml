@@ -1,0 +1,16 @@
+name: query_scholar
+display_name: Query Scholar
+description: Query Google Scholar for papers based on the provided search query and
+  return the first search result.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: The search query string.
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: query_scholar
+returns:
+  type: str
+  description: 工具执行结果

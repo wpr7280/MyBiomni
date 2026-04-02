@@ -1,0 +1,31 @@
+name: analyze_atp_luminescence_assay
+display_name: Analyze Atp Luminescence Assay
+description: Analyze luminescence-based ATP assay data to determine intracellular
+  ATP concentration.
+parameters:
+  required:
+  - name: data_file
+    type: str
+    description: Path to CSV file containing luminescence readings from samples with
+      columns for Sample_ID and Luminescence_Value
+  - name: standard_curve_file
+    type: str
+    description: Path to CSV file containing standard curve data with columns for
+      ATP_Concentration (in nM) and Luminescence_Value
+  optional:
+  - name: normalization_method
+    type: str
+    description: Method used to normalize ATP values, either cell_count or protein_content
+    default: cell_count
+  - name: normalization_data
+    type: str or dict
+    description: Path to CSV file with normalization data or dictionary with sample
+      IDs as keys and normalization values
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: analyze_atp_luminescence_assay
+returns:
+  type: str
+  description: 工具执行结果

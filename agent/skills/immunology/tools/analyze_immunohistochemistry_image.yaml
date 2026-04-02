@@ -1,0 +1,25 @@
+name: analyze_immunohistochemistry_image
+display_name: Analyze Immunohistochemistry Image
+description: Analyzes immunohistochemistry images to quantify protein expression and
+  spatial distribution.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the microscopy image of tissue section stained with antibodies
+  optional:
+  - name: protein_name
+    type: str
+    description: Name of the protein being analyzed
+    default: Unknown
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./ihc_results/
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: analyze_immunohistochemistry_image
+returns:
+  type: str
+  description: 工具执行结果

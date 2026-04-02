@@ -1,0 +1,34 @@
+name: synthetic_biology
+display_name: Synthetic Biology
+version: 1.0.0
+category: synthetic_biology
+description: 合成生物学工具集。提供 engineer_bacterial_genome_for_therapeutic_delivery, analyze_bacterial_growth_rate,
+  analyze_barcode_sequencing_data, analyze_bifurcation_diagram, create_biochemical_network_sbml_model
+  等 8 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- engineer_bacterial_genome_for_therapeutic_delivery
+- analyze_bacterial_growth_rate
+- analyze_barcode_sequencing_data
+- analyze_bifurcation_diagram
+- create_biochemical_network_sbml_model
+- optimize_codons_for_heterologous_expression
+- simulate_gene_circuit_with_growth_feedback
+- identify_fas_functional_domains
+triggers:
+- 合成生物学
+- synthetic biology
+- 基因回路
+- genetic circuit
+- 代谢工程
+- metabolic engineering
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology

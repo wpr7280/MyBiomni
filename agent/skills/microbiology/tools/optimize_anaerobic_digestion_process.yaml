@@ -1,0 +1,31 @@
+name: optimize_anaerobic_digestion_process
+display_name: Optimize Anaerobic Digestion Process
+description: Optimize anaerobic digestion process conditions to maximize VFA production
+  or methane yield.
+parameters:
+  required:
+  - name: waste_characteristics
+    type: dict
+    description: Dictionary containing waste characteristics such as total_solids,
+      volatile_solids, and cod
+  - name: operational_parameters
+    type: dict
+    description: Dictionary containing operational parameters and their ranges for
+      hrt, olr, if_ratio, temperature, and ph
+  optional:
+  - name: target_output
+    type: str
+    description: Target output to maximize, either 'vfa_production' or 'methane_yield'
+    default: methane_yield
+  - name: optimization_method
+    type: str
+    description: Method used for optimization, either 'rsm' (Response Surface Methodology)
+      or 'genetic' (Genetic Algorithm)
+    default: rsm
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: optimize_anaerobic_digestion_process
+returns:
+  type: str
+  description: 工具执行结果

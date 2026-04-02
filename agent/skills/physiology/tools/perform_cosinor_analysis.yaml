@@ -1,0 +1,25 @@
+name: perform_cosinor_analysis
+display_name: Perform Cosinor Analysis
+description: Performs cosinor analysis on physiological time series data to characterize
+  circadian rhythms.
+parameters:
+  required:
+  - name: time_data
+    type: array-like
+    description: Time points of the measurements in hours
+  - name: physiological_data
+    type: array-like
+    description: Physiological measurements corresponding to each time point
+  optional:
+  - name: period
+    type: float
+    description: Period of the rhythm in hours, default is 24 hours for circadian
+      rhythms
+    default: 24.0
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: perform_cosinor_analysis
+returns:
+  type: str
+  description: 工具执行结果

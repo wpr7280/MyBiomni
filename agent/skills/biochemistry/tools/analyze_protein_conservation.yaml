@@ -1,0 +1,21 @@
+name: analyze_protein_conservation
+display_name: Analyze Protein Conservation
+description: Perform multiple sequence alignment and phylogenetic analysis to identify
+  conserved protein regions.
+parameters:
+  required:
+  - name: protein_sequences
+    type: list of str
+    description: List of protein sequences in FASTA format from multiple organisms.
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.biochemistry
+  function: analyze_protein_conservation
+returns:
+  type: str
+  description: 工具执行结果

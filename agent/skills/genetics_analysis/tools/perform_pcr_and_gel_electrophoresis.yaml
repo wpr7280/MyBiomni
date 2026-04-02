@@ -1,0 +1,53 @@
+name: perform_pcr_and_gel_electrophoresis
+display_name: Perform Pcr And Gel Electrophoresis
+description: Performs PCR amplification of a target transgene and visualizes results
+  using agarose gel electrophoresis.
+parameters:
+  required:
+  - name: genomic_dna
+    type: str
+    description: Path to file containing genomic DNA sequence in FASTA format or the
+      sequence itself
+  optional:
+  - name: forward_primer
+    type: str
+    description: Forward primer sequence. If not provided, will be designed based
+      on target_region
+    default: null
+  - name: reverse_primer
+    type: str
+    description: Reverse primer sequence. If not provided, will be designed based
+      on target_region
+    default: null
+  - name: target_region
+    type: tuple
+    description: Tuple of (start, end) positions for the target region in the genomic
+      DNA
+    default: null
+  - name: annealing_temp
+    type: float
+    description: Annealing temperature for PCR in °C
+    default: 58
+  - name: extension_time
+    type: int
+    description: Extension time in seconds
+    default: 30
+  - name: cycles
+    type: int
+    description: Number of PCR cycles
+    default: 35
+  - name: gel_percentage
+    type: float
+    description: Percentage of agarose gel
+    default: 2.0
+  - name: output_prefix
+    type: str
+    description: Prefix for output files
+    default: pcr_result
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: perform_pcr_and_gel_electrophoresis
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,19 @@
+name: calculate_similarity_metrics
+display_name: Calculate Similarity Metrics
+description: Calculate similarity metrics between two medical images. Supports mutual
+  information, mean squared error, correlation, and normalized cross correlation.
+parameters:
+  required:
+  - name: image1_path
+    type: str
+    description: Path to the first image file
+  - name: image2_path
+    type: str
+    description: Path to the second image file
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: calculate_similarity_metrics
+returns:
+  type: str
+  description: 工具执行结果

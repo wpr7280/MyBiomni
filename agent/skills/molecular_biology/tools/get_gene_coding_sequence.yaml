@@ -1,0 +1,23 @@
+name: get_gene_coding_sequence
+display_name: Get Gene Coding Sequence
+description: Retrieves the coding sequence(s) of a specified gene from NCBI Entrez.
+parameters:
+  required:
+  - name: gene_name
+    type: str
+    description: Name of the gene
+  - name: organism
+    type: str
+    description: Name of the organism
+  optional:
+  - name: email
+    type: str
+    description: Email address for NCBI Entrez (recommended)
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: get_gene_coding_sequence
+returns:
+  type: str
+  description: 工具执行结果

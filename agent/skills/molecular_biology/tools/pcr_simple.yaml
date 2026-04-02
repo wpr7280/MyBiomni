@@ -1,0 +1,26 @@
+name: pcr_simple
+display_name: Pcr Simple
+description: Simulate PCR amplification with given primers and sequence.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: Either a sequence string or path to plasmid file
+  - name: forward_primer
+    type: str
+    description: Forward primer sequence (5' to 3')
+  - name: reverse_primer
+    type: str
+    description: Reverse primer sequence (5' to 3')
+  optional:
+  - name: circular
+    type: bool
+    description: Whether the sequence is circular
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: pcr_simple
+returns:
+  type: str
+  description: 工具执行结果

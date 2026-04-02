@@ -1,0 +1,21 @@
+name: optimize_codons_for_heterologous_expression
+display_name: Optimize Codons For Heterologous Expression
+description: Analyzes and optimizes a DNA/RNA sequence for improved expression in
+  a heterologous host organism.
+parameters:
+  required:
+  - name: target_sequence
+    type: str
+    description: The DNA or RNA sequence of the target gene to be optimized. Should
+      contain complete codons (length divisible by 3).
+  - name: host_codon_usage
+    type: dict
+    description: 'Dictionary mapping codons to their usage frequency in the host organism.
+      Format: {''AUG'': 0.8, ''GCC'': 0.6, ...} or {''ATG'': 0.8, ''GCC'': 0.6, ...}'
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: optimize_codons_for_heterologous_expression
+returns:
+  type: str
+  description: 工具执行结果

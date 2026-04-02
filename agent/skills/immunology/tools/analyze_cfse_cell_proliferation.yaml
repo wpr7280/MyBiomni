@@ -1,0 +1,25 @@
+name: analyze_cfse_cell_proliferation
+display_name: Analyze Cfse Cell Proliferation
+description: Analyze CFSE-labeled cell samples to quantify cell division and proliferation.
+parameters:
+  required:
+  - name: fcs_file_path
+    type: str
+    description: Path to the FCS file containing flow cytometry data from CFSE-labeled
+      cells
+  optional:
+  - name: cfse_channel
+    type: str
+    description: Name of the channel containing CFSE fluorescence data
+    default: FL1-A
+  - name: lymphocyte_gate
+    type: tuple or None
+    description: Tuple of (min_fsc, max_fsc, min_ssc, max_ssc) for lymphocyte gating
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: analyze_cfse_cell_proliferation
+returns:
+  type: str
+  description: 工具执行结果

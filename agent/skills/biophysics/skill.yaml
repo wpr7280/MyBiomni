@@ -1,0 +1,27 @@
+name: biophysics
+display_name: Biophysics
+version: 1.0.0
+category: biophysics
+description: 生物物理学工具集。提供 predict_protein_disorder_regions, analyze_cell_morphology_and_cytoskeleton,
+  analyze_tissue_deformation_flow。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- predict_protein_disorder_regions
+- analyze_cell_morphology_and_cytoskeleton
+- analyze_tissue_deformation_flow
+triggers:
+- 生物物理
+- biophysics
+- 分子动力学
+- molecular dynamics
+- 蛋白质折叠
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.biophysics

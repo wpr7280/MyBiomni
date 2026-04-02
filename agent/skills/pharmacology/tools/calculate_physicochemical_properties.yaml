@@ -1,0 +1,15 @@
+name: calculate_physicochemical_properties
+display_name: Calculate Physicochemical Properties
+description: Calculate key physicochemical properties of a drug candidate molecule.
+parameters:
+  required:
+  - name: smiles_string
+    type: str
+    description: The molecular structure in SMILES format
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: calculate_physicochemical_properties
+returns:
+  type: str
+  description: 工具执行结果

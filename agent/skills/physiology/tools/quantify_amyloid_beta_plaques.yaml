@@ -1,0 +1,33 @@
+name: quantify_amyloid_beta_plaques
+display_name: Quantify Amyloid Beta Plaques
+description: Analyzes an image to detect and quantify amyloid-beta plaques, returning
+  a detailed analysis log.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the image file to be analyzed for amyloid-beta plaques
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory where results will be saved
+    default: ./results
+  - name: threshold_method
+    type: str
+    description: Method for image thresholding (otsu, adaptive, or manual)
+    default: otsu
+  - name: min_plaque_size
+    type: int
+    description: Minimum size in pixels² for a region to be considered a plaque
+    default: 50
+  - name: manual_threshold
+    type: int
+    description: Threshold value to use when threshold_method is manual
+    default: 127
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: quantify_amyloid_beta_plaques
+returns:
+  type: str
+  description: 工具执行结果

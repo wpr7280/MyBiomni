@@ -1,0 +1,38 @@
+name: analyze_barcode_sequencing_data
+display_name: Analyze Barcode Sequencing Data
+description: Analyze sequencing data to extract, quantify and determine lineage relationships
+  of barcodes.
+parameters:
+  required:
+  - name: input_file
+    type: str
+    description: Path to the input sequencing file in FASTQ or FASTA format
+  optional:
+  - name: barcode_pattern
+    type: str
+    description: Regular expression pattern to identify barcodes. If None, will use
+      flanking sequences
+    default: null
+  - name: flanking_seq_5prime
+    type: str
+    description: 5' flanking sequence of the barcode region
+    default: null
+  - name: flanking_seq_3prime
+    type: str
+    description: 3' flanking sequence of the barcode region
+    default: null
+  - name: min_count
+    type: int
+    description: Minimum count threshold for considering a barcode
+    default: 5
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: analyze_barcode_sequencing_data
+returns:
+  type: str
+  description: 工具执行结果

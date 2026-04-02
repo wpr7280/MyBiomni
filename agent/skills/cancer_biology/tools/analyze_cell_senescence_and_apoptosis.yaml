@@ -1,0 +1,17 @@
+name: analyze_cell_senescence_and_apoptosis
+display_name: Analyze Cell Senescence And Apoptosis
+description: Analyze flow cytometry data to quantify senescent and apoptotic cell
+  populations.
+parameters:
+  required:
+  - name: fcs_file_path
+    type: str
+    description: Path to the FCS file containing flow cytometry data with measurements
+      for senescence-associated β-galactosidase (SA-β-Gal) and Annexin V/7-AAD staining
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: analyze_cell_senescence_and_apoptosis
+returns:
+  type: str
+  description: 工具执行结果

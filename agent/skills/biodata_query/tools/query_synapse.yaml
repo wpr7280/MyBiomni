@@ -1,0 +1,40 @@
+name: query_synapse
+display_name: Query Synapse
+description: Query Synapse REST API for biomedical datasets/files using natural language
+  or structured search parameters. Supports optional authentication via SYNAPSE_AUTH_TOKEN.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about biomedical data
+  optional:
+  - name: query_term
+    type: str|list[str]
+    description: Search term(s) (AND logic across list)
+    default: null
+  - name: return_fields
+    type: list[str]
+    description: Fields to return
+    default:
+    - name
+    - node_type
+    - description
+  - name: max_results
+    type: int
+    description: Max results (20 typical, up to 50)
+    default: 20
+  - name: query_type
+    type: str
+    description: '''dataset'', ''file'', or ''folder'''
+    default: dataset
+  - name: verbose
+    type: bool
+    description: Return full API response or formatted
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_synapse
+returns:
+  type: str
+  description: 工具执行结果

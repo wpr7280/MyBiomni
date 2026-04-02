@@ -1,0 +1,26 @@
+name: predict_protein_disorder_regions
+display_name: Predict Protein Disorder Regions
+description: Predicts intrinsically disordered regions (IDRs) in a protein sequence
+  using IUPred2A.
+parameters:
+  required:
+  - name: protein_sequence
+    type: str
+    description: The amino acid sequence of the protein to analyze
+  optional:
+  - name: threshold
+    type: float
+    description: The disorder score threshold above which a residue is considered
+      disordered
+    default: 0.5
+  - name: output_file
+    type: str
+    description: Filename to save the per-residue disorder scores
+    default: disorder_prediction_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.biophysics
+  function: predict_protein_disorder_regions
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,28 @@
+name: find_alternative_drugs_ddinter
+display_name: Find Alternative Drugs Ddinter
+description: Find alternative drugs that don't interact with contraindicated drugs
+  using DDInter database for safer therapeutic substitutions.
+parameters:
+  required:
+  - name: target_drug
+    type: str
+    description: Drug to find alternatives for
+  - name: contraindicated_drugs
+    type: List[str]
+    description: List of drugs to avoid interactions with
+  optional:
+  - name: therapeutic_class
+    type: str
+    description: Limit search to specific therapeutic class
+    default: null
+  - name: data_lake_path
+    type: str
+    description: Path to data lake directory containing DDInter data
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: find_alternative_drugs_ddinter
+returns:
+  type: str
+  description: 工具执行结果

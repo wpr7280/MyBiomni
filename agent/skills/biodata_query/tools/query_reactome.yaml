@@ -1,0 +1,33 @@
+name: query_reactome
+display_name: Query Reactome
+description: Query the Reactome database using natural language or a direct endpoint;
+  optionally download pathway diagrams.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about biological pathways
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct endpoint or full URL
+    default: null
+  - name: download
+    type: bool
+    description: Download pathway diagram if available
+    default: false
+  - name: output_dir
+    type: str
+    description: Directory to save downloads
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_reactome
+returns:
+  type: str
+  description: 工具执行结果

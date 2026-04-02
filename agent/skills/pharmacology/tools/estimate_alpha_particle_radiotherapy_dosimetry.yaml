@@ -1,0 +1,28 @@
+name: estimate_alpha_particle_radiotherapy_dosimetry
+display_name: Estimate Alpha Particle Radiotherapy Dosimetry
+description: Estimate radiation absorbed doses to tumor and normal organs for alpha-particle
+  radiotherapeutics using the Medical Internal Radiation Dose (MIRD) schema.
+parameters:
+  required:
+  - name: biodistribution_data
+    type: dict
+    description: Dictionary containing organ/tissue names as keys and a list of time-activity
+      measurements as values. Each measurement should be a tuple of (time_hours, percent_injected_activity).
+      Must include entries for all relevant organs including 'tumor'.
+  - name: radiation_parameters
+    type: dict
+    description: Dictionary containing radiation parameters for the alpha-emitting
+      radionuclide including 'radionuclide', 'half_life_hours', 'energy_per_decay_MeV',
+      'radiation_weighting_factor', and 'S_factors'.
+  optional:
+  - name: output_file
+    type: str
+    description: Filename to save the dosimetry results
+    default: dosimetry_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: estimate_alpha_particle_radiotherapy_dosimetry
+returns:
+  type: str
+  description: 工具执行结果

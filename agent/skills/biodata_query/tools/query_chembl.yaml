@@ -1,0 +1,41 @@
+name: query_chembl
+display_name: Query Chembl
+description: Query the ChEMBL REST API via natural language, direct endpoint, or identifiers
+  (chembl_id, smiles, molecule_name).
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about bioactivity data
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct ChEMBL API endpoint or full URL
+    default: null
+  - name: chembl_id
+    type: str
+    description: ChEMBL ID (e.g., 'CHEMBL25')
+    default: null
+  - name: smiles
+    type: str
+    description: SMILES for similarity/substructure
+    default: null
+  - name: molecule_name
+    type: str
+    description: Molecule name to search
+    default: null
+  - name: max_results
+    type: int
+    description: Max results
+    default: 20
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_chembl
+returns:
+  type: str
+  description: 工具执行结果

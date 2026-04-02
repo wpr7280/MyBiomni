@@ -1,0 +1,26 @@
+name: get_genes_near_ccre
+display_name: Get Genes Near Ccre
+description: Given a cCRE accession, return k nearest genes sorted by distance.
+parameters:
+  required:
+  - name: accession
+    type: str
+    description: ENCODE cCRE accession ID (e.g., 'EH38E1516980')
+  - name: assembly
+    type: str
+    description: Genome assembly (e.g., 'GRCh38')
+  - name: chromosome
+    type: str
+    description: Chromosome of the cCRE (e.g., 'chr12')
+  optional:
+  - name: k
+    type: int
+    description: Number of nearby genes to return
+    default: 10
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: get_genes_near_ccre
+returns:
+  type: str
+  description: 工具执行结果

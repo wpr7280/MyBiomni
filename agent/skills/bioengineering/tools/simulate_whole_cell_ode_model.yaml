@@ -1,0 +1,41 @@
+name: simulate_whole_cell_ode_model
+display_name: Simulate Whole Cell Ode Model
+description: Simulate a whole-cell model represented as a system of ordinary differential
+  equations (ODEs).
+parameters:
+  required:
+  - name: initial_conditions
+    type: dict or array-like
+    description: Initial values for each state variable in the model. If dict, keys
+      are variable names and values are initial concentrations/values. If array-like,
+      order must match the order expected by the ODE function.
+  - name: parameters
+    type: dict
+    description: Model parameters required by the ODE function. Keys are parameter
+      names and values are parameter values.
+  optional:
+  - name: ode_function
+    type: callable
+    description: Function defining the system of ODEs. Should take arguments (t, y,
+      *args) where t is time, y is the state vector, and args contains additional
+      parameters. If None, a simple example whole-cell model will be used.
+    default: null
+  - name: time_span
+    type: tuple
+    description: Tuple of (start_time, end_time) for the simulation.
+    default: (0, 100)
+  - name: time_points
+    type: int
+    description: Number of time points to evaluate.
+    default: 1000
+  - name: method
+    type: str
+    description: Numerical integration method to use (e.g., 'RK45', 'LSODA', 'BDF').
+    default: '''LSODA'''
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: simulate_whole_cell_ode_model
+returns:
+  type: str
+  description: 工具执行结果

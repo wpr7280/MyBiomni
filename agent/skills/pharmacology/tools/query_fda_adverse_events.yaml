@@ -1,0 +1,34 @@
+name: query_fda_adverse_events
+display_name: Query Fda Adverse Events
+description: Query FDA adverse event reports for specific drugs from the OpenFDA database
+  to identify potential safety signals, reaction patterns, and regulatory intelligence.
+parameters:
+  required:
+  - name: drug_name
+    type: str
+    description: Name of the drug to query for adverse events
+  optional:
+  - name: date_range
+    type: Tuple[str, str]
+    description: Optional date range as (start_date, end_date) in YYYY-MM-DD format
+    default: null
+  - name: severity_filter
+    type: List[str]
+    description: Optional filter by severity levels ['serious', 'non_serious']
+    default: null
+  - name: outcome_filter
+    type: List[str]
+    description: Optional filter by outcomes ['life_threatening', 'hospitalization',
+      'death']
+    default: null
+  - name: limit
+    type: int
+    description: Maximum number of results to return
+    default: 100
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: query_fda_adverse_events
+returns:
+  type: str
+  description: 工具执行结果

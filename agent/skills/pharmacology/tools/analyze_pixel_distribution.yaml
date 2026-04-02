@@ -1,0 +1,18 @@
+name: analyze_pixel_distribution
+display_name: Analyze Pixel Distribution
+description: Analyze western blot or DNA electrophoresis images and return pixel distribution
+  statistics including intensity statistics, percentiles, and brightness distribution.
+  Use this to determine appropriate threshold values for find_roi_from_image.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the input grayscale image. Automatically appends .png if
+      no suffix is provided.
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_pixel_distribution
+returns:
+  type: str
+  description: 工具执行结果

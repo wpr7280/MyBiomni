@@ -1,0 +1,32 @@
+name: detect_and_characterize_structural_variations
+display_name: Detect And Characterize Structural Variations
+description: Detects and characterizes structural variations (SVs) in genomic sequencing
+  data using LUMPY for SV detection followed by annotation with COSMIC and/or ClinVar
+  databases.
+parameters:
+  required:
+  - name: bam_file_path
+    type: str
+    description: Path to the aligned sequencing data in BAM format
+  - name: reference_genome_path
+    type: str
+    description: Path to the reference genome in FASTA format
+  - name: output_dir
+    type: str
+    description: Directory where results will be saved
+  optional:
+  - name: cosmic_db_path
+    type: str
+    description: Path to the COSMIC database for cancer annotation
+    default: null
+  - name: clinvar_db_path
+    type: str
+    description: Path to the ClinVar database for clinical annotation
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: detect_and_characterize_structural_variations
+returns:
+  type: str
+  description: 工具执行结果

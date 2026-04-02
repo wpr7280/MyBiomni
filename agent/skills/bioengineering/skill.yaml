@@ -1,0 +1,33 @@
+name: bioengineering
+display_name: Bioengineering
+version: 1.0.0
+category: bioengineering
+description: 生物工程工具集。提供 analyze_cell_migration_metrics, perform_crispr_cas9_genome_editing,
+  analyze_calcium_imaging_data, analyze_in_vitro_drug_release_kinetics, analyze_myofiber_morphology
+  等 7 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- analyze_cell_migration_metrics
+- perform_crispr_cas9_genome_editing
+- analyze_calcium_imaging_data
+- analyze_in_vitro_drug_release_kinetics
+- analyze_myofiber_morphology
+- decode_behavior_from_neural_trajectories
+- simulate_whole_cell_ode_model
+triggers:
+- 生物工程
+- bioengineering
+- 生物材料
+- 组织工程
+- tissue engineering
+- 合成生物学
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering

@@ -1,0 +1,30 @@
+name: analyze_protein_phylogeny
+display_name: Analyze Protein Phylogeny
+description: Perform phylogenetic analysis on a set of protein sequences. This function
+  aligns sequences, constructs a phylogenetic tree, and visualizes evolutionary relationships.
+parameters:
+  required:
+  - name: fasta_sequences
+    type: str
+    description: Path to a FASTA file containing protein sequences or a string with
+      FASTA-formatted sequences
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+  - name: alignment_method
+    type: str
+    description: 'Method for sequence alignment: "clustalw", "muscle", or "pre-aligned"'
+    default: clustalw
+  - name: tree_method
+    type: str
+    description: 'Method for tree construction: "iqtree" or fallback to neighbor-joining'
+    default: fasttree
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: analyze_protein_phylogeny
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,29 @@
+name: query_drug_interactions
+display_name: Query Drug Interactions
+description: Query drug-drug interactions from DDInter database to identify potential
+  interactions, mechanisms, and severity levels between specified drugs.
+parameters:
+  required:
+  - name: drug_names
+    type: List[str]
+    description: List of drug names to query for interactions
+  optional:
+  - name: interaction_types
+    type: List[str]
+    description: Filter results by specific interaction types
+    default: null
+  - name: severity_levels
+    type: List[str]
+    description: Filter results by severity levels (Major, Moderate, Minor)
+    default: null
+  - name: data_lake_path
+    type: str
+    description: Path to data lake directory containing DDInter data
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: query_drug_interactions
+returns:
+  type: str
+  description: 工具执行结果

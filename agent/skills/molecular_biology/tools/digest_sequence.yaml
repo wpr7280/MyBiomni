@@ -1,0 +1,24 @@
+name: digest_sequence
+display_name: Digest Sequence
+description: Simulates restriction enzyme digestion of a DNA sequence and returns
+  the resulting fragments with their properties.
+parameters:
+  required:
+  - name: dna_sequence
+    type: str
+    description: Input DNA sequence to be digested
+  - name: enzyme_names
+    type: List[str]
+    description: Names of restriction enzymes to use for digestion
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the DNA sequence is circular (True) or linear (False)
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: digest_sequence
+returns:
+  type: str
+  description: 工具执行结果

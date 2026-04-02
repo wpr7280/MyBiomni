@@ -1,0 +1,34 @@
+name: analyze_cell_migration_metrics
+display_name: Analyze Cell Migration Metrics
+description: Analyze cell migration metrics from time-lapse microscopy images.
+parameters:
+  required:
+  - name: image_sequence_path
+    type: str
+    description: Path to the directory containing time-lapse images or path to a multi-frame
+      TIFF file
+  optional:
+  - name: pixel_size_um
+    type: float
+    description: Conversion factor from pixels to micrometers
+    default: 1.0
+  - name: time_interval_min
+    type: float
+    description: Time interval between consecutive frames in minutes
+    default: 1.0
+  - name: min_track_length
+    type: int
+    description: Minimum number of frames a cell must be tracked to be included in
+      analysis
+    default: 10
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: analyze_cell_migration_metrics
+returns:
+  type: str
+  description: 工具执行结果

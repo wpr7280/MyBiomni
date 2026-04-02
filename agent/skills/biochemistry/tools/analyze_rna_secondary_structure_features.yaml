@@ -1,0 +1,23 @@
+name: analyze_rna_secondary_structure_features
+display_name: Analyze Rna Secondary Structure Features
+description: Calculate numeric values for various structural features of an RNA secondary
+  structure.
+parameters:
+  required:
+  - name: dot_bracket_structure
+    type: str
+    description: RNA secondary structure in dot-bracket notation (e.g., "(((...)))").
+      Parentheses represent base pairs, dots represent unpaired bases.
+  optional:
+  - name: sequence
+    type: str
+    description: The RNA sequence corresponding to the structure. If provided, sequence-dependent
+      energy calculations will be performed.
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.biochemistry
+  function: analyze_rna_secondary_structure_features
+returns:
+  type: str
+  description: 工具执行结果

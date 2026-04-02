@@ -1,0 +1,22 @@
+name: predict_admet_properties
+display_name: Predict Admet Properties
+description: Predicts ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity)
+  properties for a list of compounds using pretrained models.
+parameters:
+  required:
+  - name: smiles_list
+    type: List[str]
+    description: List of SMILES strings representing chemical compounds to analyze
+  optional:
+  - name: ADMET_model_type
+    type: str
+    description: 'Type of model to use for ADMET prediction (options: ''MPNN'', ''CNN'',
+      ''Morgan'')'
+    default: MPNN
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: predict_admet_properties
+returns:
+  type: str
+  description: 工具执行结果

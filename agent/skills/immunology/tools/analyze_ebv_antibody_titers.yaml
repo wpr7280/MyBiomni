@@ -1,0 +1,30 @@
+name: analyze_ebv_antibody_titers
+display_name: Analyze Ebv Antibody Titers
+description: Analyze ELISA data to quantify EBV antibody titers in plasma/serum samples.
+parameters:
+  required:
+  - name: raw_od_data
+    type: dict
+    description: 'Dictionary containing optical density (OD) readings for each sample.
+      Format: {sample_id: {''VCA_IgG'': float, ''VCA_IgM'': float, ''EA_IgG'': float,
+      ''EA_IgM'': float, ''EBNA1_IgG'': float, ''EBNA1_IgM'': float}}'
+  - name: standard_curve_data
+    type: dict
+    description: 'Dictionary containing standard curve data for each antibody type.
+      Format: {antibody_type: [(concentration, OD), ...]}'
+  - name: sample_metadata
+    type: dict
+    description: 'Dictionary containing metadata for each sample. Format: {sample_id:
+      {''group'': str, ''collection_date'': str}}'
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files.
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: analyze_ebv_antibody_titers
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,25 @@
+name: query_gnomad
+display_name: Query Gnomad
+description: Query gnomAD for variants in a gene using natural language or direct
+  gene symbol.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about genetic variants
+  optional:
+  - name: gene_symbol
+    type: str
+    description: Gene symbol (e.g., 'BRCA1')
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_gnomad
+returns:
+  type: str
+  description: 工具执行结果

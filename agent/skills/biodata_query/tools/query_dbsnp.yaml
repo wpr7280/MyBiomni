@@ -1,0 +1,25 @@
+name: query_dbsnp
+display_name: Query Dbsnp
+description: Query the NCBI dbSNP database using natural language or direct search
+  term.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about SNPs/variants
+  optional:
+  - name: search_term
+    type: str
+    description: Direct dbSNP search term
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum number of results
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_dbsnp
+returns:
+  type: str
+  description: 工具执行结果

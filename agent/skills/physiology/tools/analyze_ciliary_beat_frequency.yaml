@@ -1,0 +1,33 @@
+name: analyze_ciliary_beat_frequency
+display_name: Analyze Ciliary Beat Frequency
+description: Analyze ciliary beat frequency from high-speed video microscopy data
+  using FFT analysis.
+parameters:
+  required:
+  - name: video_path
+    type: str
+    description: Path to the high-speed video microscopy file of ciliary beating
+  optional:
+  - name: roi_count
+    type: int
+    description: Number of regions of interest to analyze
+    default: 5
+  - name: min_freq
+    type: float
+    description: Minimum frequency to consider in Hz
+    default: 0
+  - name: max_freq
+    type: float
+    description: Maximum frequency to consider in Hz
+    default: 30
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_ciliary_beat_frequency
+returns:
+  type: str
+  description: 工具执行结果

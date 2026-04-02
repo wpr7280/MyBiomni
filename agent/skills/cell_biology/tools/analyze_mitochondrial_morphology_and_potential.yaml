@@ -1,0 +1,26 @@
+name: analyze_mitochondrial_morphology_and_potential
+display_name: Analyze Mitochondrial Morphology And Potential
+description: Quantifies metrics of mitochondrial morphology and membrane potential
+  from fluorescence microscopy images.
+parameters:
+  required:
+  - name: morphology_image_path
+    type: str
+    description: Path to the fluorescence microscopy image showing mitochondrial morphology
+      (e.g., MTS-GFP)
+  - name: potential_image_path
+    type: str
+    description: Path to the fluorescence microscopy image showing mitochondrial membrane
+      potential (e.g., TMRE staining)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.cell_biology
+  function: analyze_mitochondrial_morphology_and_potential
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,24 @@
+name: search_google
+display_name: Search Google
+description: Search using Google search and return formatted results.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: The search query (e.g., "protocol text or search question")
+  optional:
+  - name: num_results
+    type: int
+    description: Number of results to return
+    default: 3
+  - name: language
+    type: str
+    description: Language code for search results
+    default: en
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: search_google
+returns:
+  type: str
+  description: 工具执行结果

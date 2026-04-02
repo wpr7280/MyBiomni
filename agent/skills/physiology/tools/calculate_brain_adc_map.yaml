@@ -1,0 +1,28 @@
+name: calculate_brain_adc_map
+display_name: Calculate Brain Adc Map
+description: Calculate Apparent Diffusion Coefficient (ADC) map from diffusion-weighted
+  MRI data using monoexponential diffusion model.
+parameters:
+  required:
+  - name: dwi_file_path
+    type: str
+    description: Path to the 4D NIfTI file containing diffusion-weighted MRI data
+  - name: b_values
+    type: List[float]
+    description: List of b-values corresponding to each volume in the 4D DWI data
+  optional:
+  - name: output_path
+    type: str
+    description: Path where the output ADC map will be saved
+    default: adc_map.nii.gz
+  - name: mask_file_path
+    type: str
+    description: Path to a binary mask file to limit ADC calculation to brain regions
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: calculate_brain_adc_map
+returns:
+  type: str
+  description: 工具执行结果

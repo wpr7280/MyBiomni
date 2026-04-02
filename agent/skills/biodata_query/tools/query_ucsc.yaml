@@ -1,0 +1,25 @@
+name: query_ucsc
+display_name: Query Ucsc
+description: Query the UCSC Genome Browser API using natural language or a direct
+  endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about genomic data
+  optional:
+  - name: endpoint
+    type: str
+    description: Full URL or endpoint spec
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_ucsc
+returns:
+  type: str
+  description: 工具执行结果

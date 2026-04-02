@@ -1,0 +1,17 @@
+name: grade_adverse_events_using_vcog_ctcae
+display_name: Grade Adverse Events Using Vcog Ctcae
+description: Grade and monitor adverse events in animal studies using the VCOG-CTCAE
+  standard.
+parameters:
+  required:
+  - name: clinical_data_file
+    type: str
+    description: 'Path to a CSV file containing clinical evaluation data with columns:
+      subject_id, time_point, symptom, severity, measurement (optional)'
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: grade_adverse_events_using_vcog_ctcae
+returns:
+  type: str
+  description: 工具执行结果

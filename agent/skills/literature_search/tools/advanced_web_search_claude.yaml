@@ -1,0 +1,26 @@
+name: advanced_web_search_claude
+display_name: Advanced Web Search Claude
+description: Initiate an advanced web search by launching a specialized agent to collect
+  relevant information and citations through multiple rounds of web searches for a
+  given query.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: The search query string.
+  optional:
+  - name: max_searches
+    type: int
+    description: Maximum number of searches
+    default: 1
+  - name: max_retries
+    type: int
+    description: Maximum number of retry attempts with modified queries.
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: advanced_web_search_claude
+returns:
+  type: str
+  description: 工具执行结果

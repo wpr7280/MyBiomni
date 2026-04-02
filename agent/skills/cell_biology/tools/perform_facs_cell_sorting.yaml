@@ -1,0 +1,35 @@
+name: perform_facs_cell_sorting
+display_name: Perform Facs Cell Sorting
+description: Performs Fluorescence-Activated Cell Sorting (FACS) to enrich cell populations
+  based on fluorescence characteristics.
+parameters:
+  required:
+  - name: cell_suspension_data
+    type: str
+    description: Path to the FCS file containing flow cytometry data
+  - name: fluorescence_parameter
+    type: str
+    description: The fluorescence parameter to use for sorting (e.g., 'GFP', 'FITC',
+      'PE')
+  optional:
+  - name: threshold_min
+    type: float
+    description: Minimum threshold for the fluorescence parameter. Cells below this
+      value will be excluded
+    default: null
+  - name: threshold_max
+    type: float
+    description: Maximum threshold for the fluorescence parameter. Cells above this
+      value will be excluded
+    default: null
+  - name: output_file
+    type: str
+    description: Filename to save the sorted cell population data
+    default: sorted_cells.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.cell_biology
+  function: perform_facs_cell_sorting
+returns:
+  type: str
+  description: 工具执行结果

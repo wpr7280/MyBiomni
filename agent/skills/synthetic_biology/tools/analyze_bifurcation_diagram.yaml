@@ -1,0 +1,30 @@
+name: analyze_bifurcation_diagram
+display_name: Analyze Bifurcation Diagram
+description: Performs bifurcation analysis on a dynamical system and generates a bifurcation
+  diagram.
+parameters:
+  required:
+  - name: time_series_data
+    type: numpy.ndarray
+    description: A 2D array where each row represents a time series for a specific
+      parameter value. Shape should be (n_parameter_values, n_time_points).
+  - name: parameter_values
+    type: numpy.ndarray
+    description: 1D array of parameter values corresponding to each time series. Shape
+      should be (n_parameter_values,).
+  optional:
+  - name: system_name
+    type: str
+    description: Name of the dynamical system being analyzed, used for plot titles.
+    default: Dynamical System
+  - name: output_dir
+    type: str
+    description: Directory to save the output files.
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: analyze_bifurcation_diagram
+returns:
+  type: str
+  description: 工具执行结果

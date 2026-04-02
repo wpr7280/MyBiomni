@@ -1,0 +1,25 @@
+name: identify_fas_functional_domains
+display_name: Identify Fas Functional Domains
+description: Identifies functional domains within a Fatty Acid Synthase (FAS) sequence
+  and predicts their roles.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: The nucleotide or protein sequence of a FAS gene
+  optional:
+  - name: sequence_type
+    type: str
+    description: Type of sequence provided - "protein" or "nucleotide"
+    default: protein
+  - name: output_file
+    type: str
+    description: Name of the output file to save the detailed domain report
+    default: fas_domains_report.txt
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: identify_fas_functional_domains
+returns:
+  type: str
+  description: 工具执行结果

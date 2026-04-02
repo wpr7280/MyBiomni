@@ -1,0 +1,33 @@
+name: analyze_xenograft_tumor_growth_inhibition
+display_name: Analyze Xenograft Tumor Growth Inhibition
+description: Analyze tumor growth inhibition in xenograft models across different
+  treatment groups.
+parameters:
+  required:
+  - name: data_path
+    type: str
+    description: Path to CSV or TSV file containing tumor volume measurements
+  - name: time_column
+    type: str
+    description: Name of the column containing time points
+  - name: volume_column
+    type: str
+    description: Name of the column containing tumor volume measurements
+  - name: group_column
+    type: str
+    description: Name of the column containing treatment group labels
+  - name: subject_column
+    type: str
+    description: Name of the column containing subject/mouse identifiers
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_xenograft_tumor_growth_inhibition
+returns:
+  type: str
+  description: 工具执行结果

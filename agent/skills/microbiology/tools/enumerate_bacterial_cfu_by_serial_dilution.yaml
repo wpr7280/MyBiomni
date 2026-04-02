@@ -1,0 +1,37 @@
+name: enumerate_bacterial_cfu_by_serial_dilution
+display_name: Enumerate Bacterial Cfu By Serial Dilution
+description: Quantify bacterial concentration (CFU/mL) using serial dilutions and
+  spot plating.
+parameters:
+  optional:
+  - name: initial_sample_volume_ml
+    type: float
+    description: Volume of the initial bacterial sample in milliliters
+    default: 1.0
+  - name: estimated_concentration
+    type: float
+    description: Estimated concentration of bacteria in the initial sample (CFU/mL)
+    default: 100000000.0
+  - name: dilution_factor
+    type: int
+    description: Factor by which each dilution reduces the concentration
+    default: 10
+  - name: num_dilutions
+    type: int
+    description: Number of serial dilutions to perform
+    default: 8
+  - name: spots_per_dilution
+    type: int
+    description: Number of replicate spots to plate for each dilution
+    default: 3
+  - name: output_file
+    type: str
+    description: Filename to save the CFU enumeration results
+    default: cfu_enumeration_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: enumerate_bacterial_cfu_by_serial_dilution
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,28 @@
+name: design_knockout_sgrna
+display_name: Design Knockout Sgrna
+description: Design sgRNAs for CRISPR knockout by searching pre-computed sgRNA libraries.
+  Returns optimized guide RNAs for targeting a specific gene.
+parameters:
+  required:
+  - name: gene_name
+    type: str
+    description: Target gene symbol/name (e.g., "EGFR", "TP53")
+  - name: data_lake_path
+    type: str
+    description: Path to the data lake
+  optional:
+  - name: species
+    type: str
+    description: Target organism species
+    default: human
+  - name: num_guides
+    type: int
+    description: Number of guides to return
+    default: 1
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: design_knockout_sgrna
+returns:
+  type: str
+  description: 工具执行结果

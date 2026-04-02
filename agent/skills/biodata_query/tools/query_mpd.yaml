@@ -1,0 +1,25 @@
+name: query_mpd
+display_name: Query Mpd
+description: Query the Mouse Phenome Database (MPD) using natural language or a direct
+  endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about mouse phenotypes/strains
+  optional:
+  - name: endpoint
+    type: str
+    description: Full API endpoint to query
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_mpd
+returns:
+  type: str
+  description: 工具执行结果

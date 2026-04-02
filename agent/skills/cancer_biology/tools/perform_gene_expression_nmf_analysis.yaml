@@ -1,0 +1,34 @@
+name: perform_gene_expression_nmf_analysis
+display_name: Perform Gene Expression Nmf Analysis
+description: Performs Non-negative Matrix Factorization (NMF) on gene expression data
+  to extract metagenes and their associated sample weights for tumor subtype identification.
+parameters:
+  required:
+  - name: expression_data_path
+    type: str
+    description: Path to a CSV or TSV file containing gene expression data with genes
+      as rows and samples as columns. Values should be non-negative.
+  optional:
+  - name: n_components
+    type: int
+    description: Number of metagenes (components) to extract.
+    default: 10
+  - name: normalize
+    type: bool
+    description: Whether to normalize the expression data before applying NMF.
+    default: true
+  - name: output_dir
+    type: str
+    description: Directory to save the output files.
+    default: nmf_results
+  - name: random_state
+    type: int
+    description: Random seed for reproducibility.
+    default: 42
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: perform_gene_expression_nmf_analysis
+returns:
+  type: str
+  description: 工具执行结果

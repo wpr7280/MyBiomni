@@ -1,0 +1,30 @@
+name: run_3d_chondrogenic_aggregate_assay
+display_name: Run 3D Chondrogenic Aggregate Assay
+description: Generates a detailed protocol for performing a 3D chondrogenic aggregate
+  culture assay to evaluate compounds' effects on chondrogenesis.
+parameters:
+  required:
+  - name: chondrocyte_cells
+    type: dict
+    description: Dictionary with cell information including 'source', 'passage_number',
+      and 'cell_density'
+  - name: test_compounds
+    type: list of dict
+    description: List of compounds to test, each with 'name', 'concentration', and
+      'vehicle' keys
+  optional:
+  - name: culture_duration_days
+    type: int
+    description: Total duration of the culture period in days
+    default: 21
+  - name: measurement_intervals
+    type: int
+    description: Interval in days between measurements
+    default: 7
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: run_3d_chondrogenic_aggregate_assay
+returns:
+  type: str
+  description: 工具执行结果

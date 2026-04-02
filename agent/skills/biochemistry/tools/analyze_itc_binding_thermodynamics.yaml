@@ -1,0 +1,35 @@
+name: analyze_itc_binding_thermodynamics
+display_name: Analyze Itc Binding Thermodynamics
+description: Analyzes isothermal titration calorimetry (ITC) data to determine binding
+  affinity and thermodynamic parameters.
+parameters:
+  optional:
+  - name: itc_data_path
+    type: str
+    description: Path to CSV or TSV file containing ITC thermogram data with columns
+      for injection number, injection volume, and heat released/absorbed.
+    default: null
+  - name: itc_data
+    type: numpy.ndarray
+    description: Raw ITC thermogram data as a numpy array with shape (n_injections,
+      3) containing injection number, injection volume, and heat.
+    default: null
+  - name: temperature
+    type: float
+    description: Temperature in Kelvin at which the experiment was conducted.
+    default: 298.15
+  - name: protein_concentration
+    type: float
+    description: Initial concentration of protein in the cell in molar (M).
+    default: null
+  - name: ligand_concentration
+    type: float
+    description: Concentration of ligand in the syringe in molar (M).
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.biochemistry
+  function: analyze_itc_binding_thermodynamics
+returns:
+  type: str
+  description: 工具执行结果

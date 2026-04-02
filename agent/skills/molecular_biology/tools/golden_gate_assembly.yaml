@@ -1,0 +1,29 @@
+name: golden_gate_assembly
+display_name: Golden Gate Assembly
+description: Simulate Golden Gate assembly to predict final construct sequences from
+  backbone and fragment sequences.
+parameters:
+  required:
+  - name: backbone_sequence
+    type: str
+    description: Complete backbone sequence
+  - name: enzyme_name
+    type: str
+    description: Type IIS restriction enzyme to be used (e.g., "BsmBI", "BsaI")
+  - name: fragments
+    type: List[Dict[str, str]]
+    description: 'List of fragments to insert, containing one of: name + fwd_oligo
+      + rev_oligo (oligo pair with matching overhangs) or name + sequence (double-stranded
+      DNA fragment containing restriction sites)'
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the backbone is circular
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: golden_gate_assembly
+returns:
+  type: str
+  description: 工具执行结果

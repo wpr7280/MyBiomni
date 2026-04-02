@@ -1,0 +1,27 @@
+name: glycoengineering
+display_name: Glycoengineering
+version: 1.0.0
+category: glycoengineering
+description: 糖工程工具集。提供 find_n_glycosylation_motifs, predict_o_glycosylation_hotspots,
+  list_glycoengineering_resources。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- find_n_glycosylation_motifs
+- predict_o_glycosylation_hotspots
+- list_glycoengineering_resources
+triggers:
+- 糖工程
+- glycoengineering
+- 糖基化
+- glycosylation
+- 糖蛋白
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.glycoengineering

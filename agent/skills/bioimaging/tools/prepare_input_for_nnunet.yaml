@@ -1,0 +1,24 @@
+name: prepare_input_for_nnunet
+display_name: Prepare Input For Nnunet
+description: Prepare input data for nnUNet by handling both 4D and pre-split modality
+  files. Automatically detects file format and prepares data accordingly.
+parameters:
+  required:
+  - name: input_path
+    type: str
+    description: Path to input file or directory
+  - name: output_dir
+    type: str
+    description: Directory to save prepared files
+  optional:
+  - name: case_name
+    type: str
+    description: Base name for the case files
+    default: BRAT
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: prepare_input_for_nnunet
+returns:
+  type: str
+  description: 工具执行结果

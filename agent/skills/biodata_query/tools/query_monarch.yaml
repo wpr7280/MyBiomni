@@ -1,0 +1,28 @@
+name: query_monarch
+display_name: Query Monarch
+description: Query the Monarch Initiative API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about genes/diseases/phenotypes
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct endpoint or full URL
+    default: null
+  - name: max_results
+    type: int
+    description: Max results (adds limit param)
+    default: 2
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_monarch
+returns:
+  type: str
+  description: 工具执行结果

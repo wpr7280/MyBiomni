@@ -1,0 +1,36 @@
+name: analyze_atac_seq_differential_accessibility
+display_name: Analyze Atac Seq Differential Accessibility
+description: Perform ATAC-seq peak calling and differential accessibility analysis
+  using MACS2.
+parameters:
+  required:
+  - name: treatment_bam
+    type: str
+    description: Path to the treatment condition BAM file with aligned ATAC-seq reads
+  - name: control_bam
+    type: str
+    description: Path to the control condition BAM file with aligned ATAC-seq reads
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./atac_results
+  - name: genome_size
+    type: str
+    description: Genome size parameter for MACS2
+    default: hs
+  - name: q_value
+    type: float
+    description: q-value cutoff for peak detection
+    default: 0.05
+  - name: name_prefix
+    type: str
+    description: Prefix for output file names
+    default: atac
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: analyze_atac_seq_differential_accessibility
+returns:
+  type: str
+  description: 工具执行结果

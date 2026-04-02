@@ -1,0 +1,15 @@
+name: search_protocols
+display_name: Search Protocols
+description: Search protocols.io for public protocols matching a keyword.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: Most important keyword or phrase to search (title, description, authors)
+implementation:
+  type: module_ref
+  module: biomni.tool.protocols
+  function: search_protocols
+returns:
+  type: str
+  description: 工具执行结果

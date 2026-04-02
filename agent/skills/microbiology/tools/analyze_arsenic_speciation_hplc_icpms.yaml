@@ -1,0 +1,28 @@
+name: analyze_arsenic_speciation_hplc_icpms
+display_name: Analyze Arsenic Speciation Hplc Icpms
+description: Analyzes arsenic speciation in liquid samples using HPLC-ICP-MS technique.
+  Returns a research log summarizing analysis steps and results.
+parameters:
+  required:
+  - name: sample_data
+    type: dict
+    description: Dictionary containing sample data with keys as sample IDs and values
+      as dictionaries with retention times (in minutes) as keys and signal intensities
+      as values
+  optional:
+  - name: sample_name
+    type: str
+    description: Name of the sample being analyzed
+    default: Unknown Sample
+  - name: calibration_data
+    type: dict
+    description: Dictionary containing calibration standards data with known concentrations
+      for each arsenic species
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: analyze_arsenic_speciation_hplc_icpms
+returns:
+  type: str
+  description: 工具执行结果

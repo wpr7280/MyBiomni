@@ -1,0 +1,30 @@
+name: docking_autodock_vina
+display_name: Docking Autodock Vina
+description: Performs molecular docking using AutoDock Vina to predict binding affinities
+  between small molecules and a receptor protein.
+parameters:
+  required:
+  - name: smiles_list
+    type: List[str]
+    description: List of SMILES strings representing small molecules to dock
+  - name: receptor_pdb_file
+    type: str
+    description: Path to the receptor protein structure PDB file
+  - name: box_center
+    type: List[float]
+    description: 3D coordinates [x, y, z] of the docking box center
+  - name: box_size
+    type: List[float]
+    description: Dimensions [x, y, z] of the docking box
+  optional:
+  - name: ncpu
+    type: int
+    description: Number of CPU cores to use for docking
+    default: 1
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: docking_autodock_vina
+returns:
+  type: str
+  description: 工具执行结果

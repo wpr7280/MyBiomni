@@ -1,0 +1,20 @@
+name: query_arxiv
+display_name: Query Arxiv
+description: Query arXiv for papers based on the provided search query.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: The search query string.
+  optional:
+  - name: max_papers
+    type: int
+    description: The maximum number of papers to retrieve.
+    default: 10
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: query_arxiv
+returns:
+  type: str
+  description: 工具执行结果

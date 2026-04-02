@@ -1,5 +1,6 @@
 import { request } from '@/utils'
 import infraApi from './infra'
+import skillsApi from './skills'
 
 export default {
   login: (data) => request.post('/auth/login', data, { noNeedToken: true }),
@@ -114,4 +115,7 @@ export default {
   listAccessToken: (params = {}) => request.get('/auth/listAccessToken', { params }),
   createAccessToken: (data = {}) => request.post('/auth/createAccessToken', data),
   deleteAccessToken: (data = {}) => request.post('/auth/deleteAccessToken', data),
+
+  // ========== Skill 管理 ==========
+  ...skillsApi,
 }

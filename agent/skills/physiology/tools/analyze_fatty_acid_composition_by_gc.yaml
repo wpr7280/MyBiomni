@@ -1,0 +1,28 @@
+name: analyze_fatty_acid_composition_by_gc
+display_name: Analyze Fatty Acid Composition By Gc
+description: Analyzes fatty acid composition in tissue samples using gas chromatography
+  data.
+parameters:
+  required:
+  - name: gc_data_file
+    type: str
+    description: Path to the CSV file containing gas chromatography data with columns
+      'retention_time' and 'peak_area'
+  - name: tissue_type
+    type: str
+    description: Type of tissue sample (e.g., liver, kidney, heart, muscle, adipose)
+  - name: sample_id
+    type: str
+    description: Identifier for the sample being analyzed
+  optional:
+  - name: output_directory
+    type: str
+    description: Directory where result files will be saved
+    default: ./results
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_fatty_acid_composition_by_gc
+returns:
+  type: str
+  description: 工具执行结果

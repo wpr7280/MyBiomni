@@ -1,0 +1,22 @@
+name: analyze_thrombus_histology
+display_name: Analyze Thrombus Histology
+description: Analyze histological images of thrombus samples stained with H&E to identify
+  and quantify different thrombus components (fresh, cellular lysis, endothelialization,
+  fibroblastic reaction).
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the histological image of thrombus sample stained with H&E
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: analyze_thrombus_histology
+returns:
+  type: str
+  description: 工具执行结果

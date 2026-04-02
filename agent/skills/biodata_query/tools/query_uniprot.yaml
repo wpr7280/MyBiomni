@@ -1,0 +1,27 @@
+name: query_uniprot
+display_name: Query Uniprot
+description: Query the UniProt REST API using either natural language or a direct
+  endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about proteins (e.g., "Find information about
+      human insulin")
+  optional:
+  - name: endpoint
+    type: str
+    description: Full or partial UniProt API endpoint URL to query directly (e.g.,
+      'https://rest.uniprot.org/uniprotkb/P01308')
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum number of results to return
+    default: 5
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_uniprot
+returns:
+  type: str
+  description: 工具执行结果

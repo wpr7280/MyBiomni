@@ -28,6 +28,43 @@ export const basicRoutes = [
     meta: { order: 1 },
   },
   {
+    name: 'Skills',
+    path: '/skills',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/skills/index.vue'),
+        name: 'SkillList',
+        meta: {
+          title: 'Skill 管理',
+          icon: 'carbon:skill-level-advanced',
+          affix: false,
+        },
+      },
+    ],
+    meta: { order: 5 },
+  },
+  {
+    name: 'SkillDetail',
+    path: '/skills/:id',
+    component: Layout,
+    isHidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/skills/detail.vue'),
+        name: 'SkillDetailDefault',
+        meta: {
+          title: 'Skill 详情',
+          icon: 'carbon:skill-level-advanced',
+          activeMenu: 'SkillList',
+        },
+      },
+    ],
+    meta: { order: 5 },
+  },
+  {
     name: t('views.profile.label_profile'),
     path: '/profile',
     component: Layout,

@@ -1,0 +1,34 @@
+name: analyze_myofiber_morphology
+display_name: Analyze Myofiber Morphology
+description: Quantifies morphological properties of myofibers in microscopy images
+  of tissue sections.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the microscopy image file (typically a multichannel image
+      with nuclei and myofiber staining)
+  optional:
+  - name: nuclei_channel
+    type: int
+    description: Channel index containing nuclei staining (DAPI, Hoechst, etc.)
+    default: 2
+  - name: myofiber_channel
+    type: int
+    description: Channel index containing myofiber staining (α-Actinin, etc.)
+    default: 1
+  - name: threshold_method
+    type: str
+    description: Method for thresholding ('otsu', 'adaptive', or 'manual')
+    default: otsu
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: analyze_myofiber_morphology
+returns:
+  type: str
+  description: 工具执行结果

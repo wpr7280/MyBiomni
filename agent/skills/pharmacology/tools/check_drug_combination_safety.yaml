@@ -1,0 +1,29 @@
+name: check_drug_combination_safety
+display_name: Check Drug Combination Safety
+description: Analyze safety of a drug combination for potential interactions using
+  DDInter database with comprehensive risk assessment and clinical recommendations.
+parameters:
+  required:
+  - name: drug_list
+    type: List[str]
+    description: List of drugs to analyze for combination safety
+  optional:
+  - name: include_mechanisms
+    type: bool
+    description: Include interaction mechanism descriptions in results
+    default: true
+  - name: include_management
+    type: bool
+    description: Include management recommendations in results
+    default: true
+  - name: data_lake_path
+    type: str
+    description: Path to data lake directory containing DDInter data
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: check_drug_combination_safety
+returns:
+  type: str
+  description: 工具执行结果

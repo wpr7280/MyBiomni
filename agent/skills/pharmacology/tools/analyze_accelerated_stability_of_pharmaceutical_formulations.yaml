@@ -1,0 +1,24 @@
+name: analyze_accelerated_stability_of_pharmaceutical_formulations
+display_name: Analyze Accelerated Stability Of Pharmaceutical Formulations
+description: Analyzes the stability of pharmaceutical formulations under accelerated
+  storage conditions.
+parameters:
+  required:
+  - name: formulations
+    type: List[dict]
+    description: List of formulation dictionaries containing name, active ingredient,
+      concentration, and excipients
+  - name: storage_conditions
+    type: List[dict]
+    description: List of storage condition dictionaries containing temperature, humidity
+      (optional), and description
+  - name: time_points
+    type: List[int]
+    description: List of time points in days to evaluate stability
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: analyze_accelerated_stability_of_pharmaceutical_formulations
+returns:
+  type: str
+  description: 工具执行结果

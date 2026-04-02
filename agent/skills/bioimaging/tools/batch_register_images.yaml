@@ -1,0 +1,60 @@
+name: batch_register_images
+display_name: Batch Register Images
+description: Perform batch registration of multiple images to a single reference image.
+  Automatically processes all medical image files in a directory and registers them
+  to the fixed reference. Supports rigid, affine, or deformable registration for all
+  images.
+parameters:
+  required:
+  - name: fixed_image_path
+    type: str
+    description: Path to the reference (fixed) image file
+  - name: moving_images_dir
+    type: str
+    description: Directory path containing multiple images to register (supports .nii,
+      .nii.gz, .nrrd, .mha, .mhd formats)
+  - name: output_dir
+    type: str
+    description: Directory path to save registration results for all images
+  optional:
+  - name: transform_type
+    type: str
+    description: 'Type of registration to perform: ''rigid'', ''affine'', or ''deformable'''
+    default: rigid
+  - name: metric
+    type: str
+    description: 'Similarity metric for registration: ''mutual_information'', ''mean_squares'',
+      ''correlation'', or ''normalized_correlation'''
+    default: mutual_information
+  - name: optimizer
+    type: str
+    description: 'Optimization method: ''gradient_descent'', ''lbfgsb'', ''powell'',
+      or ''amoeba'''
+    default: gradient_descent
+  - name: preprocess
+    type: bool
+    description: Whether to preprocess images (denoising and normalization)
+    default: true
+  - name: create_visualizations
+    type: bool
+    description: Whether to create visualization plots for each registration
+    default: true
+  - name: learning_rate
+    type: float
+    description: Learning rate for gradient descent optimizer
+    default: 0.01
+  - name: number_of_iterations
+    type: int
+    description: Maximum number of optimization iterations
+    default: 100
+  - name: gradient_convergence_tolerance
+    type: float
+    description: Convergence tolerance for optimization
+    default: 1.0e-06
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: batch_register_images
+returns:
+  type: str
+  description: 工具执行结果

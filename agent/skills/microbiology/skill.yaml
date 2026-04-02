@@ -1,0 +1,41 @@
+name: microbiology
+display_name: Microbiology
+version: 1.0.0
+category: microbiology
+description: 微生物学工具集。提供 optimize_anaerobic_digestion_process, analyze_arsenic_speciation_hplc_icpms,
+  count_bacterial_colonies, annotate_bacterial_genome, enumerate_bacterial_cfu_by_serial_dilution
+  等 12 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- optimize_anaerobic_digestion_process
+- analyze_arsenic_speciation_hplc_icpms
+- count_bacterial_colonies
+- annotate_bacterial_genome
+- enumerate_bacterial_cfu_by_serial_dilution
+- model_bacterial_growth_dynamics
+- quantify_biofilm_biomass_crystal_violet
+- segment_and_analyze_microbial_cells
+- segment_cells_with_deep_learning
+- simulate_generalized_lotka_volterra_dynamics
+- predict_rna_secondary_structure
+- simulate_microbial_population_dynamics
+triggers:
+- 微生物学
+- microbiology
+- 细菌
+- bacteria
+- 微生物
+- 抗生素
+- antibiotic
+- 微生物组
+- microbiome
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology

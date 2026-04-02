@@ -1,0 +1,28 @@
+name: query_pdb_identifiers
+display_name: Query Pdb Identifiers
+description: Retrieve detailed data and/or download files for PDB identifiers.
+parameters:
+  required:
+  - name: identifiers
+    type: List[str]
+    description: List of PDB identifiers
+  optional:
+  - name: return_type
+    type: str
+    description: '''entry'', ''assembly'', ''polymer_entity'', etc.'
+    default: entry
+  - name: download
+    type: bool
+    description: Download PDB structure files
+    default: false
+  - name: attributes
+    type: List[str]
+    description: Specific attributes to retrieve
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_pdb_identifiers
+returns:
+  type: str
+  description: 工具执行结果

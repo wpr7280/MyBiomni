@@ -1,0 +1,27 @@
+name: decode_behavior_from_neural_trajectories
+display_name: Decode Behavior From Neural Trajectories
+description: Model neural activity trajectories and decode behavioral variables.
+parameters:
+  required:
+  - name: neural_data
+    type: numpy.ndarray
+    description: Neural spiking activity data, shape (n_timepoints, n_neurons)
+  - name: behavioral_data
+    type: numpy.ndarray
+    description: Behavioral data, shape (n_timepoints, n_behavioral_variables)
+  optional:
+  - name: n_components
+    type: int
+    description: Number of principal components to use for dimensionality reduction
+    default: 10
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: decode_behavior_from_neural_trajectories
+returns:
+  type: str
+  description: 工具执行结果

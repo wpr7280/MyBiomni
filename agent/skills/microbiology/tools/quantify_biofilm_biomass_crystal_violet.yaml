@@ -1,0 +1,30 @@
+name: quantify_biofilm_biomass_crystal_violet
+display_name: Quantify Biofilm Biomass Crystal Violet
+description: Quantifies biofilm biomass using crystal violet staining assay data and
+  returns a detailed research log.
+parameters:
+  required:
+  - name: od_values
+    type: List[float] or numpy.ndarray
+    description: Optical density measurements from crystal violet staining representing
+      absorbance readings for samples
+  optional:
+  - name: sample_names
+    type: List[str]
+    description: Names of the biofilm samples corresponding to od_values
+    default: null
+  - name: control_index
+    type: int
+    description: Index of the negative control sample in od_values
+    default: 0
+  - name: save_path
+    type: str
+    description: Path to save the results as CSV file
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: quantify_biofilm_biomass_crystal_violet
+returns:
+  type: str
+  description: 工具执行结果

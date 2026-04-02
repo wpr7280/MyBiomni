@@ -1,0 +1,12 @@
+name: list_glycoengineering_resources
+display_name: List Glycoengineering Resources
+description: 'Curated list of external glycoengineering tools and resources (links
+  and notes) as referenced in issue #198.'
+parameters: {}
+implementation:
+  type: module_ref
+  module: biomni.tool.glycoengineering
+  function: list_glycoengineering_resources
+returns:
+  type: str
+  description: 工具执行结果

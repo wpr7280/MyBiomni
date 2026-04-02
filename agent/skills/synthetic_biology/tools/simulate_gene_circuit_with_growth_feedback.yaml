@@ -1,0 +1,34 @@
+name: simulate_gene_circuit_with_growth_feedback
+display_name: Simulate Gene Circuit With Growth Feedback
+description: Simulate gene regulatory circuit dynamics with growth feedback.
+parameters:
+  required:
+  - name: circuit_topology
+    type: numpy.ndarray
+    description: Adjacency matrix representing the gene circuit topology. Positive
+      values indicate activation, negative values indicate repression. Shape should
+      be (n_genes, n_genes) where n_genes is the number of genes in the circuit.
+  - name: kinetic_params
+    type: dict
+    description: 'Dictionary containing kinetic parameters: ''basal_rates'', ''degradation_rates'',
+      ''hill_coefficients'', and ''threshold_constants'' for the gene circuit.'
+  - name: growth_params
+    type: dict
+    description: 'Dictionary containing growth-related parameters: ''max_growth_rate'',
+      ''growth_inhibition'', and ''gene_growth_weights''.'
+  optional:
+  - name: simulation_time
+    type: float
+    description: Total simulation time
+    default: 100
+  - name: time_points
+    type: int
+    description: Number of time points to sample
+    default: 1000
+implementation:
+  type: module_ref
+  module: biomni.tool.synthetic_biology
+  function: simulate_gene_circuit_with_growth_feedback
+returns:
+  type: str
+  description: 工具执行结果

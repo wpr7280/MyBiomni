@@ -1,0 +1,36 @@
+name: fit_genomic_prediction_model
+display_name: Fit Genomic Prediction Model
+description: Fit a linear mixed model for genomic prediction using genotype and phenotype
+  data.
+parameters:
+  required:
+  - name: genotypes
+    type: numpy.ndarray
+    description: Matrix of genotype data, with individuals in rows and markers in
+      columns. Values are typically coded as 0, 1, 2 for additive models or with specific
+      encoding for dominance effects.
+  - name: phenotypes
+    type: numpy.ndarray
+    description: Vector or matrix of phenotype data, with individuals in rows and
+      traits in columns.
+  optional:
+  - name: fixed_effects
+    type: numpy.ndarray
+    description: Matrix of fixed effects (e.g., environment, management), with individuals
+      in rows and effects in columns.
+    default: null
+  - name: model_type
+    type: str
+    description: 'Type of genetic model to fit: "additive" or "additive_dominance".'
+    default: additive
+  - name: output_file
+    type: str
+    description: File name to save the results.
+    default: genomic_prediction_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: fit_genomic_prediction_model
+returns:
+  type: str
+  description: 工具执行结果

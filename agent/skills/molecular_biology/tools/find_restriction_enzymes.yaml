@@ -1,0 +1,21 @@
+name: find_restriction_enzymes
+display_name: Find Restriction Enzymes
+description: Finds common restriction enzyme sites in a DNA sequence and returns their
+  cut positions.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: DNA sequence to analyze
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the sequence is circular
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: find_restriction_enzymes
+returns:
+  type: str
+  description: 工具执行结果

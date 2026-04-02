@@ -1,0 +1,24 @@
+name: retrieve_topk_repurposing_drugs_from_disease_txgnn
+display_name: Retrieve Topk Repurposing Drugs From Disease Txgnn
+description: Computes TxGNN model predictions for drug repurposing and returns the
+  top predicted drugs with their scores for a given disease.
+parameters:
+  required:
+  - name: disease_name
+    type: str
+    description: The name of the disease for which to retrieve drug predictions
+  - name: data_lake_path
+    type: str
+    description: Path to the data lake
+  optional:
+  - name: k
+    type: int
+    description: The number of top drug predictions to return
+    default: 5
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: retrieve_topk_repurposing_drugs_from_disease_txgnn
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,24 @@
+name: query_interpro
+display_name: Query Interpro
+description: Query the InterPro REST API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about protein domains/families
+  optional:
+  - name: endpoint
+    type: str
+    description: Endpoint path or full URL
+    default: null
+  - name: max_results
+    type: int
+    description: Max results per page
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_interpro
+returns:
+  type: str
+  description: 工具执行结果

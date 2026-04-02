@@ -1,0 +1,60 @@
+name: segment_with_nn_unet
+display_name: Segment With Nn Unet
+description: Segment images using nnUNet with proper environment setup. Supports brain
+  tumor segmentation and other medical image segmentation tasks.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to input image file or directory
+  - name: output_dir
+    type: str
+    description: Directory to save segmentation results
+  - name: task_id
+    type: str
+    description: Task identifier (e.g., 'Task001_BrainTumour')
+  optional:
+  - name: model_type
+    type: str
+    description: Model type for segmentation
+    default: 3d_fullres
+  - name: folds
+    type: list
+    description: Model folds to use for ensemble prediction
+    default:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+  - name: use_tta
+    type: bool
+    description: Use test time augmentation
+    default: false
+  - name: num_threads
+    type: int
+    description: Number of threads for preprocessing
+    default: 1
+  - name: mixed_precision
+    type: bool
+    description: Use mixed precision for faster inference
+    default: true
+  - name: verbose
+    type: bool
+    description: Enable verbose logging
+    default: true
+  - name: auto_prepare_input
+    type: bool
+    description: Automatically prepare input for nnUNet
+    default: true
+  - name: results_folder
+    type: str
+    description: Path to nnUNet results folder
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: segment_with_nn_unet
+returns:
+  type: str
+  description: 工具执行结果

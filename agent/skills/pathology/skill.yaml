@@ -1,0 +1,34 @@
+name: pathology
+display_name: Pathology
+version: 1.0.0
+category: pathology
+description: 病理学工具集。提供 analyze_aortic_diameter_and_geometry, analyze_atp_luminescence_assay,
+  analyze_thrombus_histology, analyze_intracellular_calcium_with_rhod2, quantify_corneal_nerve_fibers
+  等 7 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- analyze_aortic_diameter_and_geometry
+- analyze_atp_luminescence_assay
+- analyze_thrombus_histology
+- analyze_intracellular_calcium_with_rhod2
+- quantify_corneal_nerve_fibers
+- segment_and_quantify_cells_in_multiplexed_images
+- analyze_bone_microct_morphometry
+triggers:
+- 病理学
+- pathology
+- 疾病分析
+- disease
+- 病理图像
+- 组织学
+- histology
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology

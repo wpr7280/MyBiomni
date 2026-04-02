@@ -1,0 +1,36 @@
+name: genetics_analysis
+display_name: Genetics Analysis
+version: 1.0.0
+category: genetics
+description: 遗传学分析工具集。提供 liftover_coordinates, bayesian_finemapping_with_deep_vi,
+  simulate_demographic_history, identify_transcription_factor_binding_sites, fit_genomic_prediction_model
+  等 7 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- liftover_coordinates
+- bayesian_finemapping_with_deep_vi
+- simulate_demographic_history
+- identify_transcription_factor_binding_sites
+- fit_genomic_prediction_model
+- perform_pcr_and_gel_electrophoresis
+- analyze_protein_phylogeny
+triggers:
+- 遗传学
+- genetics
+- 基因变异
+- genetic variant
+- SNP
+- 等位基因
+- allele frequency
+- 遗传分析
+- 基因组变异
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics

@@ -1,0 +1,19 @@
+name: align_sequences
+display_name: Align Sequences
+description: Align short sequences (primers) to a longer sequence, allowing for one
+  mismatch. Checks both forward and reverse complement strands.
+parameters:
+  required:
+  - name: long_seq
+    type: str
+    description: Target DNA sequence
+  - name: short_seqs
+    type: Union[str, List[str]]
+    description: Single primer or list of primers
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: align_sequences
+returns:
+  type: str
+  description: 工具执行结果

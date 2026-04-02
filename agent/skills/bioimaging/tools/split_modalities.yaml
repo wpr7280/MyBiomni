@@ -1,0 +1,24 @@
+name: split_modalities
+display_name: Split Modalities
+description: Split a 4D NIfTI file into separate modality files for nnUNet processing.
+  Handles BRATS dataset format with FLAIR, T1w, t1gd, and T2w modalities.
+parameters:
+  required:
+  - name: input_file
+    type: str
+    description: Path to the 4D NIfTI file to split
+  - name: output_dir
+    type: str
+    description: Directory to save the split modality files
+  optional:
+  - name: case_name
+    type: str
+    description: Base name for the case files
+    default: BRAT
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: split_modalities
+returns:
+  type: str
+  description: 工具执行结果

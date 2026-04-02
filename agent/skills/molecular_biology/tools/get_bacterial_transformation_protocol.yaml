@@ -1,0 +1,20 @@
+name: get_bacterial_transformation_protocol
+display_name: Get Bacterial Transformation Protocol
+description: Return a standard protocol for bacterial transformation.
+parameters:
+  optional:
+  - name: antibiotic
+    type: str
+    description: Selection antibiotic
+    default: ampicillin
+  - name: is_repetitive
+    type: bool
+    description: Whether the sequence contains repetitive elements
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: get_bacterial_transformation_protocol
+returns:
+  type: str
+  description: 工具执行结果

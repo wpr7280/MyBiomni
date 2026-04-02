@@ -1,0 +1,27 @@
+name: analyze_bacterial_growth_curve
+display_name: Analyze Bacterial Growth Curve
+description: Analyzes bacterial growth curve data to determine growth parameters such
+  as doubling time, growth rate, and lag phase.
+parameters:
+  required:
+  - name: time_points
+    type: List or numpy.ndarray
+    description: Time points of measurements in hours
+  - name: od_values
+    type: List or numpy.ndarray
+    description: Optical density measurements corresponding to each time point
+  - name: strain_name
+    type: str
+    description: Name of the bacterial strain being analyzed
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory where output files will be saved
+    default: .
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: analyze_bacterial_growth_curve
+returns:
+  type: str
+  description: 工具执行结果

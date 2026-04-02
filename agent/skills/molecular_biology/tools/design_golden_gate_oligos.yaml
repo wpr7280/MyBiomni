@@ -1,0 +1,27 @@
+name: design_golden_gate_oligos
+display_name: Design Golden Gate Oligos
+description: Design complementary oligonucleotides with Type IIS restriction enzyme
+  overhangs for Golden Gate assembly based on restriction site analysis of the backbone.
+parameters:
+  required:
+  - name: backbone_sequence
+    type: str
+    description: Complete backbone sequence
+  - name: insert_sequence
+    type: str
+    description: Sequence to be inserted (e.g., sgRNA target sequence)
+  - name: enzyme_name
+    type: str
+    description: Type IIS restriction enzyme to be used
+  optional:
+  - name: is_circular
+    type: bool
+    description: Whether the backbone is circular
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: design_golden_gate_oligos
+returns:
+  type: str
+  description: 工具执行结果

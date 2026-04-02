@@ -1,0 +1,26 @@
+name: analyze_bone_microct_morphometry
+display_name: Analyze Bone Microct Morphometry
+description: Analyze bone microarchitecture parameters from 3D micro-CT images to
+  calculate bone mineral density, bone volume, trabecular number, thickness, and separation.
+parameters:
+  required:
+  - name: input_file_path
+    type: str
+    description: Path to the micro-CT scan data file (TIFF stack or similar 3D format)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+  - name: threshold_value
+    type: float
+    description: Threshold value for bone segmentation. If None, Otsu's method will
+      be used
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: analyze_bone_microct_morphometry
+returns:
+  type: str
+  description: 工具执行结果

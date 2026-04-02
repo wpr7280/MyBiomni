@@ -1,0 +1,22 @@
+name: analyze_aortic_diameter_and_geometry
+display_name: Analyze Aortic Diameter And Geometry
+description: Analyze aortic diameter and geometry from cardiovascular imaging data
+  to measure aortic root diameter, ascending aorta diameter, and calculate geometric
+  parameters such as tortuosity and dilation indices.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the cardiovascular imaging data (DICOM, JPG, PNG)
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: analyze_aortic_diameter_and_geometry
+returns:
+  type: str
+  description: 工具执行结果

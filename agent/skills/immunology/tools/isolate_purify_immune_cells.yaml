@@ -1,0 +1,34 @@
+name: isolate_purify_immune_cells
+display_name: Isolate Purify Immune Cells
+description: Simulates the isolation and purification of immune cells from tissue
+  samples.
+parameters:
+  required:
+  - name: tissue_type
+    type: str
+    description: The type of tissue sample (e.g., 'adipose', 'kidney', 'liver', 'lung',
+      'spleen')
+  - name: target_cell_type
+    type: str
+    description: The immune cell population to isolate (e.g., 'macrophages', 'leukocytes',
+      'T cells')
+  optional:
+  - name: enzyme_type
+    type: str
+    description: The enzyme used for tissue digestion
+    default: collagenase
+  - name: macs_antibody
+    type: str
+    description: Specific antibody for magnetic-assisted cell sorting
+    default: null
+  - name: digestion_time_min
+    type: int
+    description: Digestion time in minutes
+    default: 45
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology
+  function: isolate_purify_immune_cells
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,28 @@
+name: query_pubchem
+display_name: Query Pubchem
+description: Query the PubChem PUG-REST API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about chemical compounds
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct PubChem API endpoint or full URL
+    default: null
+  - name: max_results
+    type: int
+    description: Max results (rate-limited to 5 rps)
+    default: 5
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_pubchem
+returns:
+  type: str
+  description: 工具执行结果

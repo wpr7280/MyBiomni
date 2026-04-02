@@ -1,0 +1,25 @@
+name: query_pride
+display_name: Query Pride
+description: Query the PRIDE proteomics database using natural language or a direct
+  endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about proteomics data
+  optional:
+  - name: endpoint
+    type: str
+    description: Full endpoint to query
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum number of results
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_pride
+returns:
+  type: str
+  description: 工具执行结果

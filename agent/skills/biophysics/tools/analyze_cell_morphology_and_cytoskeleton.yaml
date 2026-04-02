@@ -1,0 +1,25 @@
+name: analyze_cell_morphology_and_cytoskeleton
+display_name: Analyze Cell Morphology And Cytoskeleton
+description: Quantifies cell morphology and cytoskeletal organization from fluorescence
+  microscopy images.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the fluorescence microscopy image file
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./results
+  - name: threshold_method
+    type: str
+    description: Method for cell segmentation ('otsu', 'adaptive', or 'manual')
+    default: otsu
+implementation:
+  type: module_ref
+  module: biomni.tool.biophysics
+  function: analyze_cell_morphology_and_cytoskeleton
+returns:
+  type: str
+  description: 工具执行结果

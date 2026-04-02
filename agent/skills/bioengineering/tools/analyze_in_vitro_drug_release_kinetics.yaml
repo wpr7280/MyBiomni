@@ -1,0 +1,32 @@
+name: analyze_in_vitro_drug_release_kinetics
+display_name: Analyze In Vitro Drug Release Kinetics
+description: Analyzes in vitro drug release kinetics from biomaterial formulations.
+parameters:
+  required:
+  - name: time_points
+    type: List[float] or numpy.ndarray
+    description: Time points at which drug concentrations were measured (in hours)
+  - name: concentration_data
+    type: List[float] or numpy.ndarray
+    description: Measured drug concentration at each time point
+  optional:
+  - name: drug_name
+    type: str
+    description: Name of the drug being analyzed
+    default: Drug
+  - name: total_drug_loaded
+    type: float
+    description: Total amount of drug initially loaded in the formulation. If None,
+      the maximum concentration is used as 100%
+    default: null
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.bioengineering
+  function: analyze_in_vitro_drug_release_kinetics
+returns:
+  type: str
+  description: 工具执行结果

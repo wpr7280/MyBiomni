@@ -1,0 +1,24 @@
+name: create_segmentation_visualization
+display_name: Create Segmentation Visualization
+description: Create and save visualization of segmentation results using nilearn.
+  Generates overlay plots and multiple anatomical views.
+parameters:
+  required:
+  - name: original_mri
+    type: str
+    description: Path to original MRI file
+  - name: segmentation
+    type: str
+    description: Path to segmentation file
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory to save visualization images
+    default: ./visualization_output
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging
+  function: create_segmentation_visualization
+returns:
+  type: str
+  description: 工具执行结果

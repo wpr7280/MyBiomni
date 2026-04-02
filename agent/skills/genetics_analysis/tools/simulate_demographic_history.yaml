@@ -1,0 +1,54 @@
+name: simulate_demographic_history
+display_name: Simulate Demographic History
+description: Simulate DNA sequences with specified demographic and coalescent histories
+  using msprime.
+parameters:
+  optional:
+  - name: num_samples
+    type: int
+    description: Number of sample sequences to simulate
+    default: 10
+  - name: sequence_length
+    type: int
+    description: Length of the simulated sequence in base pairs
+    default: 100000
+  - name: recombination_rate
+    type: float
+    description: Per-base recombination rate
+    default: 1.0e-08
+  - name: mutation_rate
+    type: float
+    description: Per-base mutation rate
+    default: 1.0e-08
+  - name: demographic_model
+    type: str
+    description: Type of demographic model to simulate (constant, bottleneck, expansion,
+      contraction, sawtooth)
+    default: constant
+  - name: demographic_params
+    type: dict
+    description: Parameters specific to the chosen demographic model
+    default: null
+  - name: coalescent_model
+    type: str
+    description: Type of coalescent model to use (kingman, beta)
+    default: kingman
+  - name: beta_coalescent_param
+    type: float
+    description: Parameter for beta-coalescent model
+    default: null
+  - name: random_seed
+    type: int
+    description: Seed for random number generator
+    default: null
+  - name: output_file
+    type: str
+    description: Filename to save the simulated sequences in VCF format
+    default: simulated_sequences.vcf
+implementation:
+  type: module_ref
+  module: biomni.tool.genetics
+  function: simulate_demographic_history
+returns:
+  type: str
+  description: 工具执行结果

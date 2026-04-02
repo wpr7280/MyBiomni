@@ -266,6 +266,10 @@
         "message_save_failed": "保存失败",
         "message_load_failed": "加载配置失败"
       }
+    },
+    "skills": {
+      "label_skills": "Skill 管理",
+      "label_skill_detail": "Skill 详情"
     }
   },
   "menu": {
@@ -278,7 +282,8 @@
     "commercial_mode": "商用模式",
     "system_settings": "系统设置",
     "my_conversations": "我的对话",
-    "knowledge_base": "知识库"
+    "knowledge_base": "知识库",
+    "skill_management": "Skill 管理"
   },
   "common": {
     "text": {

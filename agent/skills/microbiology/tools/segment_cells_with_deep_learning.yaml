@@ -1,0 +1,31 @@
+name: segment_cells_with_deep_learning
+display_name: Segment Cells With Deep Learning
+description: Perform cell segmentation on fluorescence microscopy images using deep
+  learning with pre-trained models from the Cellpose/Omnipose library.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the fluorescence microscopy image file
+  optional:
+  - name: model_type
+    type: str
+    description: 'Name of the pre-trained model to use (Options include: ''bact_fluor_omni'',
+      ''cyto'', ''nuclei'', etc.)'
+    default: bact_fluor_omni
+  - name: diameter
+    type: float
+    description: Expected diameter of cells in pixels. If None, diameter is automatically
+      estimated
+    default: null
+  - name: save_dir
+    type: str
+    description: Directory to save segmentation results
+    default: segmentation_results
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: segment_cells_with_deep_learning
+returns:
+  type: str
+  description: 工具执行结果

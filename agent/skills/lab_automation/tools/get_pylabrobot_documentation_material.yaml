@@ -1,0 +1,12 @@
+name: get_pylabrobot_documentation_material
+display_name: Get Pylabrobot Documentation Material
+description: Get the documentation for the material handling section of the PyLabRobot
+  tutorial.
+parameters: {}
+implementation:
+  type: module_ref
+  module: biomni.tool.lab_automation
+  function: get_pylabrobot_documentation_material
+returns:
+  type: str
+  description: 工具执行结果

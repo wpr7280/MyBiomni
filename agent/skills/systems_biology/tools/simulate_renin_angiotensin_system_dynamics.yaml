@@ -1,0 +1,34 @@
+name: simulate_renin_angiotensin_system_dynamics
+display_name: Simulate Renin Angiotensin System Dynamics
+description: Simulate the time-dependent concentrations of renin-angiotensin system
+  (RAS) components.
+parameters:
+  required:
+  - name: initial_concentrations
+    type: dict
+    description: 'Initial concentrations of RAS components with keys: ''renin'', ''angiotensinogen'',
+      ''angiotensin_I'', ''angiotensin_II'', ''ACE2_angiotensin_II'', ''angiotensin_1_7'''
+  - name: rate_constants
+    type: dict
+    description: 'Kinetic rate constants with keys: ''k_ren'', ''k_agt'', ''k_ace'',
+      ''k_ace2'', ''k_at1r'', ''k_mas'''
+  - name: feedback_params
+    type: dict
+    description: 'Parameters controlling feedback mechanisms with keys: ''fb_ang_II'',
+      ''fb_ace2'''
+  optional:
+  - name: simulation_time
+    type: float
+    description: Total simulation time in hours
+    default: 48
+  - name: time_points
+    type: int
+    description: Number of time points to evaluate
+    default: 100
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology
+  function: simulate_renin_angiotensin_system_dynamics
+returns:
+  type: str
+  description: 工具执行结果

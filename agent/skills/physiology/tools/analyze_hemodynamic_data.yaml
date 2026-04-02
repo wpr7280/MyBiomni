@@ -1,0 +1,23 @@
+name: analyze_hemodynamic_data
+display_name: Analyze Hemodynamic Data
+description: Analyzes raw blood pressure data to calculate key hemodynamic parameters.
+parameters:
+  required:
+  - name: pressure_data
+    type: numpy.ndarray
+    description: Raw blood pressure measurements in mmHg
+  - name: sampling_rate
+    type: float
+    description: Data acquisition rate in Hz (samples per second)
+  optional:
+  - name: output_file
+    type: str
+    description: Filename to save the calculated parameters
+    default: hemodynamic_results.csv
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_hemodynamic_data
+returns:
+  type: str
+  description: 工具执行结果

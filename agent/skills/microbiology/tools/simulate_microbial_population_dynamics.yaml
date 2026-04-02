@@ -1,0 +1,38 @@
+name: simulate_microbial_population_dynamics
+display_name: Simulate Microbial Population Dynamics
+description: Performs stochastic simulation of microbial population dynamics using
+  the Gillespie algorithm.
+parameters:
+  required:
+  - name: initial_populations
+    type: List[int]
+    description: Initial population sizes for each microbial species
+  - name: growth_rates
+    type: List[float]
+    description: Per capita growth rates for each species
+  - name: clearance_rates
+    type: List[float]
+    description: Per capita death/clearance rates for each species
+  - name: carrying_capacities
+    type: List[float]
+    description: Maximum sustainable population for each species
+  optional:
+  - name: max_time
+    type: float
+    description: Maximum simulation time
+    default: 100
+  - name: num_simulations
+    type: int
+    description: Number of stochastic simulations to run
+    default: 100
+  - name: time_points
+    type: int
+    description: Number of time points to record for trajectories
+    default: 100
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: simulate_microbial_population_dynamics
+returns:
+  type: str
+  description: 工具执行结果

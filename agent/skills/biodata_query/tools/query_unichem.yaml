@@ -1,0 +1,24 @@
+name: query_unichem
+display_name: Query Unichem
+description: Query the UniChem 2.0 REST API using natural language or a direct endpoint.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about chemical cross-references
+  optional:
+  - name: endpoint
+    type: str
+    description: Direct UniChem endpoint or full URL
+    default: null
+  - name: verbose
+    type: bool
+    description: Return detailed results
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_unichem
+returns:
+  type: str
+  description: 工具执行结果

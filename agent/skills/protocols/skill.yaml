@@ -1,0 +1,29 @@
+name: protocols
+display_name: Protocols
+version: 1.0.0
+category: protocols
+description: 实验方案工具集。提供 search_protocols, get_protocol_details, list_local_protocols,
+  read_local_protocol。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- search_protocols
+- get_protocol_details
+- list_local_protocols
+- read_local_protocol
+triggers:
+- 实验方案
+- protocols
+- 实验流程
+- experimental protocol
+- SOP
+- 标准操作
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.protocols

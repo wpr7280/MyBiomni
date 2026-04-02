@@ -1,0 +1,29 @@
+name: reconstruct_3d_face_from_mri
+display_name: Reconstruct 3D Face From Mri
+description: Generate a 3D model of facial anatomy from MRI scans of the head and
+  neck.
+parameters:
+  required:
+  - name: mri_file_path
+    type: str
+    description: 'Path to the MRI scan file (NIfTI format: .nii or .nii.gz)'
+  optional:
+  - name: output_dir
+    type: str
+    description: Directory where output files will be saved
+    default: ./output
+  - name: subject_id
+    type: str
+    description: Identifier for the subject, used in output filenames
+    default: subject
+  - name: threshold_value
+    type: int
+    description: Threshold value for initial segmentation of facial tissues
+    default: 300
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: reconstruct_3d_face_from_mri
+returns:
+  type: str
+  description: 工具执行结果

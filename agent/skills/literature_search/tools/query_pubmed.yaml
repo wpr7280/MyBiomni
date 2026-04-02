@@ -1,0 +1,24 @@
+name: query_pubmed
+display_name: Query Pubmed
+description: Query PubMed for papers based on the provided search query.
+parameters:
+  required:
+  - name: query
+    type: str
+    description: The search query string.
+  optional:
+  - name: max_papers
+    type: int
+    description: The maximum number of papers to retrieve.
+    default: 10
+  - name: max_retries
+    type: int
+    description: Maximum number of retry attempts with modified queries.
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.literature
+  function: query_pubmed
+returns:
+  type: str
+  description: 工具执行结果

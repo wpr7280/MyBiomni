@@ -1,0 +1,23 @@
+name: read_local_protocol
+display_name: Read Local Protocol
+description: Read the contents of a local protocol file from biomni/tool/protocols/.
+  Use list_local_protocols() first to find available protocol filenames.
+parameters:
+  required:
+  - name: filename
+    type: str
+    description: Name of the protocol file (e.g., 'Addgene_ Protocol - How to Run
+      an Agarose Gel.txt')
+  optional:
+  - name: source
+    type: str
+    description: Source directory (e.g., 'addgene' or 'thermofisher'). If None, searches
+      all sources.
+    default: null
+implementation:
+  type: module_ref
+  module: biomni.tool.protocols
+  function: read_local_protocol
+returns:
+  type: str
+  description: 工具执行结果

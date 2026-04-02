@@ -1,0 +1,28 @@
+name: annotate_open_reading_frames
+display_name: Annotate Open Reading Frames
+description: Find all Open Reading Frames (ORFs) in a DNA sequence using Biopython,
+  searching both forward and reverse complement strands.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: DNA sequence to analyze
+  - name: min_length
+    type: int
+    description: Minimum length of ORF in nucleotides
+  optional:
+  - name: search_reverse
+    type: bool
+    description: Whether to search the reverse complement strand
+    default: false
+  - name: filter_subsets
+    type: bool
+    description: Whether to filter out ORFs with same end but later start
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: annotate_open_reading_frames
+returns:
+  type: str
+  description: 工具执行结果

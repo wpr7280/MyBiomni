@@ -1,0 +1,31 @@
+name: detect_and_annotate_somatic_mutations
+display_name: Detect And Annotate Somatic Mutations
+description: Detects and annotates somatic mutations in tumor samples compared to
+  matched normal samples using GATK Mutect2 for variant calling, GATK FilterMutectCalls
+  for filtering, and SnpEff for functional annotation.
+parameters:
+  required:
+  - name: tumor_bam
+    type: str
+    description: Path to the tumor sample BAM file
+  - name: normal_bam
+    type: str
+    description: Path to the matched normal sample BAM file
+  - name: reference_genome
+    type: str
+    description: Path to the reference genome FASTA file
+  - name: output_prefix
+    type: str
+    description: Prefix for output files
+  optional:
+  - name: snpeff_database
+    type: str
+    description: SnpEff database to use for annotation
+    default: GRCh38.105
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
+  function: detect_and_annotate_somatic_mutations
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,25 @@
+name: query_pdb
+display_name: Query Pdb
+description: Query the RCSB PDB database using natural language or a direct structured
+  query.
+parameters:
+  required:
+  - name: prompt
+    type: str
+    description: Natural language query about protein structures
+  optional:
+  - name: query
+    type: dict
+    description: Direct RCSB Search API query JSON
+    default: null
+  - name: max_results
+    type: int
+    description: Maximum results to return
+    default: 3
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: query_pdb
+returns:
+  type: str
+  description: 工具执行结果

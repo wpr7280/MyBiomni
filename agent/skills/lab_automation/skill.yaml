@@ -1,0 +1,29 @@
+name: lab_automation
+display_name: Lab Automation
+version: 1.0.0
+category: lab_automation
+description: 实验室自动化工具集。提供 test_pylabrobot_script, get_pylabrobot_documentation_liquid,
+  get_pylabrobot_documentation_material。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- test_pylabrobot_script
+- get_pylabrobot_documentation_liquid
+- get_pylabrobot_documentation_material
+triggers:
+- 实验室自动化
+- lab automation
+- 机器人
+- robot
+- 高通量
+- high-throughput
+- 液体处理
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.lab_automation

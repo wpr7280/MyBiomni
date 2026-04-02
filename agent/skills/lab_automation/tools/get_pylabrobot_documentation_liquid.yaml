@@ -1,0 +1,12 @@
+name: get_pylabrobot_documentation_liquid
+display_name: Get Pylabrobot Documentation Liquid
+description: Get the documentation for the liquid handling section of the PyLabRobot
+  tutorial.
+parameters: {}
+implementation:
+  type: module_ref
+  module: biomni.tool.lab_automation
+  function: get_pylabrobot_documentation_liquid
+returns:
+  type: str
+  description: 工具执行结果

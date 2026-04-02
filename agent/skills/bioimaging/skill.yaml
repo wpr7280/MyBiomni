@@ -1,0 +1,37 @@
+name: bioimaging
+display_name: Bioimaging
+version: 1.0.0
+category: bioimaging
+description: 生物成像工具集。提供 split_modalities, prepare_input_for_nnunet, segment_with_nn_unet,
+  create_segmentation_visualization, quick_rigid_registration 等 10 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- split_modalities
+- prepare_input_for_nnunet
+- segment_with_nn_unet
+- create_segmentation_visualization
+- quick_rigid_registration
+- quick_affine_registration
+- quick_deformable_registration
+- batch_register_images
+- calculate_similarity_metrics
+- create_registration_visualization
+triggers:
+- 生物成像
+- bioimaging
+- 显微镜
+- microscopy
+- 图像分析
+- image analysis
+- 荧光成像
+- 共聚焦
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.bioimaging

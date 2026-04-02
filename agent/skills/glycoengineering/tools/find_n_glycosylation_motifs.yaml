@@ -1,0 +1,21 @@
+name: find_n_glycosylation_motifs
+display_name: Find N Glycosylation Motifs
+description: Scan a protein sequence for canonical N-glycosylation sequons (N-X-[S/T],
+  X≠P). Returns positions and motifs.
+parameters:
+  required:
+  - name: sequence
+    type: str
+    description: Protein sequence (one-letter AA codes)
+  optional:
+  - name: allow_overlap
+    type: bool
+    description: Allow overlapping motif detections
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.glycoengineering
+  function: find_n_glycosylation_motifs
+returns:
+  type: str
+  description: 工具执行结果

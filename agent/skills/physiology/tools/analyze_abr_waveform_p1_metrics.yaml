@@ -1,0 +1,19 @@
+name: analyze_abr_waveform_p1_metrics
+display_name: Analyze Abr Waveform P1 Metrics
+description: Extracts P1 amplitude and latency from Auditory Brainstem Response (ABR)
+  waveform data.
+parameters:
+  required:
+  - name: time_ms
+    type: array-like
+    description: Time points of the ABR recording in milliseconds
+  - name: amplitude_uv
+    type: array-like
+    description: Amplitude values of the ABR recording in microvolts
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: analyze_abr_waveform_p1_metrics
+returns:
+  type: str
+  description: 工具执行结果

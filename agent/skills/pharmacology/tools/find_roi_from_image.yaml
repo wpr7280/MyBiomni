@@ -1,0 +1,37 @@
+name: find_roi_from_image
+display_name: Find Roi From Image
+description: Find the ROIs (regions of interest) of protein bands from a Western blot
+  or DNA electrophoresis image using threshold-based blob detection. Returns annotated
+  image path and list of ROI coordinates. Use analyze_pixel_distribution first to
+  determine appropriate threshold values. The returned ROI list can be converted to
+  target_bands format for analyze_western_blot.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the input image.
+  - name: lower_threshold
+    type: int
+    description: Pixel intensities lower than this value are used to make the binary
+      image. Use analyze_pixel_distribution to determine appropriate values.
+  - name: upper_threshold
+    type: int
+    description: Pixel intensities greater than or equal to this value are used to
+      make the binary image. Use analyze_pixel_distribution to determine appropriate
+      values.
+  - name: number_of_bands
+    type: int
+    description: The actual number of bands expected in the image.
+  optional:
+  - name: debug
+    type: bool
+    description: If True, draw green contours (hulls) and blue keypoint boxes for
+      debugging.
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: find_roi_from_image
+returns:
+  type: str
+  description: 工具执行结果

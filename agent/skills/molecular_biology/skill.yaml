@@ -1,0 +1,47 @@
+name: molecular_biology
+display_name: Molecular Biology
+version: 1.0.0
+category: molecular_biology
+description: 分子生物学工具集。提供 annotate_open_reading_frames, annotate_plasmid, get_gene_coding_sequence,
+  get_plasmid_sequence, align_sequences 等 18 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- annotate_open_reading_frames
+- annotate_plasmid
+- get_gene_coding_sequence
+- get_plasmid_sequence
+- align_sequences
+- pcr_simple
+- digest_sequence
+- find_restriction_sites
+- find_restriction_enzymes
+- find_sequence_mutations
+- design_knockout_sgrna
+- get_oligo_annealing_protocol
+- get_golden_gate_assembly_protocol
+- get_bacterial_transformation_protocol
+- design_primer
+- design_verification_primers
+- design_golden_gate_oligos
+- golden_gate_assembly
+triggers:
+- 分子生物学
+- molecular biology
+- 基因表达
+- gene expression
+- 蛋白质结构
+- protein structure
+- 序列分析
+- sequence analysis
+- PCR
+- 引物设计
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology

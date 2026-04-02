@@ -1,0 +1,31 @@
+name: run_diffdock_with_smiles
+display_name: Run Diffdock With Smiles
+description: Run DiffDock molecular docking using a protein PDB file and a SMILES
+  string for the ligand, executing the process in a Docker container.
+parameters:
+  required:
+  - name: pdb_path
+    type: str
+    description: Path to the protein PDB file for docking
+  - name: smiles_string
+    type: str
+    description: SMILES string representation of the ligand molecule
+  - name: local_output_dir
+    type: str
+    description: Local directory path where docking results will be saved
+  optional:
+  - name: gpu_device
+    type: int
+    description: GPU device ID to use for computation
+    default: 0
+  - name: use_gpu
+    type: bool
+    description: Whether to use GPU acceleration for docking
+    default: true
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: run_diffdock_with_smiles
+returns:
+  type: str
+  description: 工具执行结果

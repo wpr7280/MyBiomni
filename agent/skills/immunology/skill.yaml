@@ -1,0 +1,39 @@
+name: immunology
+display_name: Immunology
+version: 1.0.0
+category: immunology
+description: 免疫学工具集。提供 analyze_atac_seq_differential_accessibility, analyze_bacterial_growth_curve,
+  isolate_purify_immune_cells, estimate_cell_cycle_phase_durations, track_immune_cells_under_flow
+  等 10 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- analyze_atac_seq_differential_accessibility
+- analyze_bacterial_growth_curve
+- isolate_purify_immune_cells
+- estimate_cell_cycle_phase_durations
+- track_immune_cells_under_flow
+- analyze_cfse_cell_proliferation
+- analyze_cytokine_production_in_cd4_tcells
+- analyze_ebv_antibody_titers
+- analyze_cns_lesion_histology
+- analyze_immunohistochemistry_image
+triggers:
+- 免疫学
+- immunology
+- 免疫分析
+- immune analysis
+- 抗体
+- antibody
+- T细胞
+- B细胞
+- 免疫组库
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.immunology

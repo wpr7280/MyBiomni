@@ -1,0 +1,29 @@
+name: count_bacterial_colonies
+display_name: Count Bacterial Colonies
+description: Count bacterial colonies from an image of agar plate using computer vision
+  techniques.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the image file containing bacterial colonies on agar plate
+  optional:
+  - name: dilution_factor
+    type: float
+    description: Dilution factor of the plated sample
+    default: 1
+  - name: plate_area_cm2
+    type: float
+    description: Area of the agar plate in square centimeters
+    default: 65.0
+  - name: output_dir
+    type: str
+    description: Directory to save output images and results
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.microbiology
+  function: count_bacterial_colonies
+returns:
+  type: str
+  description: 工具执行结果

@@ -1,0 +1,24 @@
+name: run_autosite
+display_name: Run Autosite
+description: Runs AutoSite on a PDB file to identify potential binding sites and returns
+  a research log with the results.
+parameters:
+  required:
+  - name: pdb_file
+    type: str
+    description: Path to the input PDB file
+  - name: output_dir
+    type: str
+    description: Directory where AutoSite results will be saved
+  optional:
+  - name: spacing
+    type: float
+    description: Grid spacing parameter for AutoSite calculation
+    default: 1.0
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: run_autosite
+returns:
+  type: str
+  description: 工具执行结果

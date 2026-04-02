@@ -1,0 +1,26 @@
+name: region_to_ccre_screen
+display_name: Region To Ccre Screen
+description: Given genomic coordinates, retrieve intersecting ENCODE SCREEN cCREs.
+parameters:
+  required:
+  - name: coord_chrom
+    type: str
+    description: Chromosome (e.g., 'chr12')
+  - name: coord_start
+    type: int
+    description: Start coordinate
+  - name: coord_end
+    type: int
+    description: End coordinate
+  optional:
+  - name: assembly
+    type: str
+    description: Genome assembly (e.g., 'GRCh38')
+    default: GRCh38
+implementation:
+  type: module_ref
+  module: biomni.tool.database
+  function: region_to_ccre_screen
+returns:
+  type: str
+  description: 工具执行结果

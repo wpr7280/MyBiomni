@@ -1,0 +1,35 @@
+name: literature_search
+display_name: Literature Search
+version: 1.0.0
+category: literature
+description: 文献检索工具集。提供 fetch_supplementary_info_from_doi, query_arxiv, query_scholar,
+  query_pubmed, search_google 等 8 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- fetch_supplementary_info_from_doi
+- query_arxiv
+- query_scholar
+- query_pubmed
+- search_google
+- extract_url_content
+- extract_pdf_content
+- advanced_web_search_claude
+triggers:
+- 文献检索
+- literature search
+- PubMed
+- 论文搜索
+- paper search
+- biorxiv
+- 文献综述
+- 学术搜索
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.literature

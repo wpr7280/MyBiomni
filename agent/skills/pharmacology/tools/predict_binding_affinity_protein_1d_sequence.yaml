@@ -1,0 +1,25 @@
+name: predict_binding_affinity_protein_1d_sequence
+display_name: Predict Binding Affinity Protein 1D Sequence
+description: Predicts binding affinity between small molecules and a protein sequence
+  using pre-trained deep learning models.
+parameters:
+  required:
+  - name: smiles_list
+    type: List[str]
+    description: List of SMILES strings representing chemical compounds
+  - name: amino_acid_sequence
+    type: str
+    description: Protein sequence in amino acid format
+  optional:
+  - name: affinity_model_type
+    type: str
+    description: 'Deep learning model architecture to use for binding affinity prediction
+      (options: CNN-CNN, MPNN-CNN, Morgan-CNN, Morgan-AAC, Daylight-AAC)'
+    default: MPNN-CNN
+implementation:
+  type: module_ref
+  module: biomni.tool.pharmacology
+  function: predict_binding_affinity_protein_1d_sequence
+returns:
+  type: str
+  description: 工具执行结果

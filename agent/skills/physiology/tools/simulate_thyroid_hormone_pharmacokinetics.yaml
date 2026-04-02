@@ -1,0 +1,30 @@
+name: simulate_thyroid_hormone_pharmacokinetics
+display_name: Simulate Thyroid Hormone Pharmacokinetics
+description: Simulates the transport and binding of thyroid hormones across different
+  tissue compartments using an ODE-based pharmacokinetic model.
+parameters:
+  required:
+  - name: parameters
+    type: dict
+    description: Dictionary containing model parameters including transport_rates,
+      binding_constants, metabolism_rates, and volumes
+  - name: initial_conditions
+    type: dict
+    description: Dictionary of initial concentrations for all molecular species in
+      each compartment
+  optional:
+  - name: time_span
+    type: tuple
+    description: Start and end time for simulation in hours
+    default: (0, 24)
+  - name: time_points
+    type: int
+    description: Number of time points to output
+    default: 100
+implementation:
+  type: module_ref
+  module: biomni.tool.physiology
+  function: simulate_thyroid_hormone_pharmacokinetics
+returns:
+  type: str
+  description: 工具执行结果

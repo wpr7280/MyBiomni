@@ -1,0 +1,32 @@
+name: simulate_metabolic_network_perturbation
+display_name: Simulate Metabolic Network Perturbation
+description: Construct and simulate kinetic models of metabolic networks and analyze
+  their responses to perturbations.
+parameters:
+  required:
+  - name: model_file
+    type: str
+    description: Path to the COBRA model file (SBML format)
+  - name: initial_concentrations
+    type: dict
+    description: Dictionary mapping metabolite IDs to their initial concentrations
+  - name: perturbation_params
+    type: dict
+    description: Dictionary with keys 'time' (float), 'metabolite' (str), and 'factor'
+      (float) for perturbation details
+  optional:
+  - name: simulation_time
+    type: float
+    description: Total simulation time
+    default: 100
+  - name: time_points
+    type: int
+    description: Number of time points to simulate
+    default: 1000
+implementation:
+  type: module_ref
+  module: biomni.tool.systems_biology
+  function: simulate_metabolic_network_perturbation
+returns:
+  type: str
+  description: 工具执行结果

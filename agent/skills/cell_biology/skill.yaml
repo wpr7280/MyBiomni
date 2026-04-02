@@ -1,0 +1,31 @@
+name: cell_biology
+display_name: Cell Biology
+version: 1.0.0
+category: cell_biology
+description: 细胞生物学工具集。提供 quantify_cell_cycle_phases_from_microscopy, quantify_and_cluster_cell_motility,
+  perform_facs_cell_sorting, analyze_flow_cytometry_immunophenotyping, analyze_mitochondrial_morphology_and_potential。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- quantify_cell_cycle_phases_from_microscopy
+- quantify_and_cluster_cell_motility
+- perform_facs_cell_sorting
+- analyze_flow_cytometry_immunophenotyping
+- analyze_mitochondrial_morphology_and_potential
+triggers:
+- 细胞生物学
+- cell biology
+- 细胞增殖
+- cell proliferation
+- 细胞迁移
+- 细胞周期
+- cell cycle
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.cell_biology

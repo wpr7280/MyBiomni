@@ -1,0 +1,37 @@
+name: analyze_protease_kinetics
+display_name: Analyze Protease Kinetics
+description: Analyze protease kinetics data from fluorogenic peptide cleavage assays,
+  fit the data to Michaelis-Menten kinetics, and determine key kinetic parameters.
+parameters:
+  required:
+  - name: time_points
+    type: numpy.ndarray
+    description: Array of time points (in seconds) at which measurements were taken
+  - name: fluorescence_data
+    type: numpy.ndarray
+    description: 2D array of fluorescence measurements where each row corresponds
+      to a different substrate concentration and each column corresponds to a time
+      point
+  - name: substrate_concentrations
+    type: numpy.ndarray
+    description: Array of substrate concentrations (in μM) corresponding to each row
+      in fluorescence_data
+  - name: enzyme_concentration
+    type: float
+    description: Concentration of the protease enzyme (in μM)
+  optional:
+  - name: output_prefix
+    type: str
+    description: Prefix for output files
+    default: protease_kinetics
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./
+implementation:
+  type: module_ref
+  module: biomni.tool.biochemistry
+  function: analyze_protease_kinetics
+returns:
+  type: str
+  description: 工具执行结果

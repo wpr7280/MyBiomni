@@ -1,0 +1,36 @@
+name: get_golden_gate_assembly_protocol
+display_name: Get Golden Gate Assembly Protocol
+description: Return a customized protocol for Golden Gate assembly based on the number
+  of inserts and specific DNA sequences.
+parameters:
+  required:
+  - name: enzyme_name
+    type: str
+    description: Type IIS restriction enzyme to be used
+  - name: vector_length
+    type: int
+    description: Length of the destination vector in bp
+  optional:
+  - name: num_inserts
+    type: int
+    description: Number of inserts to be assembled
+    default: 1
+  - name: vector_amount_ng
+    type: float
+    description: Amount of vector to use in ng
+    default: 75.0
+  - name: insert_lengths
+    type: List[int]
+    description: List of insert lengths in bp
+    default: null
+  - name: is_library_prep
+    type: bool
+    description: Whether this is for library preparation
+    default: false
+implementation:
+  type: module_ref
+  module: biomni.tool.molecular_biology
+  function: get_golden_gate_assembly_protocol
+returns:
+  type: str
+  description: 工具执行结果

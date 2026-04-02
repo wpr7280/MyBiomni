@@ -1,0 +1,28 @@
+name: segment_and_quantify_cells_in_multiplexed_images
+display_name: Segment And Quantify Cells In Multiplexed Images
+description: Segment cells and quantify protein expression levels from multichannel
+  tissue images.
+parameters:
+  required:
+  - name: image_path
+    type: str
+    description: Path to the multichannel image file (tiff stack or similar format)
+  - name: markers_list
+    type: List[str]
+    description: List of marker names corresponding to each channel in the image
+  optional:
+  - name: nuclear_channel_index
+    type: int
+    description: Index of the nuclear marker channel (typically DAPI)
+    default: 0
+  - name: output_dir
+    type: str
+    description: Directory to save output files
+    default: ./output
+implementation:
+  type: module_ref
+  module: biomni.tool.pathology
+  function: segment_and_quantify_cells_in_multiplexed_images
+returns:
+  type: str
+  description: 工具执行结果

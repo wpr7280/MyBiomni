@@ -1,0 +1,34 @@
+name: cancer_biology
+display_name: Cancer Biology
+version: 1.0.0
+category: cancer_biology
+description: 肿瘤生物学工具集。提供 analyze_ddr_network_in_cancer, analyze_cell_senescence_and_apoptosis,
+  detect_and_annotate_somatic_mutations, detect_and_characterize_structural_variations,
+  perform_gene_expression_nmf_analysis 等 6 个工具。
+authors:
+- name: Biomni Team
+  role: maintainer
+license: CC BY 4.0
+commercial_use: true
+tools:
+- analyze_ddr_network_in_cancer
+- analyze_cell_senescence_and_apoptosis
+- detect_and_annotate_somatic_mutations
+- detect_and_characterize_structural_variations
+- perform_gene_expression_nmf_analysis
+- analyze_copy_number_purity_ploidy_and_focal_events
+triggers:
+- 肿瘤生物学
+- cancer biology
+- 肿瘤
+- tumor
+- 癌症
+- cancer
+- 突变分析
+- oncology
+enabled: true
+dependencies:
+  python_packages: []
+implementation:
+  type: module_ref
+  module: biomni.tool.cancer_biology
