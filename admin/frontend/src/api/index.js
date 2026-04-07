@@ -1,6 +1,7 @@
 import { request } from '@/utils'
 import infraApi from './infra'
 import skillsApi from './skills'
+import knowhowApi from './knowhow'
 
 export default {
   login: (data) => request.post('/auth/login', data, { noNeedToken: true }),
@@ -118,4 +119,7 @@ export default {
 
   // ========== Skill 管理 ==========
   ...skillsApi,
+
+  // ========== Know-How 管理 ==========
+  ...knowhowApi,
 }

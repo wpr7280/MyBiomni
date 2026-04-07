@@ -37,7 +37,7 @@ export const basicRoutes = [
         component: () => import('@/views/skills/index.vue'),
         name: 'SkillList',
         meta: {
-          title: 'Skill 管理',
+          title: t('views.skills.label_skills'),
           icon: 'carbon:skill-level-advanced',
           affix: false,
         },
@@ -56,13 +56,50 @@ export const basicRoutes = [
         component: () => import('@/views/skills/detail.vue'),
         name: 'SkillDetailDefault',
         meta: {
-          title: 'Skill 详情',
+          title: t('views.skills.label_skill_detail'),
           icon: 'carbon:skill-level-advanced',
           activeMenu: 'SkillList',
         },
       },
     ],
     meta: { order: 5 },
+  },
+  {
+    name: 'KnowHow',
+    path: '/knowhow',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/knowhow/index.vue'),
+        name: 'KnowHowList',
+        meta: {
+          title: t('views.knowhow.label_knowhow'),
+          icon: 'carbon:book',
+          affix: false,
+        },
+      },
+    ],
+    meta: { order: 6 },
+  },
+  {
+    name: 'KnowHowDetail',
+    path: '/knowhow/:id',
+    component: Layout,
+    isHidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/knowhow/detail.vue'),
+        name: 'KnowHowDetailDefault',
+        meta: {
+          title: t('views.knowhow.label_knowhow'),
+          icon: 'carbon:book',
+          activeMenu: 'KnowHowList',
+        },
+      },
+    ],
+    meta: { order: 6 },
   },
   {
     name: t('views.profile.label_profile'),

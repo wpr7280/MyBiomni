@@ -3,11 +3,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NInput, NSwitch, NButton, NIcon, NSpace, NTag, NBadge, NSpin, NEmpty, NGrid, NGridItem, NScrollbar } from 'naive-ui'
 import { useMessage } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
 import CommonPage from '@/components/page/CommonPage.vue'
 import api from '@/api'
 import CreateSkillModal from './components/CreateSkillModal.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 const message = useMessage()
 const loading = ref(false)
 const skills = ref([])
@@ -65,7 +67,7 @@ async function loadSkills() {
       skills.value = res.data || []
     }
   } catch (e) {
-    message.error('加载 Skill 列表失败')
+    message.error(t('views.skills.message_load_failed'))
   } finally {
     loading.value = false
   }
@@ -89,14 +91,14 @@ async function toggleSkill(skill) {
     if (skill.enabled) {
       await api.disableSkill(skill.id)
       skill.enabled = false
-      message.success(`已禁用 ${skill.display_name || skill.name}`)
+      message.success(t('views.skills.message_disable_success') + ': ' + (skill.display_name || skill.name))
     } else {
       await api.enableSkill(skill.id)
       skill.enabled = true
-      message.success(`已启用 ${skill.display_name || skill.name}`)
+      message.success(t('views.skills.message_enable_success') + ': ' + (skill.display_name || skill.name))
     }
   } catch (e) {
-    message.error('操作失败')
+    message.error(t('views.skills.message_reload_failed'))
   }
 }
 
@@ -116,10 +118,10 @@ async function handleCreated(newSkill) {
 async function handleReloadAll() {
   try {
     await api.reloadAllSkills()
-    message.success('已重载所有 Skill')
+    message.success(t('views.skills.message_reload_success'))
     await loadSkills()
   } catch (e) {
-    message.error('重载失败')
+    message.error(t('views.skills.message_reload_failed'))
   }
 }
 
@@ -133,16 +135,16 @@ onMounted(async () => {
   <CommonPage :show-header="false">
     <div class="skills-page">
       <div class="skills-layout">
-        <!-- 左侧分类筛选 -->
+        <!-- 左侧{{ t('views.skills.label_category') }} -->
         <div class="category-sidebar">
-          <div class="sidebar-title">分类筛选</div>
+          <div class="sidebar-title">{{ t('views.skills.label_category') }}</div>
           <NScrollbar style="max-height: calc(100vh - 240px);">
             <div
               class="category-item"
               :class="{ active: selectedCategory === 'all' }"
               @click="selectedCategory = 'all'"
             >
-              <span>全部</span>
+              <span>{{ t('views.skills.label_all') }}</span>
               <NBadge :value="categoryCounts.all" :max="999" type="info" />
             </div>
             <div
@@ -164,7 +166,7 @@ onMounted(async () => {
           <div class="toolbar">
             <NInput
               v-model:value="searchText"
-              placeholder="搜索 Skill（名称、描述）"
+              :placeholder="t('views.skills.placeholder_search')"
               clearable
               style="width: 320px;"
             >
@@ -197,7 +199,7 @@ onMounted(async () => {
           <!-- Skill 卡片列表 -->
           <NSpin :show="loading">
             <div v-if="filteredSkills.length === 0 && !loading" style="padding: 60px 0;">
-              <NEmpty description="暂无 Skill" />
+              <NEmpty :description="t('views.skills.text_no_skills')" />
             </div>
             <NGrid v-else :cols="3" :x-gap="16" :y-gap="16" responsive="screen" :cols-s="1" :cols-m="2" :cols-l="3">
               <NGridItem v-for="skill in filteredSkills" :key="skill.id">
@@ -216,11 +218,11 @@ onMounted(async () => {
                     />
                   </div>
                   <div class="skill-id">{{ skill.name }}</div>
-                  <div class="skill-desc">{{ skill.description || '暂无描述' }}</div>
+                  <div class="skill-desc">{{ skill.description || t('views.knowhow.text_no_description') }}</div>
                   <div class="skill-footer">
                     <NSpace size="small">
                       <NTag size="small" :bordered="false" :color="{ color: getCategoryColor(skill.category) + '15', textColor: getCategoryColor(skill.category) }">
-                        {{ skill.category || '未分类' }}
+                        {{ skill.category || 'N/A' }}
                       </NTag>
                       <NTag size="small" :bordered="false" type="default">
                         v{{ skill.version || '0.1.0' }}
@@ -230,7 +232,7 @@ onMounted(async () => {
                       <NIcon size="14">
                         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9c-2-2-5-2.4-7.4-1.3L9 6 6 9L1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
                       </NIcon>
-                      {{ skill.tool_count || 0 }} 工具
+                      {{ skill.tool_count || 0 }} {{ t('views.skills.label_tools') }}
                     </span>
                   </div>
                 </NCard>

@@ -17,6 +17,23 @@ from services import skill_service
 router = APIRouter()
 
 
+def _ok(data: Any = None, message: str = "success") -> dict:
+    """包装为前端期望的 {code: 200, data: ...} 格式。"""
+    return {"code": 200, "data": data, "message": message}
+
+
+def _reload_agent_skills():
+    """通知所有缓存的 agent 实例重新加载 skill。"""
+    try:
+        from services.agent_service import agent_pool
+        for user_id, (config_hash, agent) in list(agent_pool.items()):
+            if hasattr(agent, 'skill_manager') and agent.skill_manager:
+                agent.skill_manager.reload_all()
+                print(f"🎯 Reloaded skills for agent (user {user_id})")
+    except Exception as e:
+        print(f"⚠️ Failed to reload agent skills: {e}")
+
+
 # ---------------------------------------------------------------------------
 # 鉴权依赖
 # ---------------------------------------------------------------------------
@@ -45,6 +62,7 @@ def _require_auth(authorization: str | None = Header(None)) -> dict:
 
 class SkillSummary(BaseModel):
     """Skill 列表中的摘要信息。"""
+    id: str = ""
     name: str
     display_name: str = ""
     version: str = "1.0.0"
@@ -67,6 +85,7 @@ class DependenciesOut(BaseModel):
 
 class SkillDetail(BaseModel):
     """Skill 完整详情（含 skill.yaml 全部信息）。"""
+    id: str = ""
     name: str
     display_name: str = ""
     version: str = "1.0.0"
@@ -194,6 +213,7 @@ def _skill_to_summary(skill) -> SkillSummary:
     """将 Skill 对象转换为摘要。"""
     m = skill.metadata
     return SkillSummary(
+        id=m.name,
         name=m.name,
         display_name=m.display_name,
         version=m.version,
@@ -209,6 +229,7 @@ def _skill_to_detail(skill) -> SkillDetail:
     """将 Skill 对象转换为完整详情。"""
     m = skill.metadata
     return SkillDetail(
+        id=m.name,
         name=m.name,
         display_name=m.display_name,
         version=m.version,
@@ -270,29 +291,27 @@ def _tool_to_detail(td) -> ToolDetail:
 # Endpoints — 注意：/categories 和 /reload-all 必须在 /{skill_id} 之前注册
 # ---------------------------------------------------------------------------
 
-@router.get("/skills/categories", response_model=list[str])
+@router.get("/skills/categories")
 async def get_categories(
     authorization: str | None = Header(None),
 ):
     """获取所有分类列表。"""
     _require_auth(authorization)
-    return skill_service.get_categories()
+    return _ok(skill_service.get_categories())
 
 
-@router.post("/skills/reload-all", response_model=ReloadAllResponse)
+@router.post("/skills/reload-all")
 async def reload_all_skills(
     authorization: str | None = Header(None),
 ):
     """热加载所有 skill。"""
     _require_auth(authorization)
     skill_ids = skill_service.reload_all()
-    return ReloadAllResponse(
-        message=f"成功加载 {len(skill_ids)} 个 skill",
-        skills=skill_ids,
-    )
+    _reload_agent_skills()
+    return _ok(skill_ids, f"成功加载 {len(skill_ids)} 个 skill")
 
 
-@router.get("/skills", response_model=list[SkillSummary])
+@router.get("/skills")
 async def list_skills(
     category: str | None = Query(None, description="按分类过滤"),
     enabled: bool | None = Query(None, description="按启用状态过滤"),
@@ -302,10 +321,10 @@ async def list_skills(
     """获取 Skill 列表，支持过滤和搜索。"""
     _require_auth(authorization)
     skills = skill_service.list_skills(category=category, enabled=enabled, search=search)
-    return [_skill_to_summary(s) for s in skills]
+    return _ok([_skill_to_summary(s).model_dump() for s in skills])
 
 
-@router.get("/skills/{skill_id}", response_model=SkillDetail)
+@router.get("/skills/{skill_id}")
 async def get_skill(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -315,10 +334,10 @@ async def get_skill(
     skill = skill_service.get_skill(skill_id)
     if skill is None:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
-    return _skill_to_detail(skill)
+    return _ok(_skill_to_detail(skill).model_dump())
 
 
-@router.post("/skills", response_model=SkillDetail, status_code=201)
+@router.post("/skills", status_code=201)
 async def create_skill(
     body: CreateSkillRequest,
     authorization: str | None = Header(None),
@@ -328,12 +347,13 @@ async def create_skill(
     try:
         data = body.model_dump(exclude_none=True)
         skill = skill_service.create_skill(data)
-        return _skill_to_detail(skill)
+        _reload_agent_skills()
+        return _ok(_skill_to_detail(skill).model_dump())
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.put("/skills/{skill_id}", response_model=SkillDetail)
+@router.put("/skills/{skill_id}")
 async def update_skill(
     skill_id: str,
     body: UpdateSkillRequest,
@@ -344,12 +364,13 @@ async def update_skill(
     try:
         data = body.model_dump(exclude_none=True)
         skill = skill_service.update_skill_metadata(skill_id, data)
-        return _skill_to_detail(skill)
+        _reload_agent_skills()
+        return _ok(_skill_to_detail(skill).model_dump())
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
 
-@router.patch("/skills/{skill_id}/enable", response_model=SkillDetail)
+@router.patch("/skills/{skill_id}/enable")
 async def enable_skill(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -358,12 +379,13 @@ async def enable_skill(
     _require_auth(authorization)
     try:
         skill = skill_service.enable_skill(skill_id)
-        return _skill_to_detail(skill)
+        _reload_agent_skills()
+        return _ok(_skill_to_detail(skill).model_dump())
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
 
-@router.patch("/skills/{skill_id}/disable", response_model=SkillDetail)
+@router.patch("/skills/{skill_id}/disable")
 async def disable_skill(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -372,12 +394,13 @@ async def disable_skill(
     _require_auth(authorization)
     try:
         skill = skill_service.disable_skill(skill_id)
-        return _skill_to_detail(skill)
+        _reload_agent_skills()
+        return _ok(_skill_to_detail(skill).model_dump())
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
 
-@router.delete("/skills/{skill_id}", response_model=MessageResponse)
+@router.delete("/skills/{skill_id}")
 async def delete_skill(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -386,7 +409,8 @@ async def delete_skill(
     _require_auth(authorization)
     try:
         skill_service.delete_skill(skill_id)
-        return MessageResponse(message=f"Skill '{skill_id}' 已标记删除", skill_id=skill_id)
+        _reload_agent_skills()
+        return _ok({"skill_id": skill_id}, f"Skill '{skill_id}' 已标记删除")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
@@ -395,7 +419,7 @@ async def delete_skill(
 # How-To endpoints
 # ---------------------------------------------------------------------------
 
-@router.get("/skills/{skill_id}/how-to", response_model=HowToResponse)
+@router.get("/skills/{skill_id}/how-to")
 async def get_howto(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -404,12 +428,12 @@ async def get_howto(
     _require_auth(authorization)
     try:
         content = skill_service.get_howto(skill_id)
-        return HowToResponse(skill_id=skill_id, content=content)
+        return _ok({"skill_id": skill_id, "content": content})
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
 
-@router.put("/skills/{skill_id}/how-to", response_model=HowToResponse)
+@router.put("/skills/{skill_id}/how-to")
 async def update_howto(
     skill_id: str,
     body: HowToRequest,
@@ -419,7 +443,7 @@ async def update_howto(
     _require_auth(authorization)
     try:
         content = skill_service.update_howto(skill_id, body.content)
-        return HowToResponse(skill_id=skill_id, content=content)
+        return _ok({"skill_id": skill_id, "content": content})
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
@@ -428,7 +452,7 @@ async def update_howto(
 # Tool endpoints
 # ---------------------------------------------------------------------------
 
-@router.get("/skills/{skill_id}/tools", response_model=list[ToolSummary])
+@router.get("/skills/{skill_id}/tools")
 async def get_skill_tools(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -437,12 +461,12 @@ async def get_skill_tools(
     _require_auth(authorization)
     try:
         tools = skill_service.get_tools(skill_id)
-        return [_tool_to_summary(t) for t in tools]
+        return _ok([_tool_to_detail(t).model_dump() for t in tools])
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在")
 
 
-@router.get("/skills/{skill_id}/tools/{tool_name}", response_model=ToolDetail)
+@router.get("/skills/{skill_id}/tools/{tool_name}")
 async def get_skill_tool(
     skill_id: str,
     tool_name: str,
@@ -457,10 +481,10 @@ async def get_skill_tool(
 
     if td is None:
         raise HTTPException(status_code=404, detail=f"Tool '{tool_name}' 在 Skill '{skill_id}' 中不存在")
-    return _tool_to_detail(td)
+    return _ok(_tool_to_detail(td).model_dump())
 
 
-@router.put("/skills/{skill_id}/tools/{tool_name}", response_model=ToolDetail)
+@router.put("/skills/{skill_id}/tools/{tool_name}")
 async def update_skill_tool(
     skill_id: str,
     tool_name: str,
@@ -472,7 +496,7 @@ async def update_skill_tool(
     try:
         data = body.model_dump(exclude_none=True)
         td = skill_service.update_tool(skill_id, tool_name, data)
-        return _tool_to_detail(td)
+        return _ok(_tool_to_detail(td).model_dump())
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
@@ -481,7 +505,7 @@ async def update_skill_tool(
 # Reload endpoints
 # ---------------------------------------------------------------------------
 
-@router.post("/skills/{skill_id}/reload", response_model=SkillDetail)
+@router.post("/skills/{skill_id}/reload")
 async def reload_skill(
     skill_id: str,
     authorization: str | None = Header(None),
@@ -491,4 +515,5 @@ async def reload_skill(
     skill = skill_service.reload_skill(skill_id)
     if skill is None:
         raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' 不存在或加载失败")
-    return _skill_to_detail(skill)
+    _reload_agent_skills()
+    return _ok(_skill_to_detail(skill).model_dump())
